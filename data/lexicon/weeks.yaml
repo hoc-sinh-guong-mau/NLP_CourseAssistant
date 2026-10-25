@@ -1,0 +1,107 @@
+lexical_entries: []
+entity_entries:
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_01
+  aliases:
+  - tuần 1
+  - tuần một
+  - week 1
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_02
+  aliases:
+  - tuần 2
+  - tuần hai
+  - week 2
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_03
+  aliases:
+  - tuần 3
+  - tuần ba
+  - week 3
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_04
+  aliases:
+  - tuần 4
+  - tuần bốn
+  - week 4
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_05
+  aliases:
+  - tuần 5
+  - tuần năm
+  - week 5
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_06
+  aliases:
+  - tuần 6
+  - tuần sáu
+  - week 6
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_07
+  aliases:
+  - tuần 7
+  - tuần bảy
+  - week 7
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_08
+  aliases:
+  - tuần 8
+  - tuần tám
+  - week 8
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_09
+  aliases:
+  - tuần 9
+  - tuần chín
+  - week 9
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_10
+  aliases:
+  - tuần 10
+  - tuần mười
+  - week 10
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_11
+  aliases:
+  - tuần 11
+  - tuần mười một
+  - week 11
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_12
+  aliases:
+  - tuần 12
+  - tuần mười hai
+  - week 12
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_13
+  aliases:
+  - tuần 13
+  - tuần mười ba
+  - week 13
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_14
+  aliases:
+  - tuần 14
+  - tuần mười bốn
+  - week 14
+- category: WEEK
+  entity_type: week
+  canonical_id: WEEK_15
+  aliases:
+  - tuần 15
+  - tuần mười lăm
+  - week 15

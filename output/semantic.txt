@@ -1,0 +1,3 @@
+{"predicate": "GET_DEADLINE", "arguments": {"assignment_id": "BTL01"}, "qtype": "DEADLINE"}
+null
+null

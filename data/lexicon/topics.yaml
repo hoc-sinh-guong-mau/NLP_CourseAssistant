@@ -1,0 +1,311 @@
+lexical_entries: []
+entity_entries:
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH01
+  aliases:
+  - chương 1
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH02
+  aliases:
+  - chương 2
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH03
+  aliases:
+  - chương 3
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH04
+  aliases:
+  - chương 4
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH05
+  aliases:
+  - chương 5
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH06
+  aliases:
+  - chương 6
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH07
+  aliases:
+  - chương 7
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH08
+  aliases:
+  - chương 8
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH09
+  aliases:
+  - chương 9
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH10
+  aliases:
+  - chương 10
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH11
+  aliases:
+  - chương 11
+- category: CHAPTER
+  entity_type: chapter
+  canonical_id: CH12
+  aliases:
+  - chương 12
+- category: TOPIC
+  entity_type: topic
+  canonical_id: CFG
+  aliases:
+  - cfg
+  - context-free grammar
+  - context free grammar
+  - văn phạm phi ngữ cảnh
+- category: TOPIC
+  entity_type: topic
+  canonical_id: PCFG
+  aliases:
+  - pcfg
+  - probabilistic context-free grammar
+- category: TOPIC
+  entity_type: topic
+  canonical_id: DEPENDENCY_GRAMMAR
+  aliases:
+  - dependency grammar
+  - văn phạm phụ thuộc
+- category: TOPIC
+  entity_type: topic
+  canonical_id: FEATURES
+  aliases:
+  - features
+  - feature
+  - nét
+  - feature systems
+- category: TOPIC
+  entity_type: topic
+  canonical_id: AUGMENTED_GRAMMAR
+  aliases:
+  - augmented grammar
+  - văn phạm gia tố
+  - augmented grammars
+- category: TOPIC
+  entity_type: topic
+  canonical_id: UNIFICATION
+  aliases:
+  - unification
+  - hợp nhất
+  - unification grammar
+- category: TOPIC
+  entity_type: topic
+  canonical_id: POS_TAGGING
+  aliases:
+  - pos tagging
+  - gán nhãn từ loại
+- category: TOPIC
+  entity_type: topic
+  canonical_id: LOGICAL_FORM
+  aliases:
+  - logical form
+  - dạng luận lý
+- category: TOPIC
+  entity_type: topic
+  canonical_id: THEMATIC_ROLES
+  aliases:
+  - thematic roles
+  - vai trò chủ đề
+- category: TOPIC
+  entity_type: topic
+  canonical_id: SELECTIONAL_RESTRICTION
+  aliases:
+  - selectional restriction
+  - selectional restrictions
+  - giới hạn lựa chọn
+- category: TOPIC
+  entity_type: topic
+  canonical_id: SEMANTIC_NETWORK
+  aliases:
+  - semantic network
+  - mạng ngữ nghĩa
+  - semantic networks
+- category: TOPIC
+  entity_type: topic
+  canonical_id: WSD
+  aliases:
+  - wsd
+  - word sense disambiguation
+- category: TOPIC
+  entity_type: topic
+  canonical_id: SEMANTIC_GRAMMAR
+  aliases:
+  - semantic grammar
+  - văn phạm ngữ nghĩa
+- category: TOPIC
+  entity_type: topic
+  canonical_id: KNOWLEDGE_REPRESENTATION
+  aliases:
+  - knowledge representation
+  - biểu diễn tri thức
+- category: TOPIC
+  entity_type: topic
+  canonical_id: QUESTION_ANSWERING
+  aliases:
+  - question answering
+  - hỏi đáp
+- category: TOPIC
+  entity_type: topic
+  canonical_id: LOCAL_DISCOURSE_CONTEXT
+  aliases:
+  - local discourse context
+  - ngữ cảnh diễn ngôn cục bộ
+- category: TOPIC
+  entity_type: topic
+  canonical_id: REFERENCE
+  aliases:
+  - reference
+  - tham chiếu
+- category: TOPIC
+  entity_type: topic
+  canonical_id: ANAPHORA
+  aliases:
+  - anaphora
+  - đồng tham chiếu
+- category: TOPIC
+  entity_type: topic
+  canonical_id: CENTERING
+  aliases:
+  - centering
+  - xác định tâm
+- category: TOPIC
+  entity_type: topic
+  canonical_id: PARSING
+  aliases:
+  - parsing
+  - phân tích cú pháp
+- category: COURSE_PART
+  entity_type: course_part
+  canonical_id: SYNTACTIC_PROCESSING
+  aliases:
+  - xử lý cú pháp
+  - syntactic processing
+- category: COURSE_PART
+  entity_type: course_part
+  canonical_id: SEMANTIC_INTERPRETATION
+  aliases:
+  - diễn dịch ngữ nghĩa
+  - semantic interpretation
+- category: COURSE_PART
+  entity_type: course_part
+  canonical_id: CONTEXT_WORLD_KNOWLEDGE
+  aliases:
+  - ngữ cảnh và tri thức thế giới
+  - context and world knowledge
+- category: TOPIC
+  entity_type: topic
+  canonical_id: TOP_DOWN_PARSING
+  aliases:
+  - top-down parsing
+- category: TOPIC
+  entity_type: topic
+  canonical_id: BOTTOM_UP_CHART_PARSING
+  aliases:
+  - bottom-up chart parsing
+- category: TOPIC
+  entity_type: topic
+  canonical_id: TOP_DOWN_CHART_PARSING
+  aliases:
+  - top-down chart parsing
+- category: TOPIC
+  entity_type: topic
+  canonical_id: STANFORD_DEPENDENCIES
+  aliases:
+  - stanford dependencies
+- category: TOPIC
+  entity_type: topic
+  canonical_id: LEXICON
+  aliases:
+  - lexicon
+- category: TOPIC
+  entity_type: topic
+  canonical_id: AUGMENTED_TRANSITION_NETWORKS
+  aliases:
+  - augmented transition networks
+- category: TOPIC
+  entity_type: topic
+  canonical_id: PROBABILITY
+  aliases:
+  - lý thuyết xác suất
+  - basic probability theory
+- category: TOPIC
+  entity_type: topic
+  canonical_id: BEST_FIRST_PARSING
+  aliases:
+  - best-first parsing
+- category: TOPIC
+  entity_type: topic
+  canonical_id: NOUN_PHRASE
+  aliases:
+  - noun phrase
+  - noun phrases
+- category: TOPIC
+  entity_type: topic
+  canonical_id: VERB_PHRASE
+  aliases:
+  - verb phrase
+  - verb phrases
+- category: TOPIC
+  entity_type: topic
+  canonical_id: RELATIVE_CLAUSES
+  aliases:
+  - relative clauses
+- category: TOPIC
+  entity_type: topic
+  canonical_id: COMPOSITIONALITY
+  aliases:
+  - compositionality
+- category: TOPIC
+  entity_type: topic
+  canonical_id: SEMANTIC_FILTERING
+  aliases:
+  - semantic filtering
+- category: TOPIC
+  entity_type: topic
+  canonical_id: GRAMMATICAL_RELATIONS
+  aliases:
+  - grammatical relations
+- category: TOPIC
+  entity_type: topic
+  canonical_id: TEMPLATE_MATCHING
+  aliases:
+  - template matching
+- category: TOPIC
+  entity_type: topic
+  canonical_id: FRAMES
+  aliases:
+  - frames
+- category: TOPIC
+  entity_type: topic
+  canonical_id: PROCEDURAL_SEMANTICS
+  aliases:
+  - procedural semantics
+- category: TOPIC
+  entity_type: topic
+  canonical_id: DISCOURSE_ENTITIES
+  aliases:
+  - discourse entities
+- category: TOPIC
+  entity_type: topic
+  canonical_id: ELLIPSIS
+  aliases:
+  - ellipsis
+- category: TOPIC
+  entity_type: topic
+  canonical_id: SPEECH_ACTS
+  aliases:
+  - speech acts

@@ -1,0 +1,57 @@
+lexical_entries: []
+entity_entries:
+- category: ASSIGNMENT_NAME
+  entity_type: assignment
+  canonical_id: BTL01
+  aliases:
+  - bài tập lớn
+  - btl
+  - btl01
+  - intelligent course assistant
+- category: PART
+  entity_type: part
+  canonical_id: PART_I
+  aliases:
+  - phần i
+- category: PART
+  entity_type: part
+  canonical_id: PART_II
+  aliases:
+  - phần ii
+- category: PART
+  entity_type: part
+  canonical_id: PART_III
+  aliases:
+  - phần iii
+- category: PART
+  entity_type: part
+  canonical_id: PART_IV
+  aliases:
+  - phần iv
+- category: ASSIGNMENT_COMPONENT
+  entity_type: assignment_component
+  canonical_id: PART_I
+  aliases:
+  - parser
+  - grammar
+  - văn phạm
+- category: ASSIGNMENT_COMPONENT
+  entity_type: assignment_component
+  canonical_id: PART_II
+  aliases:
+  - hỏi đáp
+  - qa
+  - semantic
+  - semantic interpretation
+- category: ASSIGNMENT_COMPONENT
+  entity_type: assignment_component
+  canonical_id: PART_III
+  aliases:
+  - context
+  - local discourse context
+- category: ASSIGNMENT_COMPONENT
+  entity_type: assignment_component
+  canonical_id: PART_IV
+  aliases:
+  - evaluation
+  - đánh giá

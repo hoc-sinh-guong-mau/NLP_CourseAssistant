@@ -1,0 +1,237 @@
+[
+  {
+    "id": "WEEK_01",
+    "week": 1,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "nghiên cứu ngôn ngữ tự nhiên",
+      "ứng dụng text-based",
+      "ứng dụng dialog-based",
+      "đánh giá hệ thống hiểu ngôn ngữ tự nhiên",
+      "các mức phân tích ngôn ngữ",
+      "biểu diễn và hiểu ngôn ngữ",
+      "tổ chức hệ thống NLU"
+    ],
+    "part": "Introduction",
+    "chapter": "Chapter 1"
+  },
+  {
+    "id": "WEEK_02",
+    "week": 2,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "words",
+      "simple noun phrases",
+      "verb phrases",
+      "simple sentences",
+      "adjective phrases",
+      "adverbial phrases"
+    ],
+    "part": "Syntactic Processing",
+    "chapter": "Chapter 2"
+  },
+  {
+    "id": "WEEK_03",
+    "week": 3,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "context-free grammar",
+      "grammar and sentence structure",
+      "top-down parsing",
+      "bottom-up chart parsing",
+      "top-down chart parsing",
+      "probabilistic context-free grammar",
+      "dependency grammar",
+      "Stanford dependencies"
+    ],
+    "part": "Syntactic Processing",
+    "chapter": "Chapter 3"
+  },
+  {
+    "id": "WEEK_04",
+    "week": 4,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "feature systems",
+      "augmented grammars",
+      "feature systems for English",
+      "lexicon",
+      "grammar using feature systems",
+      "parsing with features"
+    ],
+    "part": "Syntactic Processing",
+    "chapter": "Chapter 4"
+  },
+  {
+    "id": "WEEK_05",
+    "week": 5,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "augmented transition networks",
+      "generalized feature systems",
+      "unification grammar"
+    ],
+    "part": "Syntactic Processing",
+    "chapter": "Chapter 4",
+    "activity": "feature-based parsing exercises"
+  },
+  {
+    "id": "WEEK_06",
+    "week": 6,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "auxiliary verbs and verb phrases",
+      "movement phenomena",
+      "handling questions in CFG",
+      "relative clauses"
+    ],
+    "part": "Syntactic Processing",
+    "chapter": "Chapter 5"
+  },
+  {
+    "id": "WEEK_07",
+    "week": 7,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "basic probability theory",
+      "estimating probabilities",
+      "part-of-speech tagging",
+      "lexical probabilities",
+      "probabilistic context-free grammar"
+    ],
+    "part": "Syntactic Processing",
+    "chapter": "Chapter 6"
+  },
+  {
+    "id": "WEEK_08",
+    "week": 8,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "best-first parsing",
+      "simple context-dependent best-first parser"
+    ],
+    "part": "Syntactic Processing",
+    "chapter": "Chapter 6",
+    "activity": "ambiguity-resolution exercises",
+    "milestone": "BTL checkpoint 1 - grammar and parser"
+  },
+  {
+    "id": "WEEK_09",
+    "week": 9,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "semantics and logical form",
+      "word senses and ambiguity",
+      "basic logical form language",
+      "encoding ambiguity in logical form",
+      "verbs and states",
+      "thematic roles",
+      "speech acts and embedded sentences"
+    ],
+    "part": "Semantic Interpretation",
+    "chapter": "Chapter 7"
+  },
+  {
+    "id": "WEEK_10",
+    "week": 10,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "semantic interpretation and compositionality",
+      "grammar and lexicon with semantic interpretation",
+      "prepositional phrases and verb phrases",
+      "lexicalized semantic interpretation",
+      "semantic roles",
+      "handling simple questions"
+    ],
+    "part": "Semantic Interpretation",
+    "chapter": "Chapter 8"
+  },
+  {
+    "id": "WEEK_11",
+    "week": 11,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "selectional restrictions",
+      "semantic filtering",
+      "semantic networks",
+      "statistical word sense disambiguation"
+    ],
+    "part": "Semantic Interpretation",
+    "chapter": "Chapter 9"
+  },
+  {
+    "id": "WEEK_12",
+    "week": 12,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "grammatical relations",
+      "semantic grammars",
+      "template matching",
+      "semantically driven parsing"
+    ],
+    "part": "Semantic Interpretation",
+    "chapter": "Chapter 10",
+    "milestone": "BTL checkpoint 2 - semantic interpretation and QA"
+  },
+  {
+    "id": "WEEK_13",
+    "week": 13,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "knowledge representation",
+      "frames",
+      "natural language quantification",
+      "time and aspectual classes",
+      "procedural semantics",
+      "question answering"
+    ],
+    "part": "Context and World Knowledge",
+    "chapter": "Chapter 11"
+  },
+  {
+    "id": "WEEK_14",
+    "week": 14,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "local discourse context",
+      "discourse entities",
+      "anaphora",
+      "pronouns and centering",
+      "definite descriptions",
+      "definite reference and sets",
+      "ellipsis",
+      "surface anaphora"
+    ],
+    "part": "Context and World Knowledge",
+    "chapter": "Chapter 12"
+  },
+  {
+    "id": "WEEK_15",
+    "week": 15,
+    "source": "data/raw/schedule.txt",
+    "is_sample": true,
+    "topics": [
+      "integrate grammar/parser/semantic interpretation/QA",
+      "local discourse context",
+      "error analysis",
+      "system evaluation",
+      "demonstration and final BTL review"
+    ],
+    "part": "Integration and Evaluation",
+    "milestone": "BTL final submission and demo"
+  }
+]

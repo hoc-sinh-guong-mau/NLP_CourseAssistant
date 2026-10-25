@@ -1,0 +1,18 @@
+[
+  {
+    "course_name": "Xử lý Ngôn ngữ Tự nhiên",
+    "course_name_en": "Natural Language Processing",
+    "semester": "HK261",
+    "credits": 3,
+    "ects": 6,
+    "course_type": "Specialty / Graduation knowledge block",
+    "department": "Khoa Khoa học và Kỹ thuật Máy tính",
+    "format": "2 lecture periods per week, 15 weeks",
+    "total_course_hours": 150,
+    "lecture_hours": 30,
+    "major_assignment_hours": 45,
+    "self_study_hours": 60,
+    "id": "CO3085",
+    "source": "data/raw/course_info.txt"
+  }
+]

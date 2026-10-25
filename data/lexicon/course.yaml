@@ -1,0 +1,98 @@
+lexical_entries: []
+entity_entries:
+- category: COURSE
+  entity_type: course
+  canonical_id: CO3085
+  aliases:
+  - nlp
+  - co3085
+  - môn nlp
+  - môn co3085
+  - môn xử lý ngôn ngữ tự nhiên
+  - natural language processing
+- category: EXAM
+  entity_type: exam
+  canonical_id: MIDTERM
+  aliases:
+  - midterm
+  - giữa kỳ
+- category: EXAM
+  entity_type: exam
+  canonical_id: FINAL
+  aliases:
+  - final
+  - cuối kỳ
+- category: RESOURCE_TOPIC
+  entity_type: resource_topic
+  canonical_id: STATISTICAL_NLP
+  aliases:
+  - statistical nlp
+  - nlp thống kê
+- category: RESOURCE_TOPIC
+  entity_type: resource_topic
+  canonical_id: PYTHON_NLP
+  aliases:
+  - python nlp
+  - nlp với python
+- category: RESOURCE_TOPIC
+  entity_type: resource_topic
+  canonical_id: MACHINE_TRANSLATION
+  aliases:
+  - machine translation
+  - dịch máy
+- category: RESOURCE_TOPIC
+  entity_type: resource_topic
+  canonical_id: WORLD_KNOWLEDGE
+  aliases:
+  - world knowledge
+  - tri thức thế giới
+- category: ASSESSMENT_ITEM
+  entity_type: assessment_item
+  canonical_id: CLASS_ATTENTION_AND_ASSIGNMENTS
+  aliases:
+  - chuyên cần và bài tập
+- category: ASSESSMENT_ITEM
+  entity_type: assessment_item
+  canonical_id: MAJOR_ASSIGNMENT
+  aliases:
+  - bài tập lớn
+- category: ASSESSMENT_ITEM
+  entity_type: assessment_item
+  canonical_id: MIDTERM
+  aliases:
+  - giữa kỳ
+- category: ASSESSMENT_ITEM
+  entity_type: assessment_item
+  canonical_id: FINAL
+  aliases:
+  - cuối kỳ
+- category: RESOURCE_TITLE
+  entity_type: resource_title
+  canonical_id: TEXTBOOK_2
+  aliases:
+  - introduction to natural language processing
+- category: RESOURCE_TITLE
+  entity_type: resource_title
+  canonical_id: REFERENCE_1
+  aliases:
+  - foundation of statistical natural language processing
+- category: RESOURCE_TITLE
+  entity_type: resource_title
+  canonical_id: REFERENCE_2
+  aliases:
+  - natural language processing with python
+- category: RESOURCE_TITLE
+  entity_type: resource_title
+  canonical_id: REFERENCE_3
+  aliases:
+  - speech and language processing
+- category: RESOURCE_TITLE
+  entity_type: resource_title
+  canonical_id: REFERENCE_4
+  aliases:
+  - an introduction to machine translation
+- category: RESOURCE_TITLE
+  entity_type: resource_title
+  canonical_id: REFERENCE_5
+  aliases:
+  - natural language understanding and world knowledge

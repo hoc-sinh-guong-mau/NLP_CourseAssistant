@@ -1,0 +1,14 @@
+[
+  {
+    "id": "BTL01",
+    "name": "bài tập lớn",
+    "deadline": "2030-01-15 23:59",
+    "source": "SYNTHETIC_DEMO_ONLY"
+  },
+  {
+    "id": "HW1",
+    "name": "bài tập 1",
+    "deadline": null,
+    "source": "SYNTHETIC_DEMO_ONLY"
+  }
+]

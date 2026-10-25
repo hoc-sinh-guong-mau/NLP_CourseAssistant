@@ -1,0 +1,3 @@
+{"collection": "assignments", "filters": {"id": "BTL01"}, "select": ["deadline"]}
+null
+null
