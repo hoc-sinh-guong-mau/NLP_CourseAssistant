@@ -5,6 +5,7 @@ from src.config import ROOT, OUTPUT_DIR
 from src.application.pipeline import CourseAssistant
 from src.parsing.generator import generate_sentences
 from src.artifacts.exporter import export_records, export_grammar
+from src.parsing.runner import parse_file
 
 
 def main():
@@ -16,7 +17,16 @@ def main():
     generate.add_argument("--limit", type=int, default=1000)
     commands.add_parser("chat")
     commands.add_parser("grammar", help="Validate and export output/grammar.txt")
+    parse = commands.add_parser("parse", help="Section 3.3: syntax analysis without KB")
+    parse.add_argument("--input", type=Path, default=ROOT / "input" / "sentences.txt")
+    parse.add_argument("--output", type=Path, default=OUTPUT_DIR / "parse-results.txt")
+    parse.add_argument("--trace", type=Path, default=OUTPUT_DIR / "parse-traces.jsonl")
     args = parser.parse_args()
+    if args.command == "parse":
+        stats = parse_file(args.input, args.output, args.trace)
+        print(f"Parsed {stats['parsed']}/{stats['total']} sentences; "
+              f"multiple parses: {stats['ambiguous']}. Output: {args.output}")
+        return
     if args.command == "grammar":
         print(f"Grammar exported: {export_grammar()}")
         return

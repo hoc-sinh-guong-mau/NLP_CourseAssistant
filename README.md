@@ -174,3 +174,17 @@ Mặc định chạy batch. Tạo thư mục `output` trước khi mount. Docker
 - NLTK: https://www.nltk.org/ — FeatureGrammar và FeatureChartParser.
 - PyYAML: https://pyyaml.org/ — đọc YAML bằng safe loader.
 - Khung được xây dựng với hỗ trợ Codex; nhóm cần tự kiểm tra, hiểu thuật toán và ghi nhận nguồn hỗ trợ theo quy định môn học.
+
+## Mục 3.3 — Chạy parser độc lập
+
+```bash
+python -m src.main parse
+python -m src.main parse --input input/sentences.txt --output output/parse-results.txt --trace output/parse-traces.jsonl
+python -m unittest discover -s tests -p 'test_parser.py' -v
+```
+
+`src/parsing/runner.py` đọc UTF-8 (chấp nhận BOM), chuẩn hóa và tokenize từng dòng, gọi FeatureChartParser trong `parser.py`; không gọi semantic, query hay KB. File kết quả có đúng một dòng cho mỗi dòng input, kể cả dòng trống; câu không parse được xuất `()`. File rỗng cho kết quả rỗng. Lệnh batch hỏi đáp trước đó vẫn có hành vi bỏ dòng trống.
+
+Nếu câu có nhiều cây, `parse-results.txt` ghi cây đầu tiên theo thứ tự parser như một cây đại diện; toàn bộ cây và parse_count được giữ trong `parse-traces.jsonl`. Đây là quy ước xuất cú pháp, không phải quyết định chọn ý nghĩa đúng. Pipeline hỏi đáp tiếp tục so sánh các semantic và yêu cầu làm rõ nếu cần. Trace cũng lưu câu gốc, câu chuẩn hóa, tokens và số dòng để đối chiếu lỗi.
+
+Thuật toán parser dùng NLTK FeatureChartParser: các chart edge biểu diễn phân tích từng phần và khoảng token; dự đoán/mở rộng luật, khớp terminal và hoàn tất các thành phần kết hợp với feature unification để dựng cây từ S. Báo cáo cần ghi rõ việc sử dụng thư viện và giải thích cơ chế; đây chưa phải parser tự cài thuật toán từ đầu.
