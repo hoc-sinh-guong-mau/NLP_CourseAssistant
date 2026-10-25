@@ -37,6 +37,19 @@ class LexiconTests(unittest.TestCase):
             self.assertEqual([e.canonical_id for e in resolver.lookup_alias(alias, category)], [expected])
         self.assertEqual(resolver.lookup_alias("tuần 99"), [])
 
+    def test_assignment_one_is_alias_of_project(self):
+        resolver = EntityResolver(self.lexicon)
+        for alias in ("bài tập 1", "assignment 1", "bài tập lớn"):
+            with self.subTest(alias=alias):
+                self.assertEqual(
+                    [entry.canonical_id for entry in resolver.lookup_alias(alias, "ASSIGNMENT_NAME")],
+                    ["BTL01"],
+                )
+                trees = self.parser.parse_all(tokenize(normalize(f"Khi nào nộp {alias}?")))
+                self.assertTrue(trees)
+                self.assertTrue(all(interpret(tree).arguments == {"assignment_id": "BTL01"}
+                                    for tree in trees))
+
     def test_ambiguous_alias_preserves_both_entities(self):
         lexicon = Lexicon({"entity_entries": [
             {"category": "TOPIC", "canonical_id": entity, "entity_type": "topic", "aliases": ["trùng"]}

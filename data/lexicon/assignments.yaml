@@ -5,8 +5,10 @@ entity_entries:
   canonical_id: BTL01
   aliases:
   - bài tập lớn
+  - bài tập 1
   - btl
   - btl01
+  - assignment 1
   - intelligent course assistant
 - category: PART
   entity_type: part

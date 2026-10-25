@@ -259,6 +259,7 @@ LO_CONTENT_END -> 'học' 'về' 'gì' | 'nói' 'về' 'gì' | 'đề' 'cập' '
 LO_CONTENT_END -> 'liên' 'quan' 'đến' 'nội' 'dung' 'những' 'gì'
 
 # Assignment identity is fixed to BTL01 in the current syntax.
+# This domain has one assignment: "bài tập 1" is an alias of BTL01.
 ASSIGNMENT -> ASSIGNMENT_NAME[ENTITY='BTL01']
 
 # Complete requests carry semantic features and belong in syntax, not entity aliases.
