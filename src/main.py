@@ -1,10 +1,10 @@
 import argparse
 import json
 from pathlib import Path
-from .config import ROOT, OUTPUT_DIR
-from .pipeline import CourseAssistant
-from .generator import generate_sentences
-from .export import export_records, export_grammar
+from src.config import ROOT, OUTPUT_DIR
+from src.application.pipeline import CourseAssistant
+from src.parsing.generator import generate_sentences
+from src.artifacts.exporter import export_records, export_grammar
 
 
 def main():

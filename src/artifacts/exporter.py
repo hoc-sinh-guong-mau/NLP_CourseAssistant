@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
-from .config import OUTPUT_DIR
-from .parser import grammar_text
+from src.config import OUTPUT_DIR
+from src.parsing.parser import grammar_text
 
 
 def dump(value):

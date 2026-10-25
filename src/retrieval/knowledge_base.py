@@ -1,5 +1,5 @@
 import json
-from .config import KB_DIR
+from src.config import KB_DIR
 
 
 class KnowledgeBase:

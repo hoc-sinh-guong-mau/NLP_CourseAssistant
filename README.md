@@ -24,6 +24,39 @@ python -m src.evaluate
 
 Không cần tải corpus NLTK. Chat in toàn bộ trace; `/exit` để thoát. Evaluation hiện chỉ là smoke check, chưa phải benchmark độc lập.
 
+## Tổ chức source theo module
+
+```text
+src/
+├── main.py                 # CLI: grammar, generate, batch, chat
+├── evaluate.py             # Entry point giữ lệnh đánh giá hiện tại
+├── config.py               # Đường dẫn dữ liệu và output
+├── preprocessing/
+│   └── preprocessor.py     # normalize, tokenize
+├── lexical/
+│   ├── lexicon_loader.py
+│   └── entity_resolver.py
+├── parsing/
+│   ├── parser.py           # Ghép/kiểm tra FCFG và FeatureChartParser
+│   └── generator.py        # Sinh câu hợp lệ
+├── semantic/
+│   ├── interpreter.py      # Cây → semantic frame
+│   └── intent_entity.py
+├── retrieval/
+│   ├── query_builder.py
+│   └── knowledge_base.py
+├── generation/
+│   └── answer.py           # Câu trả lời theo mẫu
+├── application/
+│   └── pipeline.py         # Điều phối các bước
+├── artifacts/
+│   └── exporter.py         # Xuất file theo yêu cầu đề
+└── evaluation/
+    └── evaluator.py        # Chạy và báo cáo đánh giá
+```
+
+Mỗi thư mục là một Python package có `__init__.py`. Import theo đường dẫn module mới, ví dụ `from src.parsing.parser import Parser`. Các lệnh `python -m src.main ...` và `python -m src.evaluate` vẫn giữ nguyên.
+
 ## Dữ liệu và cấu trúc
 
 ```text
@@ -101,11 +134,11 @@ Cây cú pháp → semantic → intent/entity → query → KB → answer
 - `preprocessing/preprocessor.py`: API hàm `normalize(text)` và `tokenize(normalized_text)`; NFC, casefold, khoảng trắng, mã LO, chỉ bỏ dấu kết thúc `?!.`. Giữ dấu câu bên trong và token `lo2.5`, `llm/rag`, `context-free`. Tách theo tiếng/khoảng trắng, chưa phân đoạn từ tiếng Việt tổng quát.
 - `lexical/lexicon_loader.py`: load/validate lexicon, tạo luật từ vựng.
 - `lexical/entity_resolver.py`: tra alias và phát hiện collision.
-- `parser.py`: `parse_all()` giữ các cây, `parse()` báo lỗi nếu có nhiều cây.
-- `semantics.py`: đọc INTENT, ENTITY, QTYPE, TARGET từ gốc; tạo arguments có tên cụ thể cho deadline và nội dung tuần. Các loại khác giữ entity/target để phát triển handler sau.
-- `pipeline.py`: các cây có cùng semantic được gộp; nhiều semantic khác nhau trả `ambiguous`. Không parse được trả `parse_failed`; chưa có handler trả `unsupported_query`; thiếu deadline trả `missing_information`.
-- `knowledge_base.py`: đọc ba collection, kiểm tra ID và lọc theo query. Trường `select` hiện mô tả trường cần hỏi; chưa thực hiện projection.
-- `generator.py`: sinh ứng viên từ CFG projection, rồi kiểm tra lại bằng feature parser; giới hạn độ sâu/số ứng viên và tối đa 10.000 câu đầu ra. Có thể trả ít hơn limit nếu hết ngân sách ứng viên.
+- `parsing/parser.py`: `parse_all()` giữ các cây, `parse()` báo lỗi nếu có nhiều cây.
+- `semantic/interpreter.py`: đọc INTENT, ENTITY, QTYPE, TARGET từ gốc; tạo arguments có tên cụ thể cho deadline và nội dung tuần. Các loại khác giữ entity/target để phát triển handler sau.
+- `application/pipeline.py`: các cây có cùng semantic được gộp; nhiều semantic khác nhau trả `ambiguous`. Không parse được trả `parse_failed`; chưa có handler trả `unsupported_query`; thiếu deadline trả `missing_information`.
+- `retrieval/knowledge_base.py`: đọc ba collection, kiểm tra ID và lọc theo query. Trường `select` hiện mô tả trường cần hỏi; chưa thực hiện projection.
+- `parsing/generator.py`: sinh ứng viên từ CFG projection, rồi kiểm tra lại bằng feature parser; giới hạn độ sâu/số ứng viên và tối đa 10.000 câu đầu ra. Có thể trả ít hơn limit nếu hết ngân sách ứng viên.
 
 ## Đầu ra
 

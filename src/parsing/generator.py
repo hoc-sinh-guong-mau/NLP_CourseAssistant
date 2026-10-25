@@ -2,7 +2,7 @@
 from nltk.grammar import CFG, Nonterminal, Production
 from nltk.featstruct import TYPE
 from nltk.parse.generate import generate
-from .parser import Parser, load_grammar
+from src.parsing.parser import Parser, load_grammar
 
 
 def generate_sentences(limit=1000):

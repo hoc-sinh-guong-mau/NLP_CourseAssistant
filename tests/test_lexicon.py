@@ -4,11 +4,11 @@ from pathlib import Path
 
 from src.config import GRAMMAR_PATH, LEXICON_DIR
 from src.lexical import EntityResolver, Lexicon
-from src.parser import Parser
+from src.parsing.parser import Parser
 from src.preprocessing.preprocessor import normalize, tokenize
-from src.semantics import interpret
-from src.knowledge_base import KnowledgeBase
-from src.pipeline import CourseAssistant
+from src.semantic.interpreter import interpret
+from src.retrieval.knowledge_base import KnowledgeBase
+from src.application.pipeline import CourseAssistant
 
 
 class LexiconTests(unittest.TestCase):

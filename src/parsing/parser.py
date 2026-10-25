@@ -1,8 +1,8 @@
 from nltk.parse import FeatureChartParser
 from nltk.grammar import FeatureGrammar
 from nltk.featstruct import TYPE
-from .config import GRAMMAR_PATH, LEXICON_DIR
-from .lexical import Lexicon
+from src.config import GRAMMAR_PATH, LEXICON_DIR
+from src.lexical import Lexicon
 
 
 def grammar_text():

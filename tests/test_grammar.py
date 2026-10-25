@@ -6,9 +6,9 @@ from unittest.mock import patch
 from nltk.featstruct import TYPE
 from nltk.grammar import FeatureGrammar
 
-from src.export import export_grammar
-from src.generator import generate_sentences
-from src.parser import Parser, grammar_text, validate_grammar
+from src.artifacts.exporter import export_grammar
+from src.parsing.generator import generate_sentences
+from src.parsing.parser import Parser, grammar_text, validate_grammar
 from src.preprocessing.preprocessor import normalize, tokenize
 
 
@@ -76,7 +76,7 @@ class GrammarTests(unittest.TestCase):
             source.write_text("% start S\nS -> MISSING", encoding="utf-8")
             output = Path(directory, "grammar.txt")
             output.write_text("previous result", encoding="utf-8")
-            with patch("src.parser.GRAMMAR_PATH", source), self.assertRaises(ValueError):
+            with patch("src.parsing.parser.GRAMMAR_PATH", source), self.assertRaises(ValueError):
                 export_grammar(output)
             self.assertEqual(output.read_text(encoding="utf-8"), "previous result")
 

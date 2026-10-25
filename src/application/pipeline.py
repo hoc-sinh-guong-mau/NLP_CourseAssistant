@@ -1,11 +1,11 @@
-from .preprocessing.preprocessor import normalize, tokenize
+from src.preprocessing.preprocessor import normalize, tokenize
 
-from .parser import Parser
-from .semantics import interpret
-from .intent_entity import extract
-from .query import build_query
-from .knowledge_base import KnowledgeBase
-from .answer import render
+from src.parsing.parser import Parser
+from src.semantic.interpreter import interpret
+from src.semantic.intent_entity import extract
+from src.retrieval.query_builder import build_query
+from src.retrieval.knowledge_base import KnowledgeBase
+from src.generation.answer import render
 
 
 class CourseAssistant:
