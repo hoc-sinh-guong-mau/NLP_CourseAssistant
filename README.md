@@ -200,7 +200,7 @@ Thuật toán parser dùng NLTK FeatureChartParser: các chart edge biểu diễ
 
 ## Semantic schemas và khả năng mở rộng
 
-`src/semantic/rules.py` chứa các schema theo `(INTENT, QTYPE)`, nhóm chung các kiểu câu có cùng vai trò entity. `SemanticInterpreter` trong `semantic/interpreter.py` nhận bộ rule cấu hình riêng; API hàm `interpret(tree)` vẫn được giữ để tương thích.
+`src/semantic/rules.py` chứa các schema theo `(INTENT, QTYPE)`, nhóm chung các kiểu câu có cùng vai trò entity. `SemanticInterpreter` trong `semantic/interpreter.py` nhận bộ rule cấu hình riêng; API class được dùng thống nhất.
 
 Nguồn slot có ba dạng:
 

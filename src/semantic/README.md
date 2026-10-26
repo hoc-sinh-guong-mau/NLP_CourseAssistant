@@ -11,7 +11,7 @@ Parse tree → interpreter → features + rules → SemanticFrame
 - `exceptions.py`: `UnsupportedSemanticError` (thiếu schema), `InvalidSemanticError` (feature thiếu/chưa hợp nhất/mơ hồ).
 - `features.py`: đọc feature ở gốc hoặc `CATEGORY.FEATURE` trong subtree; không truy cập KB.
 - `rules.py`: registry schema, nhóm QTYPE có cùng vai trò slot; phát hiện khai báo trùng key.
-- `interpreter.py`: class điều phối việc áp dụng schema, copy cấu hình theo instance; API hàm `interpret(tree)` vẫn được giữ.
+- `interpreter.py`: class điều phối việc áp dụng schema, copy cấu hình theo instance; chỉ sử dụng API class, không tạo interpreter mới cho mỗi cây.
 - `intent_entity.py`: chiếu semantic frame sang kết quả intent/entity cho output.
 - `__init__.py`: API công khai cho các module bên ngoài.
 

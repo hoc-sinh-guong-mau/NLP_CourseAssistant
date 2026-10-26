@@ -31,7 +31,3 @@ class SemanticInterpreter:
                 arguments[slot] = read_source(tree, source)
         return SemanticFrame(intent, arguments, qtype)
 
-
-def interpret(tree):
-    """Functional API retained for existing callers."""
-    return SemanticInterpreter().interpret(tree)

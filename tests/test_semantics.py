@@ -2,8 +2,8 @@ import unittest
 from nltk import Tree
 from nltk.featstruct import TYPE, Variable
 from nltk.grammar import FeatStructNonterminal
-from src.parsing.parser import Parser, load_grammar
-from src.preprocessing.preprocessor import normalize, tokenize
+from src.parsing import Parser, load_grammar
+from src.preprocessing import normalize, tokenize
 from src.semantic import SemanticInterpreter, InvalidSemanticError, UnsupportedSemanticError, SemanticRule
 from src.semantic.rules import SEMANTIC_RULES
 from src.application.pipeline import CourseAssistant

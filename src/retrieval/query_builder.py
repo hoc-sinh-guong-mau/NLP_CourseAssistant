@@ -1,16 +1,6 @@
 """Declarative query registry: add a spec without editing pipeline control flow."""
-from dataclasses import dataclass
-
-
-class UnsupportedQueryError(ValueError):
-    """The semantic frame is valid, but has no query implementation yet."""
-
-
-@dataclass(frozen=True)
-class QuerySpec:
-    collection: str
-    filters: tuple[tuple[str, str], ...]  # (KB field, semantic argument)
-    select: tuple[str, ...]
+from .exceptions import QueryError, UnsupportedQueryError
+from .models import QuerySpec
 
 
 QUERY_SPECS = {
@@ -31,12 +21,12 @@ class QueryBuilder:
         if key not in self.specs:
             raise UnsupportedQueryError(f"Unsupported query: {key}")
         spec = self.specs[key]
+        missing = [slot for _, slot in spec.filters if slot not in frame.arguments]
+        if missing:
+            raise QueryError("Missing semantic arguments", context={"slots": missing, "intent": frame.predicate, "qtype": frame.qtype})
         return {
             "collection": spec.collection,
             "filters": {field: frame.arguments[slot] for field, slot in spec.filters},
             "select": list(spec.select),
         }
 
-
-def build_query(frame):
-    return QueryBuilder().build(frame)

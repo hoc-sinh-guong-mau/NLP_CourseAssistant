@@ -83,7 +83,7 @@ Component cần giữ các method `parse_all(tokens)`, `interpret(tree)`, `execu
 ## Lỗi và trạng thái
 
 - `UnsupportedSemanticError`, `InvalidSemanticError`: khác nhau giữa thiếu schema và feature không hợp lệ.
-- `UnsupportedQueryError`: chỉ dùng khi không có query spec; thiếu slot, cấu hình sai hoặc lỗi lập trình phải được phát hiện, không bị che thành unsupported query.
+- `UnsupportedQueryError`: chỉ dùng khi không có query spec; thiếu slot phát sinh `QueryError`, cấu hình sai hoặc lỗi lập trình không bị che thành unsupported query.
 - `UnsupportedAnswerError`: query đã có nhưng chưa có template.
 - `needs_context`: tham chiếu còn cần giải quyết; không tự đoán entity.
 - Nhiều cây nhưng cùng semantic được gộp bằng canonical key; nhiều semantic trả `ambiguous`.
@@ -100,3 +100,70 @@ python -m src.evaluate
 ```
 
 Tests dùng thư mục tạm cho file thử nghiệm. Tests mở rộng kiểm tra registry độc lập, truyền component, collection mới, grammar fragment, và phân biệt lỗi chưa hỗ trợ với lỗi thực thi. Các test input hiện tại không thay cho benchmark độc lập.
+
+## Quy ước exception thống nhất
+
+Mỗi module định nghĩa exception **một lần trong `exceptions.py`**, kế thừa `NLPError` ở `src/common/errors.py`. `NLPError` kế thừa ValueError để giữ tương thích với các kiểm tra validation hiện có; code mới nên bắt đúng domain exception hoặc `NLPError`.
+
+```python
+from src.common import NLPError
+
+class LexiconError(NLPError):
+    stage = 'lexical'
+    code = 'LEXICON_INVALID'
+```
+
+Phát sinh lỗi validation:
+
+```python
+raise LexiconError('Invalid category', context={'category': value})
+```
+
+Chuyển lỗi thư viện/I/O sang domain error tại boundary và giữ nguyên cause:
+
+```python
+try:
+    ...
+except OSError as exc:
+    raise LexiconError('Cannot read lexicon', context={'path': str(path)}) from exc
+```
+
+Không tạo lại class cùng tên ở validation/loader và không dùng `raise Exception(...)`. `src/common/files.py` thống nhất xử lý read/write và đường dẫn trong context. Các model riêng của module nằm trong `models.py`, ví dụ `retrieval/models.py` chứa QuerySpec.
+
+Pipeline gọi từng bước bằng `run_stage(stage, operation, ...)`:
+
+- Domain error đã có stage: giữ nguyên object, không bọc thêm.
+- Lỗi bất ngờ: bọc trong `StageExecutionError` với stage của bước hiện tại và `raise ... from exc`.
+- Error có `status` (unsupported semantic/query/answer, invalid semantic, parse failed): ghi vào trace dưới khóa `error`, gồm `stage`, `code`, `type`, `message`, `context`.
+- Error không có `status`: tiếp tục raise, dừng chạy để người phát triển thấy traceback. Không biến lỗi chương trình thành câu trả lời giả.
+
+Ví dụ error trong trace:
+
+```json
+{
+  "stage": "query",
+  "code": "QUERY_UNSUPPORTED",
+  "type": "UnsupportedQueryError",
+  "message": "Unsupported query: ...",
+  "context": {}
+}
+```
+
+`parse_all()` không khớp grammar trả `[]`: đây là kết quả NLP bình thường, kể cả token ngoài từ vựng. Runner mục 3.3 vẫn xuất `()`. Pipeline chuyển kết quả này thành trạng thái parse_failed với error metadata. `parse()` gặp nhiều cây phát sinh `AmbiguousParseError`; pipeline dùng parse_all và so sánh semantic.
+
+Import giữa các module dùng API package:
+
+```python
+from src.parsing import Parser
+from src.semantic import SemanticInterpreter
+from src.retrieval import QueryBuilder, KnowledgeBase
+from src.generation import AnswerGenerator
+```
+
+Import nội bộ module dùng đường dẫn tương đối như `from .exceptions import LexiconError`. Đã bỏ wrapper `interpret(tree)`, `build_query(frame)` và `render(records)` cũ; dùng instance class, khởi tạo một lần. Các hàm tiện ích thực sự như normalize/tokenize, load_grammar và export_grammar vẫn giữ dạng hàm.
+
+Chạy test quy ước lỗi:
+
+```bash
+python -m unittest discover -s tests -p 'test_errors.py' -v
+```

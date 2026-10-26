@@ -1,14 +1,13 @@
 """Answer templates dispatched by semantic request type."""
-
-
-class UnsupportedAnswerError(ValueError):
-    """A query has no registered answer template."""
+from .exceptions import AnswerError, UnsupportedAnswerError
 
 
 def render_deadline(records):
     if not records or not records[0].get("deadline"):
         return "missing_information", "Dữ liệu môn học chưa có thời hạn của bài tập này."
     row = records[0]
+    if not row.get("name"):
+        raise AnswerError("Deadline record is missing its display name")
     return "ok", f"Hạn nộp {row['name']} là {row['deadline']}."
 
 
@@ -25,7 +24,3 @@ class AnswerGenerator:
             raise UnsupportedAnswerError(f"Unsupported answer template: {key}")
         return self.handlers[key](records)
 
-
-def render(records):
-    """Legacy deadline-only function; pipeline uses AnswerGenerator."""
-    return render_deadline(records)

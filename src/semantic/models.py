@@ -3,6 +3,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Any
 import json
 
+
 FeatureSource = str | tuple[str, ...]
 RuleKey = tuple[str, str]
 

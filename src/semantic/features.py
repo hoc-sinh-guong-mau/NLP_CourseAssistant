@@ -1,5 +1,6 @@
 """Read bound root/subtree features without interpreting query semantics."""
 from nltk.featstruct import TYPE
+
 from .exceptions import InvalidSemanticError
 
 

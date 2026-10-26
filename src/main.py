@@ -1,6 +1,10 @@
 import argparse
 import json
 from pathlib import Path
+
+from src.common.files import read_text, write_text
+from src.parsing import ParseInputError
+from src.artifacts.exceptions import ArtifactError
 from src.config import ROOT, OUTPUT_DIR
 from src.application.pipeline import CourseAssistant
 from src.parsing.generator import generate_sentences
@@ -32,13 +36,12 @@ def main():
         return
     if args.command == "generate":
         sentences = generate_sentences(args.limit)
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-        (OUTPUT_DIR / "samples.txt").write_text("\n".join(sentences) + "\n", encoding="utf-8")
+        write_text(OUTPUT_DIR / "samples.txt", "".join(s + "\n" for s in sentences), ArtifactError)
         print(f"Generated {len(sentences)} sentences.")
         return
     assistant = CourseAssistant()
     if args.command == "batch":
-        texts = args.input.read_text(encoding="utf-8").splitlines()
+        texts = read_text(args.input, ParseInputError).splitlines()
         records = [assistant.process(text) for text in texts if text.strip()]
         export_records(records)
         print(f"Processed {len(records)} questions. Outputs: {OUTPUT_DIR}")

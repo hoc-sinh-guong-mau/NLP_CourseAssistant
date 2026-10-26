@@ -1,7 +1,8 @@
+from src.preprocessing import PreprocessingError
 import unittest
 import unicodedata
 
-from src.preprocessing.preprocessor import normalize
+from src.preprocessing import normalize
 
 
 class NormalizerTests(unittest.TestCase):
@@ -30,5 +31,5 @@ class NormalizerTests(unittest.TestCase):
         self.assertEqual(original, " TUẦN Ba??? ")
 
     def test_invalid_input(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(PreprocessingError):
             normalize(None)  # pyright: ignore[reportArgumentType]

@@ -1,48 +1,51 @@
 """Orchestrate NLP stages; implementations can be injected for tests/experiments."""
-from src.preprocessing.preprocessor import normalize, tokenize
-from src.parsing.parser import Parser
-from src.semantic import SemanticInterpreter, UnsupportedSemanticError, InvalidSemanticError
-from src.semantic.intent_entity import extract
-from src.retrieval.query_builder import QueryBuilder, UnsupportedQueryError
-from src.retrieval.knowledge_base import KnowledgeBase
-from src.generation.answer import AnswerGenerator, UnsupportedAnswerError
+from src.common import NLPError, run_stage
+from src.preprocessing import normalize, tokenize
+from src.parsing import Parser, ParseError
+from src.semantic import SemanticInterpreter, extract
+from src.retrieval import QueryBuilder, KnowledgeBase
+from src.generation import AnswerGenerator
+
 from .messages import set_status
 
 
 class CourseAssistant:
     def __init__(self, *, parser=None, semantic=None, kb=None, query_builder=None, answer_generator=None):
-        self.parser = Parser() if parser is None else parser
-        self.semantic = SemanticInterpreter() if semantic is None else semantic
-        self.kb = KnowledgeBase() if kb is None else kb
-        self.query_builder = QueryBuilder() if query_builder is None else query_builder
-        self.answer_generator = AnswerGenerator() if answer_generator is None else answer_generator
+        self.parser = run_stage("grammar", Parser) if parser is None else parser
+        self.semantic = run_stage("semantic", SemanticInterpreter) if semantic is None else semantic
+        self.kb = run_stage("knowledge_base", KnowledgeBase) if kb is None else kb
+        self.query_builder = run_stage("query", QueryBuilder) if query_builder is None else query_builder
+        self.answer_generator = run_stage("generation", AnswerGenerator) if answer_generator is None else answer_generator
 
     def _interpret_trees(self, trees):
         """Deduplicate equivalent frames, without selecting an arbitrary meaning."""
         frames = {}
         for tree in trees:
-            frame = self.semantic.interpret(tree)
+            frame = run_stage("semantic", self.semantic.interpret, tree)
             frames[frame.canonical_key()] = (tree, frame)
         return list(frames.values())
 
     def process(self, text):
-        normalized = normalize(text)
         record = {
-            "input": text, "normalized": normalized, "tokens": tokenize(normalized),
-            "parse_tree": "()", "semantic": None, "intent_entity": None,
-            "query": None, "result": [],
+            "input": text, "normalized": None, "tokens": [], "parse_tree": "()",
+            "semantic": None, "intent_entity": None, "query": None, "result": [],
         }
-        trees = self.parser.parse_all(record["tokens"])
+        try:
+            return self._process(text, record)
+        except NLPError as exc:
+            if exc.status is None:
+                raise  # System/configuration errors keep traceback and original cause.
+            return set_status(record, exc.status, detail=str(exc), error=exc.to_dict())
+
+    def _process(self, text, record):
+        normalized = run_stage("preprocessing", normalize, text)
+        record.update(normalized=normalized, tokens=run_stage("preprocessing", tokenize, normalized))
+        trees = run_stage("parsing", self.parser.parse_all, record["tokens"])
         record["parse_count"] = len(trees)
         if not trees:
-            return set_status(record, "parse_failed")
+            raise ParseError("No complete parse for the normalized input")
         record["parse_tree"] = trees[0].pformat(margin=10000)
-        try:
-            interpretations = self._interpret_trees(trees)
-        except UnsupportedSemanticError as exc:
-            return set_status(record, "unsupported_semantic", detail=str(exc))
-        except InvalidSemanticError as exc:
-            return set_status(record, "invalid_semantic", detail=str(exc))
+        interpretations = self._interpret_trees(trees)
         if len(interpretations) > 1:
             return set_status(record, "ambiguous", alternatives=[f.to_dict() for _, f in interpretations])
         tree, frame = interpretations[0]
@@ -50,14 +53,8 @@ class CourseAssistant:
                       semantic=frame.to_dict(), intent_entity=extract(frame))
         if frame.predicate == "CONTEXT_DEPENDENT":
             return set_status(record, "needs_context")
-        try:
-            record["query"] = self.query_builder.build(frame)
-        except UnsupportedQueryError as exc:
-            return set_status(record, "unsupported_query", detail=str(exc))
-        record["result"] = self.kb.execute(record["query"])
-        try:
-            status, answer = self.answer_generator.render(frame, record["result"])
-        except UnsupportedAnswerError as exc:
-            return set_status(record, "unsupported_answer", detail=str(exc))
+        record["query"] = run_stage("query", self.query_builder.build, frame)
+        record["result"] = run_stage("knowledge_base", self.kb.execute, record["query"])
+        status, answer = run_stage("generation", self.answer_generator.render, frame, record["result"])
         record.update(status=status, answer=answer)
         return record

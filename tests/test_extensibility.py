@@ -1,3 +1,4 @@
+from src.retrieval import QueryError
 """Extension contracts: registries, injected stages and modular data loading."""
 import json
 import tempfile
@@ -6,11 +7,11 @@ from pathlib import Path
 from unittest.mock import Mock
 
 from src.application.pipeline import CourseAssistant
-from src.generation.answer import AnswerGenerator, UnsupportedAnswerError
+from src.generation import AnswerGenerator, UnsupportedAnswerError
 from src.parsing.grammar_loader import load_syntax, validate_grammar
-from src.parsing.parser import Parser
-from src.retrieval.knowledge_base import KnowledgeBase
-from src.retrieval.query_builder import QueryBuilder, QuerySpec, UnsupportedQueryError
+from src.parsing import Parser
+from src.retrieval import KnowledgeBase
+from src.retrieval import QueryBuilder, QuerySpec, UnsupportedQueryError
 from src.semantic import SemanticFrame
 
 
@@ -64,5 +65,5 @@ class ExtensionTests(unittest.TestCase):
 
     def test_missing_slot_is_not_an_unsupported_query(self):
         frame = SemanticFrame('GET_DEADLINE', {}, 'DEADLINE')
-        with self.assertRaises(KeyError):
+        with self.assertRaises(QueryError):
             QueryBuilder().build(frame)

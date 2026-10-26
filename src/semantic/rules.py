@@ -3,6 +3,7 @@
 Sources are root features, or CATEGORY.FEATURE for a bound lexical subtree.
 A tuple of sources produces a list-valued slot (e.g. coordinated topics).
 """
+from .exceptions import InvalidSemanticError
 from .models import RuleKey, SemanticRule
 
 
@@ -13,7 +14,7 @@ def build_rules() -> dict[RuleKey, SemanticRule]:
         for qtype in qtypes.split():
             key = (intent, qtype)
             if key in rules:
-                raise ValueError(f"Duplicate semantic rule: {key}")
+                raise InvalidSemanticError(f"Duplicate semantic rule: {key}")
             rules[key] = SemanticRule(dict(slots), dict(optional or {}))
 
     group('GET_COURSE_INFO', '''CREDITS MAIN_PARTS COURSE_ID COURSE_NAME SEMESTER ECTS

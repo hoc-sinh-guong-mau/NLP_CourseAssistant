@@ -8,8 +8,8 @@ from nltk.grammar import FeatureGrammar
 
 from src.artifacts.exporter import export_grammar
 from src.parsing.generator import generate_sentences
-from src.parsing.parser import Parser, grammar_text, validate_grammar
-from src.preprocessing.preprocessor import normalize, tokenize
+from src.parsing import Parser, grammar_text, validate_grammar
+from src.preprocessing import normalize, tokenize
 
 
 class GrammarTests(unittest.TestCase):

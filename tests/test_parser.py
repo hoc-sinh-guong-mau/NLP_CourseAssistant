@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from nltk.grammar import FeatureGrammar
-from src.parsing.parser import Parser
+from src.parsing import Parser
 from src.parsing.runner import parse_file
 
 

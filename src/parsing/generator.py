@@ -2,12 +2,15 @@
 from nltk.grammar import CFG, Nonterminal, Production
 from nltk.featstruct import TYPE
 from nltk.parse.generate import generate
-from src.parsing.parser import Parser, load_grammar
+
+from .exceptions import GenerationError
+from .parser import Parser
+from .grammar_loader import load_grammar
 
 
 def generate_sentences(limit=1000):
     if not 1 <= limit <= 10000:
-        raise ValueError("limit must be between 1 and 10000")
+        raise GenerationError("limit must be between 1 and 10000")
     grammar = load_grammar()
     productions = list(dict.fromkeys(
         Production(Nonterminal(p.lhs()[TYPE]), [

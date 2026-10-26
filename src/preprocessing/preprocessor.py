@@ -1,9 +1,12 @@
 import re
 import unicodedata
 
+from .exceptions import PreprocessingError
+
+
 def normalize(text: str) -> str:
     if not isinstance(text, str):
-            raise TypeError("text must be a string")
+        raise PreprocessingError("text must be a string")
     text = unicodedata.normalize("NFC", text).casefold()
     text = re.sub(r"\s+", " ", text).strip()
     # Normalize LO codes before handling sentence-final punctuation.
@@ -18,4 +21,6 @@ def normalize(text: str) -> str:
     return unicodedata.normalize("NFC", text)
 
 def tokenize(normalized_text: str) -> list[str]:
+    if not isinstance(normalized_text, str):
+        raise PreprocessingError("normalized_text must be a string")
     return normalized_text.split()

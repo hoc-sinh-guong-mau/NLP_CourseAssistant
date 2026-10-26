@@ -1,11 +1,10 @@
 """Validate lexical schema independently of file format and NLTK."""
 import re
-from .models import Entry
-from src.preprocessing.preprocessor import normalize, tokenize
 
-class LexiconError(ValueError):
-    """Raised when lexicon validation fails."""
-    pass
+from src.preprocessing import normalize, tokenize
+
+from .exceptions import LexiconError
+from .models import Entry
 
 
 def validate_entries(data):

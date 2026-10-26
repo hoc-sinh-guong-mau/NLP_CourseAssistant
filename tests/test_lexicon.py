@@ -4,17 +4,18 @@ from pathlib import Path
 
 from src.config import GRAMMAR_PATH, LEXICON_DIR
 from src.lexical import EntityResolver, Lexicon
-from src.parsing.parser import Parser
+from src.parsing import Parser
 from src.parsing.grammar_loader import load_syntax
-from src.preprocessing.preprocessor import normalize, tokenize
-from src.semantic import interpret
-from src.retrieval.knowledge_base import KnowledgeBase
+from src.preprocessing import normalize, tokenize
+from src.semantic import SemanticInterpreter
+from src.retrieval import KnowledgeBase
 from src.application.pipeline import CourseAssistant
 
 
 class LexiconTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        cls.semantic = SemanticInterpreter()
         cls.lexicon = Lexicon.load(LEXICON_DIR)
         cls.parser = Parser(cls.lexicon.compile(load_syntax()))
 
@@ -24,7 +25,7 @@ class LexiconTests(unittest.TestCase):
                 trees = self.parser.parse_all(tokenize(normalize(f"{alias} học gì?")))
                 self.assertTrue(trees)
                 for tree in trees:
-                    frame = interpret(tree)
+                    frame = self.semantic.interpret(tree)
                     self.assertEqual(frame.predicate, "GET_SCHEDULE")
                     self.assertEqual(frame.arguments, {"week_id": "WEEK_03"})
 
@@ -48,7 +49,7 @@ class LexiconTests(unittest.TestCase):
                 )
                 trees = self.parser.parse_all(tokenize(normalize(f"Khi nào nộp {alias}?")))
                 self.assertTrue(trees)
-                self.assertTrue(all(interpret(tree).arguments == {"assignment_id": "BTL01"}
+                self.assertTrue(all(self.semantic.interpret(tree).arguments == {"assignment_id": "BTL01"}
                                     for tree in trees))
 
     def test_ambiguous_alias_preserves_both_entities(self):

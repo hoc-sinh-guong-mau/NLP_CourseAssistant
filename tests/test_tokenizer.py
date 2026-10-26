@@ -1,6 +1,6 @@
 import unittest
 
-from src.preprocessing.preprocessor import normalize, tokenize
+from src.preprocessing import normalize, tokenize
 
 
 class TokenizerTests(unittest.TestCase):

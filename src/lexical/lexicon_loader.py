@@ -1,16 +1,17 @@
 """Load validated domain entries and generate FCFG lexical productions."""
 from pathlib import Path
+
 import yaml
 from nltk.grammar import FeatureGrammar, Production, FeatStructNonterminal
 from nltk.featstruct import TYPE
-from src.preprocessing.preprocessor import tokenize
+
+from src.preprocessing import tokenize
+
+from .exceptions import LexiconError
 from .models import Entry
 from .validation import validate_entries
 from .yaml_reader import UniqueKeyLoader
 
-class LexiconError(ValueError):
-    """Raised when lexicon validation fails."""
-    pass
 
 class Lexicon:
     def __init__(self, data):
@@ -30,8 +31,8 @@ class Lexicon:
             try:
                 data = yaml.load(file.read_text(encoding="utf-8"), Loader=UniqueKeyLoader)
                 validated = cls(data)
-            except (LexiconError, yaml.YAMLError) as exc:
-                raise LexiconError(f"Invalid lexicon {file}: {exc}") from exc
+            except (LexiconError, yaml.YAMLError, OSError, UnicodeError) as exc:
+                raise LexiconError(f"Invalid lexicon {file}: {exc}", context={"path": str(file)}) from exc
             # Validation occurs again after merging to catch cross-file duplicates.
             for entry in validated.entries:
                 row = {"category": entry.category, "aliases": list(entry.aliases)}
@@ -56,4 +57,7 @@ class Lexicon:
 
     def compile(self, syntax: str):
         # NLTK handles quoting feature values and terminals in production repr.
-        return FeatureGrammar.fromstring(syntax + "\n" + self.grammar_text())
+        try:
+            return FeatureGrammar.fromstring(syntax + "\n" + self.grammar_text())
+        except ValueError as exc:
+            raise LexiconError("Cannot compile lexical grammar", context={"reason": str(exc)}) from exc
