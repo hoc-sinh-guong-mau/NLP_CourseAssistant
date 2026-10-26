@@ -1,0 +1,105 @@
+# common: structural rules. Entity aliases belong in data/lexicon/.
+MAIN_PARTS_WH[] -> 'gồm' 'những' 'phần' 'nào'
+MAIN_PARTS_WH[] -> 'có' 'những' 'phần' 'nào'
+DURATION_WH[] -> 'bao' 'nhiêu' 'phút'
+DURATION_WH[] -> 'kéo' 'dài' 'bao' 'lâu'
+TOPIC_SECTION[ENTITY=?e] -> TOPIC[ENTITY=?e]
+TOPIC_SECTION[ENTITY=?e] -> 'phần' TOPIC[ENTITY=?e]
+TOPIC_WEEK_WH[] -> 'nằm' 'ở' 'tuần' 'nào'
+TOPIC_WEEK_WH[] -> 'học' 'vào' 'tuần' 'nào'
+CONTEXT_PRONOUN[] -> 'nó'
+CONTEXT_PRONOUN[] -> 'phần' 'này'
+CONTEXT_PRONOUN[] -> 'chương' 'này'
+CONTEXT_PRONOUN[] -> 'nội' 'dung' 'này'
+REQUEST_PREFIX[] -> 
+REQUEST_PREFIX[] -> 'cho' 'tôi' 'biết'
+REQUEST_PREFIX[] -> 'cho' 'mình' 'biết'
+REQUEST_PREFIX[] -> 'xin' 'cho' 'biết'
+REQUEST_PREFIX[] -> 'vui' 'lòng' 'cho' 'biết'
+REQUEST_PREFIX[] -> 'hãy' 'giải' 'thích'
+REQUEST_PREFIX[] -> 'giải' 'thích'
+REQUEST_PREFIX[] -> 'tôi' 'muốn' 'biết'
+REQUEST_PREFIX[] -> 'mình' 'muốn' 'biết'
+REQUEST_PREFIX[] -> 'xin' 'hỏi'
+REQUEST_SUFFIX[] -> 
+REQUEST_SUFFIX[] -> 'nhé'
+REQUEST_SUFFIX[] -> 'ạ'
+REQUEST_SUFFIX[] -> 'nhé' 'ạ'
+RULE_PERSON[] -> 
+RULE_PERSON[] -> 'tôi'
+RULE_PERSON[] -> 'mình'
+RULE_PERSON[] -> 'sinh' 'viên'
+RULE_PERSON[] -> 'nhóm' 'tôi'
+RULE_PERSON[] -> 'nhóm' 'mình'
+RULE_PERMISSION_START[] -> 'có' 'được'
+RULE_PERMISSION_START[] -> 'có' 'thể'
+RULE_PERMISSION_START[] -> 'được' 'phép'
+RULE_PERMISSION_START[] -> 'có' 'được' 'phép'
+RULE_YESNO[] -> 'không'
+RULE_YESNO[] -> 'hay' 'không'
+RULE_ASSIGNMENT_CONTEXT[] -> 'trong' ASSIGNMENT[]
+RULE_ASSIGNMENT_CONTEXT[] -> 'cho' ASSIGNMENT[]
+RULE_ASSIGNMENT_CONTEXT[] -> 'khi' 'làm' ASSIGNMENT[]
+USE[] -> 'dùng'
+USE[] -> 'sử' 'dụng'
+RULE_ACTION[ENTITY=?e] -> USE[] USE_SUBJECT[ENTITY=?e]
+RULE_ACTION[ENTITY='ASSIGNMENT_SHARING'] -> SHARE_ACTION[]
+RULE_ACTION[ENTITY='ATTENDANCE'] -> ATTENDANCE_ACTION[]
+SHARE_ACTION[] -> 'chia' 'sẻ' 'bài' 'làm'
+SHARE_ACTION[] -> 'sao' 'chép' 'bài' 'làm'
+SHARE_ACTION[] -> 'chia' 'sẻ' 'bài' 'làm' 'cho' 'nhóm' 'khác'
+SHARE_ACTION[] -> 'sao' 'chép' 'bài' 'làm' 'của' 'nhóm' 'khác'
+ATTENDANCE_ACTION[] -> 'nghỉ' 'học'
+ATTENDANCE_ACTION[] -> 'vắng' 'mặt' 'trong' 'buổi' 'học'
+RULE_TOPIC[ENTITY=?e] -> RULE_SUBJECT[ENTITY=?e]
+RULE_TOPIC[ENTITY=?e] -> USE[] USE_SUBJECT[ENTITY=?e]
+POLICY_NAME[] -> 'quy' 'định'
+POLICY_NAME[] -> 'chính' 'sách'
+POLICY_NAME[] -> 'nội' 'quy'
+POLICY_NAME[] -> 'quy' 'tắc'
+POLICY_END[] -> 
+POLICY_END[] -> 'là' 'gì'
+POLICY_END[] -> 'như' 'thế' 'nào'
+POLICY_END[] -> 'ra' 'sao'
+POLICY_END[] -> 'có' 'nội' 'dung' 'gì'
+OBLIGATION_START[] -> 'có' 'phải'
+OBLIGATION_START[] -> 'có' 'cần'
+OBLIGATION_START[] -> 'có' 'cần' 'phải'
+OBLIGATION_ACTION[ENTITY='AI_USAGE'] -> 'khai' 'báo' USE[] AI_SUBJECT[]
+OBLIGATION_ACTION[ENTITY='SOURCE_CODE'] -> 'hiểu' SOURCE_SUBJECT[]
+OBLIGATION_ACTION[ENTITY='SOURCE_CODE'] -> 'giải' 'thích' SOURCE_SUBJECT[]
+OBLIGATION_ACTION[ENTITY='SOURCE_CODE'] -> 'hiểu' 'và' 'giải' 'thích' SOURCE_SUBJECT[]
+RULE_SUBJECT[ENTITY=?e] -> USE_SUBJECT[ENTITY=?e]
+RULE_SUBJECT[ENTITY='ASSIGNMENT_SHARING'] -> SHARE_ACTION[]
+USE_SUBJECT[ENTITY='AI_USAGE'] -> AI_SUBJECT[]
+USE_SUBJECT[ENTITY='SOURCE_CODE'] -> SOURCE_SUBJECT[]
+AI_SUBJECT[] -> 'ai'
+AI_SUBJECT[] -> 'công' 'cụ' 'ai'
+AI_SUBJECT[] -> 'trí' 'tuệ' 'nhân' 'tạo'
+SOURCE_SUBJECT[] -> 'mã' 'nguồn'
+SOURCE_SUBJECT[] -> 'source' 'code'
+RULE_SYSTEM[] -> 'hệ' 'thống'
+RULE_SYSTEM[] -> 'trợ' 'lý'
+RULE_SYSTEM[] -> 'course' 'assistant'
+RULE_SYSTEM[] -> 'chatbot'
+MISSING_EVIDENCE[] -> 'không' 'tìm' 'thấy' 'câu' 'trả' 'lời'
+MISSING_EVIDENCE[] -> 'không' 'tìm' 'thấy' 'thông' 'tin'
+MISSING_EVIDENCE[] -> 'không' 'có' 'dữ' 'liệu'
+NOANSWER_END[] -> 'phải' 'làm' 'gì'
+NOANSWER_END[] -> 'nên' 'làm' 'gì'
+NOANSWER_END[] -> 'xử' 'lý' 'như' 'thế' 'nào'
+NOANSWER_END[] -> 'trả' 'lời' 'như' 'thế' 'nào'
+LO[ENTITY=?e] -> LO_ID[ENTITY=?e]
+LO[ENTITY=?e] -> 'chuẩn' 'đầu' 'ra' LO_ID[ENTITY=?e]
+LO_INFO_END[] -> 
+LO_INFO_END[] -> 'là' 'gì'
+LO_INFO_END[] -> 'có' 'nghĩa' 'là' 'gì'
+LO_INFO_END[] -> 'yêu' 'cầu' 'gì'
+LO_INFO_END[] -> 'có' 'yêu' 'cầu' 'gì'
+LO_CONTENT_END[] -> 'liên' 'quan' 'đến' 'nội' 'dung' 'nào'
+LO_CONTENT_END[] -> 'liên' 'quan' 'đến' 'nội' 'dung' 'gì'
+LO_CONTENT_END[] -> 'học' 'về' 'gì'
+LO_CONTENT_END[] -> 'nói' 'về' 'gì'
+LO_CONTENT_END[] -> 'đề' 'cập' 'đến' 'nội' 'dung' 'gì'
+LO_CONTENT_END[] -> 'liên' 'quan' 'đến' 'nội' 'dung' 'những' 'gì'
+ASSIGNMENT[] -> ASSIGNMENT_NAME[ENTITY='BTL01']

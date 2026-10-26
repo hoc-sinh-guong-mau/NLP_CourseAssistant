@@ -1,0 +1,98 @@
+lexical_entries: []
+entity_entries:
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO1
+  aliases:
+  - lo1
+  - lo 1
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO2
+  aliases:
+  - lo2
+  - lo 2
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO3
+  aliases:
+  - lo3
+  - lo 3
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO4
+  aliases:
+  - lo4
+  - lo 4
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO1.1
+  aliases:
+  - lo1.1
+  - lo 1.1
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO2.1
+  aliases:
+  - lo2.1
+  - lo 2.1
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO2.2
+  aliases:
+  - lo2.2
+  - lo 2.2
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO2.3
+  aliases:
+  - lo2.3
+  - lo 2.3
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO2.4
+  aliases:
+  - lo2.4
+  - lo 2.4
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO2.5
+  aliases:
+  - lo2.5
+  - lo 2.5
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO3.1
+  aliases:
+  - lo3.1
+  - lo 3.1
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO3.2
+  aliases:
+  - lo3.2
+  - lo 3.2
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO3.3
+  aliases:
+  - lo3.3
+  - lo 3.3
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO3.4
+  aliases:
+  - lo3.4
+  - lo 3.4
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO4.1
+  aliases:
+  - lo4.1
+  - lo 4.1
+- category: LO_ID
+  entity_type: lo_id
+  canonical_id: LO4.2
+  aliases:
+  - lo4.2
+  - lo 4.2

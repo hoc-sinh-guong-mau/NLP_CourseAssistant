@@ -76,7 +76,7 @@ class GrammarTests(unittest.TestCase):
             source.write_text("% start S\nS -> MISSING", encoding="utf-8")
             output = Path(directory, "grammar.txt")
             output.write_text("previous result", encoding="utf-8")
-            with patch("src.parsing.parser.GRAMMAR_PATH", source), self.assertRaises(ValueError):
+            with patch("src.parsing.grammar_loader.GRAMMAR_PATH", source), self.assertRaises(ValueError):
                 export_grammar(output)
             self.assertEqual(output.read_text(encoding="utf-8"), "previous result")
 

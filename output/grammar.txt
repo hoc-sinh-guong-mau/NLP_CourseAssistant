@@ -1,271 +1,254 @@
 % start S
 
-# ============================================================
-# COURSE ASSISTANT - FEATURE-BASED CONTEXT-FREE GRAMMAR (FCFG)
-# Domain: CO3085 Natural Language Processing
-# Intended for NLTK FeatureGrammar / FeatureChartParser
-# Preprocessing assumption:
-#   - lowercase
-#   - remove ? ! , ; :
-#   - normalize L.O.2.5 -> lo2.5, etc.
-# ============================================================
+# Entry rules only. The loader appends rules/*.fcfg in sorted order.
+S[ENTITY=?e, INTENT=?i, QTYPE=?q] -> COURSE_QUERY[ENTITY=?e, INTENT=?i, QTYPE=?q]
+S[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t] -> SCHEDULE_QUERY[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t]
+S[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t] -> TOPIC_QUERY[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t]
+S[ENTITY=?e, INTENT=?i, QTYPE=?q] -> ASSIGNMENT_QUERY[ENTITY=?e, INTENT=?i, QTYPE=?q]
+S[ENTITY=?e, INTENT=?i, QTYPE=?q] -> DEADLINE_QUERY[ENTITY=?e, INTENT=?i, QTYPE=?q]
+S[ENTITY=?e, INTENT=?i, QTYPE=?q] -> RESOURCE_QUERY[ENTITY=?e, INTENT=?i, QTYPE=?q]
+S[ENTITY=?e, INTENT=?i, QTYPE=?q] -> INSTRUCTOR_QUERY[ENTITY=?e, INTENT=?i, QTYPE=?q]
+S[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t] -> CONTEXT_QUERY[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t]
+S[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t] -> REQUEST_PREFIX[] RULE_LO_REQUEST[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t] REQUEST_SUFFIX[]
 
-# -------------------------
-# 0. START SYMBOL
-# -------------------------
-S[INTENT=?i, ENTITY=?e, QTYPE=?q] -> COURSE_QUERY[INTENT=?i, ENTITY=?e, QTYPE=?q]
-S[INTENT=?i, ENTITY=?e, QTYPE=?q, TARGET=?t] -> SCHEDULE_QUERY[INTENT=?i, ENTITY=?e, QTYPE=?q, TARGET=?t]
-S[INTENT=?i, ENTITY=?e, QTYPE=?q, TARGET=?t] -> TOPIC_QUERY[INTENT=?i, ENTITY=?e, QTYPE=?q, TARGET=?t]
-S[INTENT=?i, ENTITY=?e, QTYPE=?q] -> ASSIGNMENT_QUERY[INTENT=?i, ENTITY=?e, QTYPE=?q]
-S[INTENT=?i, ENTITY=?e, QTYPE=?q] -> DEADLINE_QUERY[INTENT=?i, ENTITY=?e, QTYPE=?q]
-S[INTENT=?i, ENTITY=?e, QTYPE=?q] -> RESOURCE_QUERY[INTENT=?i, ENTITY=?e, QTYPE=?q]
-S[INTENT=?i, ENTITY=?e, QTYPE=?q] -> INSTRUCTOR_QUERY[INTENT=?i, ENTITY=?e, QTYPE=?q]
-S[INTENT=?i, ENTITY=?e, QTYPE=?q, TARGET=?t] -> CONTEXT_QUERY[INTENT=?i, ENTITY=?e, QTYPE=?q, TARGET=?t]
+# Source: rules/assignments.fcfg
+# assignments: structural rules. Entity aliases belong in data/lexicon/.
+ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='REQUIREMENTS'] -> ASSIGNMENT[] 'yêu' 'cầu' 'xây' 'dựng' WHAT_PLURAL[]
+ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='REQUIREMENTS'] -> ASSIGNMENT[] 'yêu' 'cầu' WHAT[]
+ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='REQUIREMENTS'] -> ASSIGNMENT[] 'có' 'những' 'yêu' 'cầu' WHAT[]
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_INFO'] -> PART[ENTITY=?e] 'của' ASSIGNMENT[] 'là' WHAT[]
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='HAS_COMPONENT'] -> ASSIGNMENT[] 'có' 'phần' ASSIGNMENT_COMPONENT[ENTITY=?e] 'không'
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='HAS_COMPONENT'] -> ASSIGNMENT[] 'có' ASSIGNMENT_COMPONENT[ENTITY=?e] 'không'
+ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='TEAM_SIZE'] -> ASSIGNMENT[] 'nhóm' 'mấy' 'người'
+ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='TEAM_SIZE'] -> ASSIGNMENT[] 'làm' 'nhóm' 'bao' 'nhiêu' 'người'
+ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='TITLE'] -> ASSIGNMENT[] 'có' 'tên' 'là' 'gì'
+ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='GOAL'] -> ASSIGNMENT[] 'có' 'mục' 'tiêu' 'gì'
+ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='DOMAIN'] -> ASSIGNMENT[] 'thuộc' 'miền' 'dữ' 'liệu' 'nào'
+ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='OUTPUTS'] -> ASSIGNMENT[] 'cần' 'xuất' 'những' 'file' 'nào'
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_OUTPUTS'] -> PART[ENTITY=?e] 'của' ASSIGNMENT[] 'cần' 'xuất' 'file' WHAT[]
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_REQUIREMENTS'] -> PART[ENTITY=?e] 'của' ASSIGNMENT[] 'yêu' 'cầu' WHAT[]
+ASSIGNMENT_QUERY[ENTITY='CO3085', INTENT='GET_ASSIGNMENT', QTYPE='ASSIGNMENT_LIST'] -> 'tôi' 'cần' 'hoàn' 'thành' 'những' 'bài' 'tập' 'nào'
 
-# -------------------------
-# 1. COURSE INFORMATION
-# -------------------------
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='CREDITS'] -> COURSE[ENTITY=?e] CREDIT_WH
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY='CO3085', QTYPE='MAIN_PARTS'] -> 'môn' 'học' MAIN_PARTS_WH
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='EXAM_DURATION'] -> EXAM[ENTITY=?e] DURATION_WH
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY='CO3085', QTYPE='COURSE_ID'] -> 'mã' 'môn' 'nlp' 'là' WHAT
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY='CO3085', QTYPE='COURSE_NAME'] -> 'co3085' 'là' 'môn' WHAT
-
-
-MAIN_PARTS_WH -> 'gồm' 'những' 'phần' 'nào'
-MAIN_PARTS_WH -> 'có' 'những' 'phần' 'nào'
-DURATION_WH -> 'bao' 'nhiêu' 'phút'
-DURATION_WH -> 'kéo' 'dài' 'bao' 'lâu'
-
-
-# -------------------------
-# 2. SCHEDULE
-# -------------------------
-SCHEDULE_QUERY[INTENT='GET_SCHEDULE', ENTITY=?e, QTYPE='WEEK_CONTENT', TARGET='NONE'] -> WEEK[ENTITY=?e] WEEK_CONTENT_WH
-SCHEDULE_QUERY[INTENT='GET_SCHEDULE', ENTITY=?e, QTYPE='CHAPTER_WEEK', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'học' 'vào' 'tuần' 'nào'
-SCHEDULE_QUERY[INTENT='GET_SCHEDULE', ENTITY=?e, QTYPE='CHAPTER_WEEK', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'được' 'học' 'ở' 'tuần' 'nào'
-SCHEDULE_QUERY[INTENT='GET_SCHEDULE', ENTITY=?e, QTYPE='WEEK_CHAPTER', TARGET='NONE'] -> WEEK[ENTITY=?e] 'học' 'chương' 'nào'
-# ENTITY là chủ đề đầu, TARGET là chủ đề thứ hai trong phép phối hợp "và".
-SCHEDULE_QUERY[INTENT='GET_SCHEDULE', ENTITY=?e, QTYPE='TOPIC_WEEK', TARGET='NONE'] -> TOPIC_SECTION[ENTITY=?e] TOPIC_WEEK_WH
-SCHEDULE_QUERY[INTENT='GET_SCHEDULE', ENTITY=?e, QTYPE='TOPICS_WEEK', TARGET=?t] -> TOPIC_SECTION[ENTITY=?e] 'và' TOPIC[ENTITY=?t] TOPIC_WEEK_WH
-
+# Source: rules/common.fcfg
+# common: structural rules. Entity aliases belong in data/lexicon/.
+MAIN_PARTS_WH[] -> 'gồm' 'những' 'phần' 'nào'
+MAIN_PARTS_WH[] -> 'có' 'những' 'phần' 'nào'
+DURATION_WH[] -> 'bao' 'nhiêu' 'phút'
+DURATION_WH[] -> 'kéo' 'dài' 'bao' 'lâu'
 TOPIC_SECTION[ENTITY=?e] -> TOPIC[ENTITY=?e]
 TOPIC_SECTION[ENTITY=?e] -> 'phần' TOPIC[ENTITY=?e]
-TOPIC_WEEK_WH -> 'nằm' 'ở' 'tuần' 'nào'
-TOPIC_WEEK_WH -> 'học' 'vào' 'tuần' 'nào'
-
-
-
-# -------------------------
-# 3. TOPICS / CHAPTERS
-# -------------------------
-TOPIC_QUERY[INTENT='GET_TOPIC', ENTITY=?e, QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> 'chương' 'nào' 'nói' 'về' TOPIC[ENTITY=?e]
-TOPIC_QUERY[INTENT='GET_TOPIC', ENTITY=?e, QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> 'chương' 'nào' 'học' 'về' TOPIC[ENTITY=?e]
-TOPIC_QUERY[INTENT='GET_TOPIC', ENTITY=?e, QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> TOPIC[ENTITY=?e] 'được' 'học' 'ở' 'đâu'
-TOPIC_QUERY[INTENT='GET_TOPIC', ENTITY=?e, QTYPE='CHAPTER_CONTENT', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'nói' 'về' WHAT
-TOPIC_QUERY[INTENT='GET_TOPIC', ENTITY=?e, QTYPE='CHAPTER_CONTENT', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'học' WHAT
-TOPIC_QUERY[INTENT='GET_TOPIC', ENTITY=?e, QTYPE='CHAPTER_METHODS', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'có' 'những' 'phương' 'pháp' 'gì'
-TOPIC_QUERY[INTENT='GET_TOPIC', ENTITY=?e, QTYPE='CHAPTER_HAS_TOPIC', TARGET=?t] -> CHAPTER[ENTITY=?e] 'có' 'liên' 'quan' 'đến' TOPIC[ENTITY=?t] 'không'
-TOPIC_QUERY[INTENT='GET_TOPIC', ENTITY=?e, QTYPE='CHAPTER_HAS_TOPIC', TARGET=?t] -> CHAPTER[ENTITY=?e] 'có' TOPIC[ENTITY=?t] 'không'
-
-
-
-
-# -------------------------
-# 4. ASSIGNMENT
-# -------------------------
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY='BTL01', QTYPE='REQUIREMENTS'] -> ASSIGNMENT 'yêu' 'cầu' 'xây' 'dựng' WHAT_PLURAL
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY='BTL01', QTYPE='REQUIREMENTS'] -> ASSIGNMENT 'yêu' 'cầu' WHAT
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY='BTL01', QTYPE='REQUIREMENTS'] -> ASSIGNMENT 'có' 'những' 'yêu' 'cầu' WHAT
-# Hỏi danh sách bài tập của môn học, không phải một bài tập cụ thể.
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY=?e, QTYPE='PART_INFO'] -> PART[ENTITY=?e] 'của' ASSIGNMENT 'là' WHAT
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY=?e, QTYPE='HAS_COMPONENT'] -> ASSIGNMENT 'có' 'phần' ASSIGNMENT_COMPONENT[ENTITY=?e] 'không'
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY=?e, QTYPE='HAS_COMPONENT'] -> ASSIGNMENT 'có' ASSIGNMENT_COMPONENT[ENTITY=?e] 'không'
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY='BTL01', QTYPE='TEAM_SIZE'] -> ASSIGNMENT 'nhóm' 'mấy' 'người'
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY='BTL01', QTYPE='TEAM_SIZE'] -> ASSIGNMENT 'làm' 'nhóm' 'bao' 'nhiêu' 'người'
-
-
-
-
-# -------------------------
-# 5. DEADLINE
-# -------------------------
-DEADLINE_QUERY[INTENT='GET_DEADLINE', ENTITY='BTL01', QTYPE='DEADLINE'] -> 'deadline' ASSIGNMENT 'là' WHEN
-DEADLINE_QUERY[INTENT='GET_DEADLINE', ENTITY='BTL01', QTYPE='DEADLINE'] -> 'deadline' 'của' ASSIGNMENT 'là' WHEN
-DEADLINE_QUERY[INTENT='GET_DEADLINE', ENTITY='BTL01', QTYPE='DEADLINE'] -> 'hạn' 'nộp' ASSIGNMENT 'là' WHEN
-DEADLINE_QUERY[INTENT='GET_DEADLINE', ENTITY='BTL01', QTYPE='DEADLINE'] -> ASSIGNMENT 'nộp' WHEN
-DEADLINE_QUERY[INTENT='GET_DEADLINE', ENTITY='BTL01', QTYPE='DEADLINE'] -> WHEN 'nộp' ASSIGNMENT
-
-
-# -------------------------
-# 6. RESOURCES
-# -------------------------
-RESOURCE_QUERY[INTENT='GET_RESOURCE', ENTITY=?e, QTYPE='RESOURCE_BY_CATEGORY'] -> 'tài' 'liệu' 'tham' 'khảo' 'về' RESOURCE_TOPIC[ENTITY=?e] 'là' WHAT
-RESOURCE_QUERY[INTENT='GET_RESOURCE', ENTITY=?e, QTYPE='RESOURCE_BY_CATEGORY'] -> 'tài' 'liệu' 'nào' 'liên' 'quan' 'đến' RESOURCE_TOPIC[ENTITY=?e]
-RESOURCE_QUERY[INTENT='GET_RESOURCE', ENTITY=?e, QTYPE='RESOURCE_BY_TOPIC'] -> 'tài' 'liệu' 'nào' 'nói' 'về' TOPIC[ENTITY=?e]
-RESOURCE_QUERY[INTENT='GET_RESOURCE', ENTITY=?e, QTYPE='RESOURCE_BY_TOPIC'] -> 'tài' 'liệu' 'nào' 'liên' 'quan' 'đến' TOPIC[ENTITY=?e]
-RESOURCE_QUERY[INTENT='GET_RESOURCE', ENTITY=?e, QTYPE='RESOURCE_BY_TOPIC'] -> 'tài' 'liệu' 'của' TOPIC[ENTITY=?e] 'là' WHAT
-
-
-# -------------------------
-# 9. INSTRUCTOR (syntactic support; answer depends on KB)
-# -------------------------
-INSTRUCTOR_QUERY[INTENT='GET_INSTRUCTOR', ENTITY='CO3085', QTYPE='INSTRUCTOR'] -> 'giảng' 'viên' COURSE 'là' WHO
-INSTRUCTOR_QUERY[INTENT='GET_INSTRUCTOR', ENTITY='CO3085', QTYPE='INSTRUCTOR'] -> 'giảng' 'viên' 'môn' 'nlp' 'là' WHO
-INSTRUCTOR_QUERY[INTENT='GET_INSTRUCTOR', ENTITY='CO3085', QTYPE='INSTRUCTOR'] -> WHO 'là' 'giảng' 'viên' 'môn' 'nlp'
-
-
-# -------------------------
-# 10. LOCAL CONTEXT / REFERENCE
-# Parsing only. Actual reference resolution is performed later.
-# -------------------------
-CONTEXT_QUERY[INTENT='CONTEXT_DEPENDENT', ENTITY='CONTEXT_REF', QTYPE='RELATED_TOPIC', TARGET=?t] -> CONTEXT_PRONOUN 'có' 'liên' 'quan' 'đến' TOPIC[ENTITY=?t] 'không'
-CONTEXT_QUERY[INTENT='CONTEXT_DEPENDENT', ENTITY='CONTEXT_REF', QTYPE='PART_OUTPUT', TARGET='NONE'] -> 'phần' 'này' 'cần' 'xuất' 'file' WHAT
-CONTEXT_QUERY[INTENT='CONTEXT_DEPENDENT', ENTITY='CONTEXT_REF', QTYPE='CHAPTER_RESOURCE', TARGET='NONE'] -> 'tài' 'liệu' 'của' 'chương' 'này' 'là' WHAT
-
-CONTEXT_PRONOUN -> 'nó'
-CONTEXT_PRONOUN -> 'phần' 'này'
-CONTEXT_PRONOUN -> 'chương' 'này'
-CONTEXT_PRONOUN -> 'nội' 'dung' 'này'
-
-# -------------------------
-# 11. COMMON WH EXPRESSIONS
-# -------------------------
-
-# -------------------------
-# 12. EXTENSIONS GROUNDED IN data/
-# -------------------------
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='MAIN_PARTS'] -> COURSE[ENTITY=?e] 'có' 'những' 'phần' 'chính' 'nào'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='SEMESTER'] -> COURSE[ENTITY=?e] 'thuộc' 'học' 'kỳ' 'nào'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='ECTS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'ects'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='COURSE_TYPE'] -> COURSE[ENTITY=?e] 'thuộc' 'khối' 'kiến' 'thức' 'nào'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='DEPARTMENT'] -> COURSE[ENTITY=?e] 'thuộc' 'khoa' 'nào'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='FORMAT'] -> COURSE[ENTITY=?e] 'học' 'bao' 'nhiêu' 'tiết' 'mỗi' 'tuần'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='DURATION_WEEKS'] -> COURSE[ENTITY=?e] 'kéo' 'dài' 'bao' 'nhiêu' 'tuần'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='TOTAL_HOURS'] -> COURSE[ENTITY=?e] 'có' 'tổng' 'cộng' 'bao' 'nhiêu' 'giờ' 'học'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='LECTURE_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'lý' 'thuyết'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='ASSIGNMENT_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'bài' 'tập' 'lớn'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='SELF_STUDY_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'tự' 'học'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='DESCRIPTION'] -> COURSE[ENTITY=?e] 'có' 'nội' 'dung' 'tổng' 'quan' 'gì'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='OBJECTIVES'] -> COURSE[ENTITY=?e] 'có' 'mục' 'tiêu' 'gì'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='ASSESSMENT'] -> COURSE[ENTITY=?e] 'được' 'đánh' 'giá' 'như' 'thế' 'nào'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='LEARNING_OUTCOMES'] -> COURSE[ENTITY=?e] 'có' 'những' 'chuẩn' 'đầu' 'ra' 'nào'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='ASSESSMENT'] -> 'cách' 'tính' 'điểm' 'của' COURSE[ENTITY=?e] 'là' WHAT
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='OBJECTIVES'] -> 'mục' 'tiêu' 'của' COURSE[ENTITY=?e] 'là' WHAT
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='EXAM_FORMAT'] -> EXAM[ENTITY=?e] 'thi' 'theo' 'hình' 'thức' 'nào'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='EXAM_OPEN_BOOK'] -> EXAM[ENTITY=?e] 'có' 'được' 'sử' 'dụng' 'tài' 'liệu' 'không'
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='ASSESSMENT_WEIGHT'] -> ASSESSMENT_ITEM[ENTITY=?e] 'chiếm' 'bao' 'nhiêu' 'phần' 'trăm' 'điểm'
-TOPIC_QUERY[INTENT='GET_TOPIC', ENTITY=?e, QTYPE='FIND_CHAPTER_BY_TOPICS', TARGET=?t] -> 'chương' 'nào' 'học' 'về' TOPIC[ENTITY=?e] 'và' TOPIC[ENTITY=?t]
-TOPIC_QUERY[INTENT='GET_TOPIC', ENTITY=?e, QTYPE='FIND_CHAPTER_BY_TOPICS', TARGET=?t] -> 'chương' 'nào' 'nói' 'về' TOPIC[ENTITY=?e] 'và' TOPIC[ENTITY=?t]
-SCHEDULE_QUERY[INTENT='GET_SCHEDULE', ENTITY=?e, QTYPE='PART_WEEKS', TARGET='NONE'] -> COURSE_PART[ENTITY=?e] 'học' 'vào' 'những' 'tuần' 'nào'
-SCHEDULE_QUERY[INTENT='GET_SCHEDULE', ENTITY=?e, QTYPE='WEEK_ACTIVITY', TARGET='NONE'] -> WEEK[ENTITY=?e] 'có' 'hoạt' 'động' 'gì'
-SCHEDULE_QUERY[INTENT='GET_SCHEDULE', ENTITY=?e, QTYPE='WEEK_MILESTONE', TARGET='NONE'] -> WEEK[ENTITY=?e] 'có' 'mốc' 'bài' 'tập' 'lớn' 'nào'
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY='BTL01', QTYPE='TITLE'] -> ASSIGNMENT 'có' 'tên' 'là' 'gì'
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY='BTL01', QTYPE='GOAL'] -> ASSIGNMENT 'có' 'mục' 'tiêu' 'gì'
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY='BTL01', QTYPE='DOMAIN'] -> ASSIGNMENT 'thuộc' 'miền' 'dữ' 'liệu' 'nào'
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY='BTL01', QTYPE='OUTPUTS'] -> ASSIGNMENT 'cần' 'xuất' 'những' 'file' 'nào'
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY=?e, QTYPE='PART_OUTPUTS'] -> PART[ENTITY=?e] 'của' ASSIGNMENT 'cần' 'xuất' 'file' WHAT
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY=?e, QTYPE='PART_REQUIREMENTS'] -> PART[ENTITY=?e] 'của' ASSIGNMENT 'yêu' 'cầu' WHAT
-RESOURCE_QUERY[INTENT='GET_RESOURCE', ENTITY='CO3085', QTYPE='TEXTBOOK_LIST'] -> 'giáo' 'trình' 'của' COURSE 'là' WHAT
-RESOURCE_QUERY[INTENT='GET_RESOURCE', ENTITY='CO3085', QTYPE='REFERENCE_LIST'] -> 'tài' 'liệu' 'tham' 'khảo' 'của' COURSE 'là' WHAT
-RESOURCE_QUERY[INTENT='GET_RESOURCE', ENTITY=?e, QTYPE='RESOURCE_AUTHOR'] -> 'ai' 'là' 'tác' 'giả' 'của' RESOURCE_TITLE[ENTITY=?e]
-RESOURCE_QUERY[INTENT='GET_RESOURCE', ENTITY=?e, QTYPE='RESOURCE_YEAR'] -> RESOURCE_TITLE[ENTITY=?e] 'xuất' 'bản' 'năm' 'nào'
-
-# 13. EXPANDED RULE AND LEARNING-OUTCOME QUESTIONS
-# Rule and learning-outcome grammar. Tokens are normalized before parsing.
-# INTENT, ENTITY, QTYPE and TARGET unify up to S for semantic extraction.
-
-# Optional polite language wraps a complete request, never an empty question.
-S[INTENT=?i, ENTITY=?e, QTYPE=?q, TARGET=?t] -> REQUEST_PREFIX RULE_LO_REQUEST[INTENT=?i, ENTITY=?e, QTYPE=?q, TARGET=?t] REQUEST_SUFFIX
-RULE_LO_REQUEST[INTENT=?i, ENTITY=?e, QTYPE=?q, TARGET=?t] -> RULE_QUERY[INTENT=?i, ENTITY=?e, QTYPE=?q, TARGET=?t]
-RULE_LO_REQUEST[INTENT='GET_LO', ENTITY=?e, QTYPE=?q, TARGET='NONE'] -> LO_QUERY[INTENT='GET_LO', ENTITY=?e, QTYPE=?q]
-REQUEST_PREFIX ->
-REQUEST_PREFIX -> 'cho' 'tôi' 'biết' | 'cho' 'mình' 'biết' | 'xin' 'cho' 'biết'
-REQUEST_PREFIX -> 'vui' 'lòng' 'cho' 'biết' | 'hãy' 'giải' 'thích' | 'giải' 'thích'
-REQUEST_PREFIX -> 'tôi' 'muốn' 'biết' | 'mình' 'muốn' 'biết' | 'xin' 'hỏi'
-REQUEST_SUFFIX ->
-REQUEST_SUFFIX -> 'nhé' | 'ạ' | 'nhé' 'ạ'
-
-# 1. Permission: asking whether an action is allowed.
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='PERMISSION', TARGET='NONE'] -> RULE_PERSON RULE_PERMISSION_START RULE_ACTION[ENTITY=?e] RULE_YESNO
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='PERMISSION', TARGET='BTL01'] -> ASSIGNMENT RULE_PERMISSION_START RULE_ACTION[ENTITY=?e] RULE_YESNO
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='PERMISSION', TARGET='BTL01'] -> RULE_PERSON RULE_PERMISSION_START RULE_ACTION[ENTITY=?e] RULE_ASSIGNMENT_CONTEXT RULE_YESNO
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='PERMISSION', TARGET='NONE'] -> RULE_ACTION[ENTITY=?e] 'có' 'được' 'phép' RULE_YESNO
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='PERMISSION', TARGET='NONE'] -> 'việc' RULE_ACTION[ENTITY=?e] 'có' 'được' 'phép' RULE_YESNO
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='PERMISSION', TARGET='NONE'] -> USE_SUBJECT[ENTITY=?e] RULE_PERMISSION_START USE RULE_YESNO
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='PERMISSION', TARGET='BTL01'] -> USE_SUBJECT[ENTITY=?e] RULE_PERMISSION_START USE RULE_ASSIGNMENT_CONTEXT RULE_YESNO
-RULE_PERSON ->
-RULE_PERSON -> 'tôi' | 'mình' | 'sinh' 'viên' | 'nhóm' 'tôi' | 'nhóm' 'mình'
-RULE_PERMISSION_START -> 'có' 'được' | 'có' 'thể' | 'được' 'phép' | 'có' 'được' 'phép'
-RULE_YESNO -> 'không' | 'hay' 'không'
-RULE_ASSIGNMENT_CONTEXT -> 'trong' ASSIGNMENT | 'cho' ASSIGNMENT | 'khi' 'làm' ASSIGNMENT
-USE -> 'dùng' | 'sử' 'dụng'
-RULE_ACTION[ENTITY=?e] -> USE USE_SUBJECT[ENTITY=?e]
-RULE_ACTION[ENTITY='ASSIGNMENT_SHARING'] -> SHARE_ACTION
-RULE_ACTION[ENTITY='ATTENDANCE'] -> ATTENDANCE_ACTION
-SHARE_ACTION -> 'chia' 'sẻ' 'bài' 'làm' | 'sao' 'chép' 'bài' 'làm'
-SHARE_ACTION -> 'chia' 'sẻ' 'bài' 'làm' 'cho' 'nhóm' 'khác'
-SHARE_ACTION -> 'sao' 'chép' 'bài' 'làm' 'của' 'nhóm' 'khác'
-ATTENDANCE_ACTION -> 'nghỉ' 'học' | 'vắng' 'mặt' 'trong' 'buổi' 'học'
-
-# 2. Policy descriptions and requests for explanations.
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='RULE_INFO', TARGET='NONE'] -> POLICY_NAME 'về' RULE_TOPIC[ENTITY=?e] POLICY_END
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='RULE_INFO', TARGET='BTL01'] -> POLICY_NAME 'về' RULE_TOPIC[ENTITY=?e] RULE_ASSIGNMENT_CONTEXT POLICY_END
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='RULE_INFO', TARGET='NONE'] -> RULE_SUBJECT[ENTITY=?e] 'được' 'quy' 'định' 'như' 'thế' 'nào'
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='RULE_INFO', TARGET='NONE'] -> 'có' 'những' POLICY_NAME 'nào' 'về' RULE_TOPIC[ENTITY=?e]
+TOPIC_WEEK_WH[] -> 'nằm' 'ở' 'tuần' 'nào'
+TOPIC_WEEK_WH[] -> 'học' 'vào' 'tuần' 'nào'
+CONTEXT_PRONOUN[] -> 'nó'
+CONTEXT_PRONOUN[] -> 'phần' 'này'
+CONTEXT_PRONOUN[] -> 'chương' 'này'
+CONTEXT_PRONOUN[] -> 'nội' 'dung' 'này'
+REQUEST_PREFIX[] -> 
+REQUEST_PREFIX[] -> 'cho' 'tôi' 'biết'
+REQUEST_PREFIX[] -> 'cho' 'mình' 'biết'
+REQUEST_PREFIX[] -> 'xin' 'cho' 'biết'
+REQUEST_PREFIX[] -> 'vui' 'lòng' 'cho' 'biết'
+REQUEST_PREFIX[] -> 'hãy' 'giải' 'thích'
+REQUEST_PREFIX[] -> 'giải' 'thích'
+REQUEST_PREFIX[] -> 'tôi' 'muốn' 'biết'
+REQUEST_PREFIX[] -> 'mình' 'muốn' 'biết'
+REQUEST_PREFIX[] -> 'xin' 'hỏi'
+REQUEST_SUFFIX[] -> 
+REQUEST_SUFFIX[] -> 'nhé'
+REQUEST_SUFFIX[] -> 'ạ'
+REQUEST_SUFFIX[] -> 'nhé' 'ạ'
+RULE_PERSON[] -> 
+RULE_PERSON[] -> 'tôi'
+RULE_PERSON[] -> 'mình'
+RULE_PERSON[] -> 'sinh' 'viên'
+RULE_PERSON[] -> 'nhóm' 'tôi'
+RULE_PERSON[] -> 'nhóm' 'mình'
+RULE_PERMISSION_START[] -> 'có' 'được'
+RULE_PERMISSION_START[] -> 'có' 'thể'
+RULE_PERMISSION_START[] -> 'được' 'phép'
+RULE_PERMISSION_START[] -> 'có' 'được' 'phép'
+RULE_YESNO[] -> 'không'
+RULE_YESNO[] -> 'hay' 'không'
+RULE_ASSIGNMENT_CONTEXT[] -> 'trong' ASSIGNMENT[]
+RULE_ASSIGNMENT_CONTEXT[] -> 'cho' ASSIGNMENT[]
+RULE_ASSIGNMENT_CONTEXT[] -> 'khi' 'làm' ASSIGNMENT[]
+USE[] -> 'dùng'
+USE[] -> 'sử' 'dụng'
+RULE_ACTION[ENTITY=?e] -> USE[] USE_SUBJECT[ENTITY=?e]
+RULE_ACTION[ENTITY='ASSIGNMENT_SHARING'] -> SHARE_ACTION[]
+RULE_ACTION[ENTITY='ATTENDANCE'] -> ATTENDANCE_ACTION[]
+SHARE_ACTION[] -> 'chia' 'sẻ' 'bài' 'làm'
+SHARE_ACTION[] -> 'sao' 'chép' 'bài' 'làm'
+SHARE_ACTION[] -> 'chia' 'sẻ' 'bài' 'làm' 'cho' 'nhóm' 'khác'
+SHARE_ACTION[] -> 'sao' 'chép' 'bài' 'làm' 'của' 'nhóm' 'khác'
+ATTENDANCE_ACTION[] -> 'nghỉ' 'học'
+ATTENDANCE_ACTION[] -> 'vắng' 'mặt' 'trong' 'buổi' 'học'
 RULE_TOPIC[ENTITY=?e] -> RULE_SUBJECT[ENTITY=?e]
-RULE_TOPIC[ENTITY=?e] -> USE USE_SUBJECT[ENTITY=?e]
-POLICY_NAME -> 'quy' 'định' | 'chính' 'sách' | 'nội' 'quy' | 'quy' 'tắc'
-POLICY_END ->
-POLICY_END -> 'là' 'gì' | 'như' 'thế' 'nào' | 'ra' 'sao' | 'có' 'nội' 'dung' 'gì'
-
-# 3. Obligations from the supplied policy topics. RULE_INFO retrieves the
-# underlying policy; parsing a "must" question does not assert its answer.
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='RULE_INFO', TARGET='NONE'] -> RULE_PERSON OBLIGATION_START OBLIGATION_ACTION[ENTITY=?e] RULE_YESNO
-RULE_QUERY[INTENT='GET_RULE', ENTITY=?e, QTYPE='RULE_INFO', TARGET='BTL01'] -> RULE_PERSON OBLIGATION_START OBLIGATION_ACTION[ENTITY=?e] RULE_ASSIGNMENT_CONTEXT RULE_YESNO
-OBLIGATION_START -> 'có' 'phải' | 'có' 'cần' | 'có' 'cần' 'phải'
-OBLIGATION_ACTION[ENTITY='AI_USAGE'] -> 'khai' 'báo' USE AI_SUBJECT
-OBLIGATION_ACTION[ENTITY='SOURCE_CODE'] -> 'hiểu' SOURCE_SUBJECT | 'giải' 'thích' SOURCE_SUBJECT
-OBLIGATION_ACTION[ENTITY='SOURCE_CODE'] -> 'hiểu' 'và' 'giải' 'thích' SOURCE_SUBJECT
-
-# 4. Entity aliases are separate from question templates, so new aliases can
-# be reused across permission, policy and obligation questions.
+RULE_TOPIC[ENTITY=?e] -> USE[] USE_SUBJECT[ENTITY=?e]
+POLICY_NAME[] -> 'quy' 'định'
+POLICY_NAME[] -> 'chính' 'sách'
+POLICY_NAME[] -> 'nội' 'quy'
+POLICY_NAME[] -> 'quy' 'tắc'
+POLICY_END[] -> 
+POLICY_END[] -> 'là' 'gì'
+POLICY_END[] -> 'như' 'thế' 'nào'
+POLICY_END[] -> 'ra' 'sao'
+POLICY_END[] -> 'có' 'nội' 'dung' 'gì'
+OBLIGATION_START[] -> 'có' 'phải'
+OBLIGATION_START[] -> 'có' 'cần'
+OBLIGATION_START[] -> 'có' 'cần' 'phải'
+OBLIGATION_ACTION[ENTITY='AI_USAGE'] -> 'khai' 'báo' USE[] AI_SUBJECT[]
+OBLIGATION_ACTION[ENTITY='SOURCE_CODE'] -> 'hiểu' SOURCE_SUBJECT[]
+OBLIGATION_ACTION[ENTITY='SOURCE_CODE'] -> 'giải' 'thích' SOURCE_SUBJECT[]
+OBLIGATION_ACTION[ENTITY='SOURCE_CODE'] -> 'hiểu' 'và' 'giải' 'thích' SOURCE_SUBJECT[]
 RULE_SUBJECT[ENTITY=?e] -> USE_SUBJECT[ENTITY=?e]
-RULE_SUBJECT[ENTITY='ASSIGNMENT_SHARING'] -> SHARE_ACTION
-USE_SUBJECT[ENTITY='AI_USAGE'] -> AI_SUBJECT
-USE_SUBJECT[ENTITY='SOURCE_CODE'] -> SOURCE_SUBJECT
-AI_SUBJECT -> 'ai' | 'công' 'cụ' 'ai' | 'trí' 'tuệ' 'nhân' 'tạo'
-SOURCE_SUBJECT -> 'mã' 'nguồn' | 'source' 'code'
-
-# 5. Questions about the assistant's bounded domain and missing-evidence rule.
-RULE_QUERY[INTENT='GET_RULE', ENTITY='OUT_OF_SCOPE', QTYPE='RULE_INFO', TARGET='NONE'] -> 'nếu' RULE_SYSTEM MISSING_EVIDENCE 'thì' NOANSWER_END
-RULE_QUERY[INTENT='GET_RULE', ENTITY='OUT_OF_SCOPE', QTYPE='RULE_INFO', TARGET='NONE'] -> 'khi' RULE_SYSTEM MISSING_EVIDENCE NOANSWER_END
-RULE_QUERY[INTENT='GET_RULE', ENTITY='OUT_OF_SCOPE', QTYPE='RULE_INFO', TARGET='NONE'] -> RULE_SYSTEM 'xử' 'lý' 'câu' 'hỏi' 'ngoài' 'phạm' 'vi' 'như' 'thế' 'nào'
-RULE_QUERY[INTENT='GET_RULE', ENTITY='OUT_OF_SCOPE', QTYPE='PERMISSION', TARGET='NONE'] -> RULE_SYSTEM 'có' 'được' 'tự' 'tạo' 'câu' 'trả' 'lời' RULE_YESNO
-RULE_SYSTEM -> 'hệ' 'thống' | 'trợ' 'lý' | 'course' 'assistant' | 'chatbot'
-MISSING_EVIDENCE -> 'không' 'tìm' 'thấy' 'câu' 'trả' 'lời' | 'không' 'tìm' 'thấy' 'thông' 'tin' | 'không' 'có' 'dữ' 'liệu'
-NOANSWER_END -> 'phải' 'làm' 'gì' | 'nên' 'làm' 'gì' | 'xử' 'lý' 'như' 'thế' 'nào' | 'trả' 'lời' 'như' 'thế' 'nào'
-
-# 6. Learning outcomes, the other assigned topic supported by course_info.txt.
-LO_QUERY[INTENT='GET_LO', ENTITY=?e, QTYPE='LO_INFO'] -> LO[ENTITY=?e] LO_INFO_END
-LO_QUERY[INTENT='GET_LO', ENTITY=?e, QTYPE='LO_CONTENT'] -> LO[ENTITY=?e] LO_CONTENT_END
+RULE_SUBJECT[ENTITY='ASSIGNMENT_SHARING'] -> SHARE_ACTION[]
+USE_SUBJECT[ENTITY='AI_USAGE'] -> AI_SUBJECT[]
+USE_SUBJECT[ENTITY='SOURCE_CODE'] -> SOURCE_SUBJECT[]
+AI_SUBJECT[] -> 'ai'
+AI_SUBJECT[] -> 'công' 'cụ' 'ai'
+AI_SUBJECT[] -> 'trí' 'tuệ' 'nhân' 'tạo'
+SOURCE_SUBJECT[] -> 'mã' 'nguồn'
+SOURCE_SUBJECT[] -> 'source' 'code'
+RULE_SYSTEM[] -> 'hệ' 'thống'
+RULE_SYSTEM[] -> 'trợ' 'lý'
+RULE_SYSTEM[] -> 'course' 'assistant'
+RULE_SYSTEM[] -> 'chatbot'
+MISSING_EVIDENCE[] -> 'không' 'tìm' 'thấy' 'câu' 'trả' 'lời'
+MISSING_EVIDENCE[] -> 'không' 'tìm' 'thấy' 'thông' 'tin'
+MISSING_EVIDENCE[] -> 'không' 'có' 'dữ' 'liệu'
+NOANSWER_END[] -> 'phải' 'làm' 'gì'
+NOANSWER_END[] -> 'nên' 'làm' 'gì'
+NOANSWER_END[] -> 'xử' 'lý' 'như' 'thế' 'nào'
+NOANSWER_END[] -> 'trả' 'lời' 'như' 'thế' 'nào'
 LO[ENTITY=?e] -> LO_ID[ENTITY=?e]
 LO[ENTITY=?e] -> 'chuẩn' 'đầu' 'ra' LO_ID[ENTITY=?e]
-LO_INFO_END ->
-LO_INFO_END -> 'là' 'gì' | 'có' 'nghĩa' 'là' 'gì' | 'yêu' 'cầu' 'gì' | 'có' 'yêu' 'cầu' 'gì'
-LO_CONTENT_END -> 'liên' 'quan' 'đến' 'nội' 'dung' 'nào' | 'liên' 'quan' 'đến' 'nội' 'dung' 'gì'
-LO_CONTENT_END -> 'học' 'về' 'gì' | 'nói' 'về' 'gì' | 'đề' 'cập' 'đến' 'nội' 'dung' 'gì'
+LO_INFO_END[] -> 
+LO_INFO_END[] -> 'là' 'gì'
+LO_INFO_END[] -> 'có' 'nghĩa' 'là' 'gì'
+LO_INFO_END[] -> 'yêu' 'cầu' 'gì'
+LO_INFO_END[] -> 'có' 'yêu' 'cầu' 'gì'
+LO_CONTENT_END[] -> 'liên' 'quan' 'đến' 'nội' 'dung' 'nào'
+LO_CONTENT_END[] -> 'liên' 'quan' 'đến' 'nội' 'dung' 'gì'
+LO_CONTENT_END[] -> 'học' 'về' 'gì'
+LO_CONTENT_END[] -> 'nói' 'về' 'gì'
+LO_CONTENT_END[] -> 'đề' 'cập' 'đến' 'nội' 'dung' 'gì'
+LO_CONTENT_END[] -> 'liên' 'quan' 'đến' 'nội' 'dung' 'những' 'gì'
+ASSIGNMENT[] -> ASSIGNMENT_NAME[ENTITY='BTL01']
 
-LO_CONTENT_END -> 'liên' 'quan' 'đến' 'nội' 'dung' 'những' 'gì'
+# Source: rules/context.fcfg
+# context: structural rules. Entity aliases belong in data/lexicon/.
+CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='RELATED_TOPIC', TARGET=?t] -> CONTEXT_PRONOUN[] 'có' 'liên' 'quan' 'đến' TOPIC[ENTITY=?t] 'không'
+CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='PART_OUTPUT', TARGET='NONE'] -> 'phần' 'này' 'cần' 'xuất' 'file' WHAT[]
+CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CHAPTER_RESOURCE', TARGET='NONE'] -> 'tài' 'liệu' 'của' 'chương' 'này' 'là' WHAT[]
+CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='NEXT_CHAPTER', TARGET='NONE'] -> 'còn' 'chương' 'sau'
+CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CONTENT_CHAPTER', TARGET='NONE'] -> 'nội' 'dung' 'này' 'nằm' 'ở' 'chương' 'nào'
 
-# Assignment identity is fixed to BTL01 in the current syntax.
-# This domain has one assignment: "bài tập 1" is an alias of BTL01.
-ASSIGNMENT -> ASSIGNMENT_NAME[ENTITY='BTL01']
+# Source: rules/course.fcfg
+# course: structural rules. Entity aliases belong in data/lexicon/.
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='CREDITS'] -> COURSE[ENTITY=?e] CREDIT_WH[]
+COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='MAIN_PARTS'] -> 'môn' 'học' MAIN_PARTS_WH[]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_DURATION'] -> EXAM[ENTITY=?e] DURATION_WH[]
+COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='COURSE_ID'] -> 'mã' 'môn' 'nlp' 'là' WHAT[]
+COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='COURSE_NAME'] -> 'co3085' 'là' 'môn' WHAT[]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='MAIN_PARTS'] -> COURSE[ENTITY=?e] 'có' 'những' 'phần' 'chính' 'nào'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='SEMESTER'] -> COURSE[ENTITY=?e] 'thuộc' 'học' 'kỳ' 'nào'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ECTS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'ects'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='COURSE_TYPE'] -> COURSE[ENTITY=?e] 'thuộc' 'khối' 'kiến' 'thức' 'nào'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='DEPARTMENT'] -> COURSE[ENTITY=?e] 'thuộc' 'khoa' 'nào'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='FORMAT'] -> COURSE[ENTITY=?e] 'học' 'bao' 'nhiêu' 'tiết' 'mỗi' 'tuần'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='DURATION_WEEKS'] -> COURSE[ENTITY=?e] 'kéo' 'dài' 'bao' 'nhiêu' 'tuần'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='TOTAL_HOURS'] -> COURSE[ENTITY=?e] 'có' 'tổng' 'cộng' 'bao' 'nhiêu' 'giờ' 'học'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='LECTURE_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'lý' 'thuyết'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSIGNMENT_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'bài' 'tập' 'lớn'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='SELF_STUDY_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'tự' 'học'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='DESCRIPTION'] -> COURSE[ENTITY=?e] 'có' 'nội' 'dung' 'tổng' 'quan' 'gì'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='OBJECTIVES'] -> COURSE[ENTITY=?e] 'có' 'mục' 'tiêu' 'gì'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT'] -> COURSE[ENTITY=?e] 'được' 'đánh' 'giá' 'như' 'thế' 'nào'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='LEARNING_OUTCOMES'] -> COURSE[ENTITY=?e] 'có' 'những' 'chuẩn' 'đầu' 'ra' 'nào'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT'] -> 'cách' 'tính' 'điểm' 'của' COURSE[ENTITY=?e] 'là' WHAT[]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='OBJECTIVES'] -> 'mục' 'tiêu' 'của' COURSE[ENTITY=?e] 'là' WHAT[]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_FORMAT'] -> EXAM[ENTITY=?e] 'thi' 'theo' 'hình' 'thức' 'nào'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_OPEN_BOOK'] -> EXAM[ENTITY=?e] 'có' 'được' 'sử' 'dụng' 'tài' 'liệu' 'không'
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT_WEIGHT'] -> ASSESSMENT_ITEM[ENTITY=?e] 'chiếm' 'bao' 'nhiêu' 'phần' 'trăm' 'điểm'
 
-# Complete requests carry semantic features and belong in syntax, not entity aliases.
-ASSIGNMENT_QUERY[INTENT='GET_ASSIGNMENT', ENTITY='CO3085', QTYPE='ASSIGNMENT_LIST'] -> 'tôi' 'cần' 'hoàn' 'thành' 'những' 'bài' 'tập' 'nào'
-CONTEXT_QUERY[INTENT='CONTEXT_DEPENDENT', ENTITY='CONTEXT_REF', QTYPE='NEXT_CHAPTER', TARGET='NONE'] -> 'còn' 'chương' 'sau'
-CONTEXT_QUERY[INTENT='CONTEXT_DEPENDENT', ENTITY='CONTEXT_REF', QTYPE='CONTENT_CHAPTER', TARGET='NONE'] -> 'nội' 'dung' 'này' 'nằm' 'ở' 'chương' 'nào'
+# Source: rules/deadlines.fcfg
+# deadlines: structural rules. Entity aliases belong in data/lexicon/.
+DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' ASSIGNMENT[] 'là' WHEN[]
+DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' 'của' ASSIGNMENT[] 'là' WHEN[]
+DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'hạn' 'nộp' ASSIGNMENT[] 'là' WHEN[]
+DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> ASSIGNMENT[] 'nộp' WHEN[]
+DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> WHEN[] 'nộp' ASSIGNMENT[]
+
+# Source: rules/instructors.fcfg
+# instructors: structural rules. Entity aliases belong in data/lexicon/.
+INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> 'giảng' 'viên' COURSE[] 'là' WHO[]
+INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> 'giảng' 'viên' 'môn' 'nlp' 'là' WHO[]
+INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> WHO[] 'là' 'giảng' 'viên' 'môn' 'nlp'
+
+# Source: rules/learning_outcomes.fcfg
+# learning_outcomes: structural rules. Entity aliases belong in data/lexicon/.
+LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE='LO_INFO'] -> LO[ENTITY=?e] LO_INFO_END[]
+LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE='LO_CONTENT'] -> LO[ENTITY=?e] LO_CONTENT_END[]
+
+# Source: rules/policies.fcfg
+# policies: structural rules. Entity aliases belong in data/lexicon/.
+RULE_LO_REQUEST[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t] -> RULE_QUERY[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t]
+RULE_LO_REQUEST[ENTITY=?e, INTENT='GET_LO', QTYPE=?q, TARGET='NONE'] -> LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE=?q]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='PERMISSION', TARGET='NONE'] -> RULE_PERSON[] RULE_PERMISSION_START[] RULE_ACTION[ENTITY=?e] RULE_YESNO[]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='PERMISSION', TARGET='BTL01'] -> ASSIGNMENT[] RULE_PERMISSION_START[] RULE_ACTION[ENTITY=?e] RULE_YESNO[]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='PERMISSION', TARGET='BTL01'] -> RULE_PERSON[] RULE_PERMISSION_START[] RULE_ACTION[ENTITY=?e] RULE_ASSIGNMENT_CONTEXT[] RULE_YESNO[]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='PERMISSION', TARGET='NONE'] -> RULE_ACTION[ENTITY=?e] 'có' 'được' 'phép' RULE_YESNO[]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='PERMISSION', TARGET='NONE'] -> 'việc' RULE_ACTION[ENTITY=?e] 'có' 'được' 'phép' RULE_YESNO[]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='PERMISSION', TARGET='NONE'] -> USE_SUBJECT[ENTITY=?e] RULE_PERMISSION_START[] USE[] RULE_YESNO[]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='PERMISSION', TARGET='BTL01'] -> USE_SUBJECT[ENTITY=?e] RULE_PERMISSION_START[] USE[] RULE_ASSIGNMENT_CONTEXT[] RULE_YESNO[]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='RULE_INFO', TARGET='NONE'] -> POLICY_NAME[] 'về' RULE_TOPIC[ENTITY=?e] POLICY_END[]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='RULE_INFO', TARGET='BTL01'] -> POLICY_NAME[] 'về' RULE_TOPIC[ENTITY=?e] RULE_ASSIGNMENT_CONTEXT[] POLICY_END[]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='RULE_INFO', TARGET='NONE'] -> RULE_SUBJECT[ENTITY=?e] 'được' 'quy' 'định' 'như' 'thế' 'nào'
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='RULE_INFO', TARGET='NONE'] -> 'có' 'những' POLICY_NAME[] 'nào' 'về' RULE_TOPIC[ENTITY=?e]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='RULE_INFO', TARGET='NONE'] -> RULE_PERSON[] OBLIGATION_START[] OBLIGATION_ACTION[ENTITY=?e] RULE_YESNO[]
+RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='RULE_INFO', TARGET='BTL01'] -> RULE_PERSON[] OBLIGATION_START[] OBLIGATION_ACTION[ENTITY=?e] RULE_ASSIGNMENT_CONTEXT[] RULE_YESNO[]
+RULE_QUERY[ENTITY='OUT_OF_SCOPE', INTENT='GET_RULE', QTYPE='RULE_INFO', TARGET='NONE'] -> 'nếu' RULE_SYSTEM[] MISSING_EVIDENCE[] 'thì' NOANSWER_END[]
+RULE_QUERY[ENTITY='OUT_OF_SCOPE', INTENT='GET_RULE', QTYPE='RULE_INFO', TARGET='NONE'] -> 'khi' RULE_SYSTEM[] MISSING_EVIDENCE[] NOANSWER_END[]
+RULE_QUERY[ENTITY='OUT_OF_SCOPE', INTENT='GET_RULE', QTYPE='RULE_INFO', TARGET='NONE'] -> RULE_SYSTEM[] 'xử' 'lý' 'câu' 'hỏi' 'ngoài' 'phạm' 'vi' 'như' 'thế' 'nào'
+RULE_QUERY[ENTITY='OUT_OF_SCOPE', INTENT='GET_RULE', QTYPE='PERMISSION', TARGET='NONE'] -> RULE_SYSTEM[] 'có' 'được' 'tự' 'tạo' 'câu' 'trả' 'lời' RULE_YESNO[]
+
+# Source: rules/resources.fcfg
+# resources: structural rules. Entity aliases belong in data/lexicon/.
+RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_CATEGORY'] -> 'tài' 'liệu' 'tham' 'khảo' 'về' RESOURCE_TOPIC[ENTITY=?e] 'là' WHAT[]
+RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_CATEGORY'] -> 'tài' 'liệu' 'nào' 'liên' 'quan' 'đến' RESOURCE_TOPIC[ENTITY=?e]
+RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_TOPIC'] -> 'tài' 'liệu' 'nào' 'nói' 'về' TOPIC[ENTITY=?e]
+RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_TOPIC'] -> 'tài' 'liệu' 'nào' 'liên' 'quan' 'đến' TOPIC[ENTITY=?e]
+RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_TOPIC'] -> 'tài' 'liệu' 'của' TOPIC[ENTITY=?e] 'là' WHAT[]
+RESOURCE_QUERY[ENTITY='CO3085', INTENT='GET_RESOURCE', QTYPE='TEXTBOOK_LIST'] -> 'giáo' 'trình' 'của' COURSE[] 'là' WHAT[]
+RESOURCE_QUERY[ENTITY='CO3085', INTENT='GET_RESOURCE', QTYPE='REFERENCE_LIST'] -> 'tài' 'liệu' 'tham' 'khảo' 'của' COURSE[] 'là' WHAT[]
+RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_AUTHOR'] -> 'ai' 'là' 'tác' 'giả' 'của' RESOURCE_TITLE[ENTITY=?e]
+RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_YEAR'] -> RESOURCE_TITLE[ENTITY=?e] 'xuất' 'bản' 'năm' 'nào'
+
+# Source: rules/schedule.fcfg
+# schedule: structural rules. Entity aliases belong in data/lexicon/.
+SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='WEEK_CONTENT', TARGET='NONE'] -> WEEK[ENTITY=?e] WEEK_CONTENT_WH[]
+SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='CHAPTER_WEEK', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'học' 'vào' 'tuần' 'nào'
+SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='CHAPTER_WEEK', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'được' 'học' 'ở' 'tuần' 'nào'
+SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='WEEK_CHAPTER', TARGET='NONE'] -> WEEK[ENTITY=?e] 'học' 'chương' 'nào'
+SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='TOPIC_WEEK', TARGET='NONE'] -> TOPIC_SECTION[ENTITY=?e] TOPIC_WEEK_WH[]
+SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='TOPICS_WEEK', TARGET=?t] -> TOPIC_SECTION[ENTITY=?e] 'và' TOPIC[ENTITY=?t] TOPIC_WEEK_WH[]
+SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='PART_WEEKS', TARGET='NONE'] -> COURSE_PART[ENTITY=?e] 'học' 'vào' 'những' 'tuần' 'nào'
+SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='WEEK_ACTIVITY', TARGET='NONE'] -> WEEK[ENTITY=?e] 'có' 'hoạt' 'động' 'gì'
+SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='WEEK_MILESTONE', TARGET='NONE'] -> WEEK[ENTITY=?e] 'có' 'mốc' 'bài' 'tập' 'lớn' 'nào'
+
+# Source: rules/topics.fcfg
+# topics: structural rules. Entity aliases belong in data/lexicon/.
+TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> 'chương' 'nào' 'nói' 'về' TOPIC[ENTITY=?e]
+TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> 'chương' 'nào' 'học' 'về' TOPIC[ENTITY=?e]
+TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> TOPIC[ENTITY=?e] 'được' 'học' 'ở' 'đâu'
+TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='CHAPTER_CONTENT', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'nói' 'về' WHAT[]
+TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='CHAPTER_CONTENT', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'học' WHAT[]
+TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='CHAPTER_METHODS', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'có' 'những' 'phương' 'pháp' 'gì'
+TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='CHAPTER_HAS_TOPIC', TARGET=?t] -> CHAPTER[ENTITY=?e] 'có' 'liên' 'quan' 'đến' TOPIC[ENTITY=?t] 'không'
+TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='CHAPTER_HAS_TOPIC', TARGET=?t] -> CHAPTER[ENTITY=?e] 'có' TOPIC[ENTITY=?t] 'không'
+TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPICS', TARGET=?t] -> 'chương' 'nào' 'học' 'về' TOPIC[ENTITY=?e] 'và' TOPIC[ENTITY=?t]
+TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPICS', TARGET=?t] -> 'chương' 'nào' 'nói' 'về' TOPIC[ENTITY=?e] 'và' TOPIC[ENTITY=?t]
 
 # Generated lexical productions; edit data/lexicon/*.yaml.
 CREDIT_WH[] -> 'có' 'bao' 'nhiêu' 'tín' 'chỉ'
@@ -304,6 +287,18 @@ ASSIGNMENT_COMPONENT[ENTITY='PART_III'] -> 'context'
 ASSIGNMENT_COMPONENT[ENTITY='PART_III'] -> 'local' 'discourse' 'context'
 ASSIGNMENT_COMPONENT[ENTITY='PART_IV'] -> 'evaluation'
 ASSIGNMENT_COMPONENT[ENTITY='PART_IV'] -> 'đánh' 'giá'
+CHAPTER[ENTITY='CH01'] -> 'chương' '1'
+CHAPTER[ENTITY='CH02'] -> 'chương' '2'
+CHAPTER[ENTITY='CH03'] -> 'chương' '3'
+CHAPTER[ENTITY='CH04'] -> 'chương' '4'
+CHAPTER[ENTITY='CH05'] -> 'chương' '5'
+CHAPTER[ENTITY='CH06'] -> 'chương' '6'
+CHAPTER[ENTITY='CH07'] -> 'chương' '7'
+CHAPTER[ENTITY='CH08'] -> 'chương' '8'
+CHAPTER[ENTITY='CH09'] -> 'chương' '9'
+CHAPTER[ENTITY='CH10'] -> 'chương' '10'
+CHAPTER[ENTITY='CH11'] -> 'chương' '11'
+CHAPTER[ENTITY='CH12'] -> 'chương' '12'
 COURSE[ENTITY='CO3085'] -> 'nlp'
 COURSE[ENTITY='CO3085'] -> 'co3085'
 COURSE[ENTITY='CO3085'] -> 'môn' 'nlp'
@@ -314,41 +309,10 @@ EXAM[ENTITY='MIDTERM'] -> 'midterm'
 EXAM[ENTITY='MIDTERM'] -> 'giữa' 'kỳ'
 EXAM[ENTITY='FINAL'] -> 'final'
 EXAM[ENTITY='FINAL'] -> 'cuối' 'kỳ'
-RESOURCE_TOPIC[ENTITY='STATISTICAL_NLP'] -> 'statistical' 'nlp'
-RESOURCE_TOPIC[ENTITY='STATISTICAL_NLP'] -> 'nlp' 'thống' 'kê'
-RESOURCE_TOPIC[ENTITY='PYTHON_NLP'] -> 'python' 'nlp'
-RESOURCE_TOPIC[ENTITY='PYTHON_NLP'] -> 'nlp' 'với' 'python'
-RESOURCE_TOPIC[ENTITY='MACHINE_TRANSLATION'] -> 'machine' 'translation'
-RESOURCE_TOPIC[ENTITY='MACHINE_TRANSLATION'] -> 'dịch' 'máy'
-RESOURCE_TOPIC[ENTITY='WORLD_KNOWLEDGE'] -> 'world' 'knowledge'
-RESOURCE_TOPIC[ENTITY='WORLD_KNOWLEDGE'] -> 'tri' 'thức' 'thế' 'giới'
 ASSESSMENT_ITEM[ENTITY='CLASS_ATTENTION_AND_ASSIGNMENTS'] -> 'chuyên' 'cần' 'và' 'bài' 'tập'
 ASSESSMENT_ITEM[ENTITY='MAJOR_ASSIGNMENT'] -> 'bài' 'tập' 'lớn'
 ASSESSMENT_ITEM[ENTITY='MIDTERM'] -> 'giữa' 'kỳ'
 ASSESSMENT_ITEM[ENTITY='FINAL'] -> 'cuối' 'kỳ'
-RESOURCE_TITLE[ENTITY='TEXTBOOK_2'] -> 'introduction' 'to' 'natural' 'language' 'processing'
-RESOURCE_TITLE[ENTITY='REFERENCE_1'] -> 'foundation' 'of' 'statistical' 'natural' 'language' 'processing'
-RESOURCE_TITLE[ENTITY='REFERENCE_2'] -> 'natural' 'language' 'processing' 'with' 'python'
-RESOURCE_TITLE[ENTITY='REFERENCE_3'] -> 'speech' 'and' 'language' 'processing'
-RESOURCE_TITLE[ENTITY='REFERENCE_4'] -> 'an' 'introduction' 'to' 'machine' 'translation'
-RESOURCE_TITLE[ENTITY='REFERENCE_5'] -> 'natural' 'language' 'understanding' 'and' 'world' 'knowledge'
-OBLIGATION_ACTION[ENTITY='ACADEMIC_INTEGRITY'] -> 'tuân' 'thủ' 'liêm' 'chính' 'học' 'thuật'
-OBLIGATION_ACTION[ENTITY='ATTENDANCE'] -> 'điểm' 'danh'
-OBLIGATION_ACTION[ENTITY='ATTENDANCE'] -> 'tham' 'dự' 'đầy' 'đủ' 'các' 'buổi' 'học'
-RULE_SUBJECT[ENTITY='ACADEMIC_INTEGRITY'] -> 'liêm' 'chính' 'học' 'thuật'
-RULE_SUBJECT[ENTITY='ACADEMIC_INTEGRITY'] -> 'code' 'of' 'ethics'
-RULE_SUBJECT[ENTITY='ATTENDANCE'] -> 'điểm' 'danh'
-RULE_SUBJECT[ENTITY='ATTENDANCE'] -> 'tham' 'dự'
-RULE_SUBJECT[ENTITY='ATTENDANCE'] -> 'nghỉ' 'học'
-RULE_SUBJECT[ENTITY='OUT_OF_SCOPE'] -> 'câu' 'hỏi' 'ngoài' 'phạm' 'vi'
-USE_SUBJECT[ENTITY='LLM_RAG'] -> 'llm/rag'
-USE_SUBJECT[ENTITY='LLM_RAG'] -> 'llm'
-USE_SUBJECT[ENTITY='LLM_RAG'] -> 'rag'
-USE_SUBJECT[ENTITY='LLM_RAG'] -> 'llm' 'hoặc' 'rag'
-USE_SUBJECT[ENTITY='LLM_RAG'] -> 'llm' 'và' 'rag'
-USE_SUBJECT[ENTITY='EXTERNAL_LIBRARIES'] -> 'thư' 'viện' 'công' 'khai'
-USE_SUBJECT[ENTITY='EXTERNAL_LIBRARIES'] -> 'thư' 'viện' 'ngoài'
-USE_SUBJECT[ENTITY='EXTERNAL_LIBRARIES'] -> 'thư' 'viện' 'bên' 'ngoài'
 LO_ID[ENTITY='LO1'] -> 'lo1'
 LO_ID[ENTITY='LO1'] -> 'lo' '1'
 LO_ID[ENTITY='LO2'] -> 'lo2'
@@ -381,18 +345,37 @@ LO_ID[ENTITY='LO4.1'] -> 'lo4.1'
 LO_ID[ENTITY='LO4.1'] -> 'lo' '4.1'
 LO_ID[ENTITY='LO4.2'] -> 'lo4.2'
 LO_ID[ENTITY='LO4.2'] -> 'lo' '4.2'
-CHAPTER[ENTITY='CH01'] -> 'chương' '1'
-CHAPTER[ENTITY='CH02'] -> 'chương' '2'
-CHAPTER[ENTITY='CH03'] -> 'chương' '3'
-CHAPTER[ENTITY='CH04'] -> 'chương' '4'
-CHAPTER[ENTITY='CH05'] -> 'chương' '5'
-CHAPTER[ENTITY='CH06'] -> 'chương' '6'
-CHAPTER[ENTITY='CH07'] -> 'chương' '7'
-CHAPTER[ENTITY='CH08'] -> 'chương' '8'
-CHAPTER[ENTITY='CH09'] -> 'chương' '9'
-CHAPTER[ENTITY='CH10'] -> 'chương' '10'
-CHAPTER[ENTITY='CH11'] -> 'chương' '11'
-CHAPTER[ENTITY='CH12'] -> 'chương' '12'
+OBLIGATION_ACTION[ENTITY='ACADEMIC_INTEGRITY'] -> 'tuân' 'thủ' 'liêm' 'chính' 'học' 'thuật'
+OBLIGATION_ACTION[ENTITY='ATTENDANCE'] -> 'điểm' 'danh'
+OBLIGATION_ACTION[ENTITY='ATTENDANCE'] -> 'tham' 'dự' 'đầy' 'đủ' 'các' 'buổi' 'học'
+RULE_SUBJECT[ENTITY='ACADEMIC_INTEGRITY'] -> 'liêm' 'chính' 'học' 'thuật'
+RULE_SUBJECT[ENTITY='ACADEMIC_INTEGRITY'] -> 'code' 'of' 'ethics'
+RULE_SUBJECT[ENTITY='ATTENDANCE'] -> 'điểm' 'danh'
+RULE_SUBJECT[ENTITY='ATTENDANCE'] -> 'tham' 'dự'
+RULE_SUBJECT[ENTITY='ATTENDANCE'] -> 'nghỉ' 'học'
+RULE_SUBJECT[ENTITY='OUT_OF_SCOPE'] -> 'câu' 'hỏi' 'ngoài' 'phạm' 'vi'
+USE_SUBJECT[ENTITY='LLM_RAG'] -> 'llm/rag'
+USE_SUBJECT[ENTITY='LLM_RAG'] -> 'llm'
+USE_SUBJECT[ENTITY='LLM_RAG'] -> 'rag'
+USE_SUBJECT[ENTITY='LLM_RAG'] -> 'llm' 'hoặc' 'rag'
+USE_SUBJECT[ENTITY='LLM_RAG'] -> 'llm' 'và' 'rag'
+USE_SUBJECT[ENTITY='EXTERNAL_LIBRARIES'] -> 'thư' 'viện' 'công' 'khai'
+USE_SUBJECT[ENTITY='EXTERNAL_LIBRARIES'] -> 'thư' 'viện' 'ngoài'
+USE_SUBJECT[ENTITY='EXTERNAL_LIBRARIES'] -> 'thư' 'viện' 'bên' 'ngoài'
+RESOURCE_TOPIC[ENTITY='STATISTICAL_NLP'] -> 'statistical' 'nlp'
+RESOURCE_TOPIC[ENTITY='STATISTICAL_NLP'] -> 'nlp' 'thống' 'kê'
+RESOURCE_TOPIC[ENTITY='PYTHON_NLP'] -> 'python' 'nlp'
+RESOURCE_TOPIC[ENTITY='PYTHON_NLP'] -> 'nlp' 'với' 'python'
+RESOURCE_TOPIC[ENTITY='MACHINE_TRANSLATION'] -> 'machine' 'translation'
+RESOURCE_TOPIC[ENTITY='MACHINE_TRANSLATION'] -> 'dịch' 'máy'
+RESOURCE_TOPIC[ENTITY='WORLD_KNOWLEDGE'] -> 'world' 'knowledge'
+RESOURCE_TOPIC[ENTITY='WORLD_KNOWLEDGE'] -> 'tri' 'thức' 'thế' 'giới'
+RESOURCE_TITLE[ENTITY='TEXTBOOK_2'] -> 'introduction' 'to' 'natural' 'language' 'processing'
+RESOURCE_TITLE[ENTITY='REFERENCE_1'] -> 'foundation' 'of' 'statistical' 'natural' 'language' 'processing'
+RESOURCE_TITLE[ENTITY='REFERENCE_2'] -> 'natural' 'language' 'processing' 'with' 'python'
+RESOURCE_TITLE[ENTITY='REFERENCE_3'] -> 'speech' 'and' 'language' 'processing'
+RESOURCE_TITLE[ENTITY='REFERENCE_4'] -> 'an' 'introduction' 'to' 'machine' 'translation'
+RESOURCE_TITLE[ENTITY='REFERENCE_5'] -> 'natural' 'language' 'understanding' 'and' 'world' 'knowledge'
 TOPIC[ENTITY='CFG'] -> 'cfg'
 TOPIC[ENTITY='CFG'] -> 'context-free' 'grammar'
 TOPIC[ENTITY='CFG'] -> 'context' 'free' 'grammar'

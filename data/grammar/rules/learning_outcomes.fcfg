@@ -1,0 +1,3 @@
+# learning_outcomes: structural rules. Entity aliases belong in data/lexicon/.
+LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE='LO_INFO'] -> LO[ENTITY=?e] LO_INFO_END[]
+LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE='LO_CONTENT'] -> LO[ENTITY=?e] LO_CONTENT_END[]

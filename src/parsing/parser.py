@@ -1,30 +1,12 @@
+"""Feature chart parsing, independent of input/output and semantic interpretation."""
 from nltk.parse import FeatureChartParser
-from nltk.grammar import FeatureGrammar
-from nltk.featstruct import TYPE
-from src.config import GRAMMAR_PATH, LEXICON_DIR
-from src.lexical import Lexicon
 
+# Re-export helpers to preserve the existing parser module API.
+from .grammar_loader import grammar_text, load_grammar, validate_grammar
 
-def grammar_text():
-    syntax = GRAMMAR_PATH.read_text(encoding="utf-8")
-    text = syntax + "\n# Generated lexical productions; edit data/lexicon/*.yaml.\n" + Lexicon.load(LEXICON_DIR).grammar_text()
-    validate_grammar(text)
-    return text
-
-
-def validate_grammar(text):
-    grammar = FeatureGrammar.fromstring(text)
-    defined = {p.lhs()[TYPE] for p in grammar.productions()}
-    referenced = {symbol[TYPE] for p in grammar.productions()
-                  for symbol in p.rhs() if not isinstance(symbol, str)}
-    missing = (referenced | {grammar.start()[TYPE]}) - defined
-    if missing:
-        raise ValueError(f"Undefined grammar categories: {sorted(missing)}")
-    return grammar
-
-
-def load_grammar():
-    return validate_grammar(grammar_text())
+class ParseError(ValueError):
+    """Raised when parsing fails due to a grammar coverage issue."""
+    pass
 
 
 class Parser:
@@ -33,13 +15,16 @@ class Parser:
         self.parser = FeatureChartParser(self.grammar)
 
     def parse_all(self, tokens):
+        tokens = list(tokens)
         try:
-            return list(self.parser.parse(tokens))
+            self.grammar.check_coverage(tokens)
         except ValueError:
-            return []
+            raise ParseError("Tokens are not covered by the grammar")
+        return list(self.parser.parse(tokens))
 
     def parse(self, tokens):
         trees = self.parse_all(tokens)
         if len(trees) > 1:
-            raise ValueError("Multiple parses: use parse_all and compare semantics")
+            raise ParseError("Multiple parses: use parse_all and compare semantics")
         return trees[0] if trees else None
+

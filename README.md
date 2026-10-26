@@ -40,7 +40,11 @@ src/
 │   ├── parser.py           # Ghép/kiểm tra FCFG và FeatureChartParser
 │   └── generator.py        # Sinh câu hợp lệ
 ├── semantic/
-│   ├── interpreter.py      # Cây → semantic frame
+│   ├── models.py           # SemanticFrame, SemanticRule
+│   ├── exceptions.py       # Lỗi semantic
+│   ├── features.py         # Đọc feature từ cây
+│   ├── rules.py            # Schema theo INTENT/QTYPE
+│   ├── interpreter.py      # Áp dụng schema → frame
 │   └── intent_entity.py
 ├── retrieval/
 │   ├── query_builder.py
@@ -62,13 +66,18 @@ Mỗi thư mục là một Python package có `__init__.py`. Import theo đườ
 ```text
 data/
 ├── grammar/
-│   └── syntax.fcfg
+│   ├── syntax.fcfg          # Start symbol và entry rules
+│   └── rules/               # Structural rules theo miền
 ├── lexicon/
 │   ├── course.yaml
 │   ├── weeks.yaml
 │   ├── topics.yaml
 │   ├── assignments.yaml
-│   └── question_patterns.yaml
+│   ├── question_patterns.yaml
+│   ├── chapters.yaml
+│   ├── resources.yaml
+│   ├── policies.yaml
+│   └── learning_outcomes.yaml
 ├── KB/
 │   ├── course.json
 │   ├── schedule.json
@@ -76,12 +85,12 @@ data/
 └── raw/                    # Giữ dữ liệu gốc để đối chiếu nguồn
 ```
 
-- `syntax.fcfg`: cấu trúc câu và feature unification; không lặp các alias đã đưa vào YAML. Một số từ chức năng vẫn nằm trực tiếp trong luật để dễ đọc.
-- `course.yaml`: môn, kỳ thi, thành phần đánh giá và tên/nhóm tài liệu.
+- `syntax.fcfg`: start symbol và các entry rule. `grammar/rules/*.fcfg` chứa luật theo nhóm (course, schedule, topics, assignments, deadlines, resources, instructors, context, policies, learning_outcomes và common). Loader đọc các fragment theo thứ tự tên; fragment không được khai báo `% start`. Không lặp alias đã đưa vào YAML.
+- `course.yaml`: môn, kỳ thi và thành phần đánh giá. `resources.yaml`: tên/nhóm tài liệu.
 - `weeks.yaml`: tuần 1–15, có biến thể số viết bằng chữ và `week N`.
-- `topics.yaml`: chủ đề, chương, phần nội dung môn học.
+- `topics.yaml`: chủ đề và phần nội dung môn học; `chapters.yaml`: chương.
 - `assignments.yaml`: tên bài tập lớn, phần và thành phần bài tập.
-- `question_patterns.yaml`: mục từ để hỏi và các alias thuộc chính sách/chuẩn đầu ra. Các mẫu cú pháp hoàn chỉnh vẫn nằm ở syntax.
+- `question_patterns.yaml`: mục từ để hỏi; `policies.yaml`: alias chính sách; `learning_outcomes.yaml`: mã chuẩn đầu ra. Mẫu câu hoàn chỉnh nằm trong grammar/rules.
 - `KB/*.json`: mỗi file là danh sách bản ghi có `id` duy nhất. Các tên thư mục có phân biệt hoa/thường trên Linux; phải dùng đúng `KB`.
 
 `course.json` được trích từ các trường trong `raw/course_info.txt`; `schedule.json` được chuyển từ `raw/schedule.txt` và đánh dấu `is_sample: true` vì nguồn là kế hoạch mẫu, không phải lịch học chính thức. `assignments.json` vẫn chứa deadline **giả lập năm 2030**, có nguồn `SYNTHETIC_DEMO_ONLY`; thay bằng dữ liệu chính thức trước demo/đánh giá thực tế. Mã bài tập lớn được thống nhất là `BTL01`.
@@ -107,7 +116,7 @@ entity_entries:
 
 `category` là nhãn grammar theo miền, không phải POS phổ quát. Không cần gán noun/verb nếu grammar không dùng những thuộc tính đó.
 
-`Lexicon.load(LEXICON_DIR)` đọc mọi file `.yaml`/`.yml` theo thứ tự tên, dùng `yaml.safe_load`, kiểm tra schema và trùng entry `(category, canonical_id)` giữa các file. Các alias được chuẩn hóa bằng cùng hàm normalization dùng cho câu hỏi. Một entity/category nên có một entry; thêm alias vào entry có sẵn.
+`Lexicon.load(LEXICON_DIR)` đọc mọi file `.yaml`/`.yml` theo thứ tự tên, dùng `UniqueKeyLoader` kế thừa `yaml.SafeLoader`, kiểm tra schema và trùng entry `(category, canonical_id)` giữa các file. Các alias được chuẩn hóa bằng cùng hàm normalization dùng cho câu hỏi. Một entity/category nên có một entry; thêm alias vào entry có sẵn.
 
 Loader sinh các lexical productions:
 
@@ -134,7 +143,7 @@ Cây cú pháp → semantic → intent/entity → query → KB → answer
 - `preprocessing/preprocessor.py`: API hàm `normalize(text)` và `tokenize(normalized_text)`; NFC, casefold, khoảng trắng, mã LO, chỉ bỏ dấu kết thúc `?!.`. Giữ dấu câu bên trong và token `lo2.5`, `llm/rag`, `context-free`. Tách theo tiếng/khoảng trắng, chưa phân đoạn từ tiếng Việt tổng quát.
 - `lexical/lexicon_loader.py`: load/validate lexicon, tạo luật từ vựng.
 - `lexical/entity_resolver.py`: tra alias và phát hiện collision.
-- `parsing/parser.py`: `parse_all()` giữ các cây, `parse()` báo lỗi nếu có nhiều cây.
+- `parsing/grammar_loader.py`: ghép và kiểm tra grammar; `parsing/parser.py`: `parse_all()` giữ các cây, `parse()` báo lỗi nếu có nhiều cây.
 - `semantic/interpreter.py`: đọc INTENT, ENTITY, QTYPE, TARGET từ gốc; tạo arguments có tên cụ thể cho deadline và nội dung tuần. Các loại khác giữ entity/target để phát triển handler sau.
 - `application/pipeline.py`: các cây có cùng semantic được gộp; nhiều semantic khác nhau trả `ambiguous`. Không parse được trả `parse_failed`; chưa có handler trả `unsupported_query`; thiếu deadline trả `missing_information`.
 - `retrieval/knowledge_base.py`: đọc ba collection, kiểm tra ID và lọc theo query. Trường `select` hiện mô tả trường cần hỏi; chưa thực hiện projection.
@@ -188,3 +197,27 @@ python -m unittest discover -s tests -p 'test_parser.py' -v
 Nếu câu có nhiều cây, `parse-results.txt` ghi cây đầu tiên theo thứ tự parser như một cây đại diện; toàn bộ cây và parse_count được giữ trong `parse-traces.jsonl`. Đây là quy ước xuất cú pháp, không phải quyết định chọn ý nghĩa đúng. Pipeline hỏi đáp tiếp tục so sánh các semantic và yêu cầu làm rõ nếu cần. Trace cũng lưu câu gốc, câu chuẩn hóa, tokens và số dòng để đối chiếu lỗi.
 
 Thuật toán parser dùng NLTK FeatureChartParser: các chart edge biểu diễn phân tích từng phần và khoảng token; dự đoán/mở rộng luật, khớp terminal và hoàn tất các thành phần kết hợp với feature unification để dựng cây từ S. Báo cáo cần ghi rõ việc sử dụng thư viện và giải thích cơ chế; đây chưa phải parser tự cài thuật toán từ đầu.
+
+## Semantic schemas và khả năng mở rộng
+
+`src/semantic/rules.py` chứa các schema theo `(INTENT, QTYPE)`, nhóm chung các kiểu câu có cùng vai trò entity. `SemanticInterpreter` trong `semantic/interpreter.py` nhận bộ rule cấu hình riêng; API hàm `interpret(tree)` vẫn được giữ để tương thích.
+
+Nguồn slot có ba dạng:
+
+- `ENTITY` hoặc `TARGET`: lấy feature ở gốc cây.
+- `ASSIGNMENT_NAME.ENTITY`: lấy giá trị đã hợp nhất từ nhánh thực thể trong cây; dùng để giữ cả `part_id` và `assignment_id`.
+- Tuple `('ENTITY', 'TARGET')`: tạo slot danh sách `topic_ids`, bảo toàn hai chủ đề được nối bằng “và”.
+
+Slot tùy chọn chỉ bỏ qua khi feature vắng mặt hoặc là `NONE`; biến chưa hợp nhất vẫn bị báo lỗi. Request tham chiếu giữ `context_ref` và trả trạng thái `needs_context`, chưa được coi là đã giải quyết hội thoại. Schema chưa đăng ký trả `unsupported_semantic`, feature không hợp lệ trả `invalid_semantic`. Nhiều cây khác semantic vẫn trả `ambiguous`.
+
+Đây là tổng quát hóa theo cấu trúc: alias và paraphrase đã được grammar nhận sẽ dùng chung schema, không cần viết semantic riêng cho từng câu. Nó không mở rộng độ bao phủ parser, không tự hiểu paraphrase ngoài grammar và không tự bổ sung query/answer handler. Các QTYPE hiện tại đã có schema; các handler trả lời vẫn phải phát triển riêng.
+
+```bash
+python -m unittest discover -s tests -p 'test_semantics.py' -v
+```
+
+Tests kiểm tra vai trò slot, coordination, optional target, missing/unbound features, cấu hình độc lập và đối chiếu các cặp INTENT/QTYPE trong grammar với schema để phát hiện thiếu mapping khi grammar được mở rộng. Đây là kiểm tra độ bao phủ cấu hình, không phải benchmark tổng quát hóa trên dữ liệu chưa thấy.
+
+## Hướng dẫn mở rộng
+
+Xem [docs/architecture.md](docs/architecture.md) để biết trách nhiệm module và các bước thêm alias, QTYPE, collection hoặc handler mới. Các lệnh CLI và định dạng output giữ tương thích. Chưa bổ sung handler trả lời ngoài deadline trong đợt refactor này.

@@ -1,0 +1,47 @@
+lexical_entries: []
+entity_entries:
+- category: OBLIGATION_ACTION
+  entity_type: obligation_action
+  canonical_id: ACADEMIC_INTEGRITY
+  aliases:
+  - tuân thủ liêm chính học thuật
+- category: OBLIGATION_ACTION
+  entity_type: obligation_action
+  canonical_id: ATTENDANCE
+  aliases:
+  - điểm danh
+  - tham dự đầy đủ các buổi học
+- category: RULE_SUBJECT
+  entity_type: rule_subject
+  canonical_id: ACADEMIC_INTEGRITY
+  aliases:
+  - liêm chính học thuật
+  - code of ethics
+- category: RULE_SUBJECT
+  entity_type: rule_subject
+  canonical_id: ATTENDANCE
+  aliases:
+  - điểm danh
+  - tham dự
+  - nghỉ học
+- category: RULE_SUBJECT
+  entity_type: rule_subject
+  canonical_id: OUT_OF_SCOPE
+  aliases:
+  - câu hỏi ngoài phạm vi
+- category: USE_SUBJECT
+  entity_type: use_subject
+  canonical_id: LLM_RAG
+  aliases:
+  - llm/rag
+  - llm
+  - rag
+  - llm hoặc rag
+  - llm và rag
+- category: USE_SUBJECT
+  entity_type: use_subject
+  canonical_id: EXTERNAL_LIBRARIES
+  aliases:
+  - thư viện công khai
+  - thư viện ngoài
+  - thư viện bên ngoài

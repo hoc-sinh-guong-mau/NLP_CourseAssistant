@@ -5,8 +5,9 @@ from pathlib import Path
 from src.config import GRAMMAR_PATH, LEXICON_DIR
 from src.lexical import EntityResolver, Lexicon
 from src.parsing.parser import Parser
+from src.parsing.grammar_loader import load_syntax
 from src.preprocessing.preprocessor import normalize, tokenize
-from src.semantic.interpreter import interpret
+from src.semantic import interpret
 from src.retrieval.knowledge_base import KnowledgeBase
 from src.application.pipeline import CourseAssistant
 
@@ -15,7 +16,7 @@ class LexiconTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.lexicon = Lexicon.load(LEXICON_DIR)
-        cls.parser = Parser(cls.lexicon.compile(GRAMMAR_PATH.read_text(encoding="utf-8")))
+        cls.parser = Parser(cls.lexicon.compile(load_syntax()))
 
     def test_week_aliases_have_same_semantics(self):
         for alias in ("tuần ba", "tuần 3", "week 3"):
