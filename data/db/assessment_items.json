@@ -1,0 +1,34 @@
+[
+  {
+    "id": "CLASS_ATTENTION_AND_ASSIGNMENTS",
+    "course_id": "CO3085",
+    "weight_percent": 15,
+    "source": "data/raw/course_info.txt",
+    "source_section": "assessment",
+    "is_sample": false
+  },
+  {
+    "id": "MAJOR_ASSIGNMENT",
+    "course_id": "CO3085",
+    "weight_percent": 15,
+    "source": "data/raw/course_info.txt",
+    "source_section": "assessment",
+    "is_sample": false
+  },
+  {
+    "id": "MIDTERM",
+    "course_id": "CO3085",
+    "weight_percent": 30,
+    "source": "data/raw/course_info.txt",
+    "source_section": "assessment",
+    "is_sample": false
+  },
+  {
+    "id": "FINAL",
+    "course_id": "CO3085",
+    "weight_percent": 40,
+    "source": "data/raw/course_info.txt",
+    "source_section": "assessment",
+    "is_sample": false
+  }
+]

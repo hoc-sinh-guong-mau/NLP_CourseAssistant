@@ -21,11 +21,17 @@ def main():
     generate.add_argument("--limit", type=int, default=1000)
     commands.add_parser("chat")
     commands.add_parser("grammar", help="Validate and export output/grammar.txt")
+    commands.add_parser("normalize-kb", help="Rebuild and validate KB JSON from raw sources")
     parse = commands.add_parser("parse", help="Section 3.3: syntax analysis without KB")
     parse.add_argument("--input", type=Path, default=ROOT / "input" / "sentences.txt")
     parse.add_argument("--output", type=Path, default=OUTPUT_DIR / "parse-results.txt")
     parse.add_argument("--trace", type=Path, default=OUTPUT_DIR / "parse-traces.jsonl")
     args = parser.parse_args()
+    if args.command == "normalize-kb":
+        from src.retrieval.normalization import normalize_kb
+        counts = normalize_kb(report_path=OUTPUT_DIR / "kb-normalization.json")
+        print(f"Normalized {sum(counts.values())} records in {len(counts)} collections. Report: {OUTPUT_DIR / 'kb-normalization.json'}")
+        return
     if args.command == "parse":
         stats = parse_file(args.input, args.output, args.trace)
         print(f"Parsed {stats['parsed']}/{stats['total']} sentences; "

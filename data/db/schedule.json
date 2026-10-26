@@ -1,9 +1,13 @@
 [
   {
     "id": "WEEK_01",
+    "course_id": "CO3085",
     "week": 1,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Introduction",
+    "course_part_id": null,
+    "chapter_ids": [
+      "CH01"
+    ],
     "topics": [
       "nghiên cứu ngôn ngữ tự nhiên",
       "ứng dụng text-based",
@@ -13,14 +17,23 @@
       "biểu diễn và hiểu ngôn ngữ",
       "tổ chức hệ thống NLU"
     ],
-    "part": "Introduction",
+    "topic_ids": [],
+    "topic_evidence": {},
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 01",
+    "is_sample": true,
     "chapter": "Chapter 1"
   },
   {
     "id": "WEEK_02",
+    "course_id": "CO3085",
     "week": 2,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Syntactic Processing",
+    "course_part_id": "SYNTACTIC_PROCESSING",
+    "chapter_ids": [
+      "CH02"
+    ],
     "topics": [
       "words",
       "simple noun phrases",
@@ -29,14 +42,33 @@
       "adjective phrases",
       "adverbial phrases"
     ],
-    "part": "Syntactic Processing",
+    "topic_ids": [
+      "NOUN_PHRASE",
+      "VERB_PHRASE"
+    ],
+    "topic_evidence": {
+      "NOUN_PHRASE": [
+        "noun phrases"
+      ],
+      "VERB_PHRASE": [
+        "verb phrases"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 02",
+    "is_sample": true,
     "chapter": "Chapter 2"
   },
   {
     "id": "WEEK_03",
+    "course_id": "CO3085",
     "week": 3,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Syntactic Processing",
+    "course_part_id": "SYNTACTIC_PROCESSING",
+    "chapter_ids": [
+      "CH03"
+    ],
     "topics": [
       "context-free grammar",
       "grammar and sentence structure",
@@ -47,14 +79,53 @@
       "dependency grammar",
       "Stanford dependencies"
     ],
-    "part": "Syntactic Processing",
+    "topic_ids": [
+      "BOTTOM_UP_CHART_PARSING",
+      "CFG",
+      "DEPENDENCY_GRAMMAR",
+      "PCFG",
+      "STANFORD_DEPENDENCIES",
+      "TOP_DOWN_CHART_PARSING",
+      "TOP_DOWN_PARSING"
+    ],
+    "topic_evidence": {
+      "BOTTOM_UP_CHART_PARSING": [
+        "bottom-up chart parsing"
+      ],
+      "CFG": [
+        "context-free grammar"
+      ],
+      "DEPENDENCY_GRAMMAR": [
+        "dependency grammar"
+      ],
+      "PCFG": [
+        "probabilistic context-free grammar"
+      ],
+      "STANFORD_DEPENDENCIES": [
+        "stanford dependencies"
+      ],
+      "TOP_DOWN_CHART_PARSING": [
+        "top-down chart parsing"
+      ],
+      "TOP_DOWN_PARSING": [
+        "top-down parsing"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 03",
+    "is_sample": true,
     "chapter": "Chapter 3"
   },
   {
     "id": "WEEK_04",
+    "course_id": "CO3085",
     "week": 4,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Syntactic Processing",
+    "course_part_id": "SYNTACTIC_PROCESSING",
+    "chapter_ids": [
+      "CH04"
+    ],
     "topics": [
       "feature systems",
       "augmented grammars",
@@ -63,42 +134,116 @@
       "grammar using feature systems",
       "parsing with features"
     ],
-    "part": "Syntactic Processing",
+    "topic_ids": [
+      "AUGMENTED_GRAMMAR",
+      "FEATURES",
+      "LEXICON",
+      "PARSING"
+    ],
+    "topic_evidence": {
+      "AUGMENTED_GRAMMAR": [
+        "augmented grammars"
+      ],
+      "FEATURES": [
+        "feature systems",
+        "features"
+      ],
+      "LEXICON": [
+        "lexicon"
+      ],
+      "PARSING": [
+        "parsing"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 04",
+    "is_sample": true,
     "chapter": "Chapter 4"
   },
   {
     "id": "WEEK_05",
+    "course_id": "CO3085",
     "week": 5,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Syntactic Processing",
+    "course_part_id": "SYNTACTIC_PROCESSING",
+    "chapter_ids": [
+      "CH04"
+    ],
     "topics": [
       "augmented transition networks",
       "generalized feature systems",
       "unification grammar"
     ],
-    "part": "Syntactic Processing",
+    "topic_ids": [
+      "AUGMENTED_TRANSITION_NETWORKS",
+      "FEATURES",
+      "UNIFICATION"
+    ],
+    "topic_evidence": {
+      "AUGMENTED_TRANSITION_NETWORKS": [
+        "augmented transition networks"
+      ],
+      "FEATURES": [
+        "feature systems"
+      ],
+      "UNIFICATION": [
+        "unification grammar"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 05",
+    "is_sample": true,
     "chapter": "Chapter 4",
     "activity": "feature-based parsing exercises"
   },
   {
     "id": "WEEK_06",
+    "course_id": "CO3085",
     "week": 6,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Syntactic Processing",
+    "course_part_id": "SYNTACTIC_PROCESSING",
+    "chapter_ids": [
+      "CH05"
+    ],
     "topics": [
       "auxiliary verbs and verb phrases",
       "movement phenomena",
       "handling questions in CFG",
       "relative clauses"
     ],
-    "part": "Syntactic Processing",
+    "topic_ids": [
+      "CFG",
+      "RELATIVE_CLAUSES",
+      "VERB_PHRASE"
+    ],
+    "topic_evidence": {
+      "CFG": [
+        "cfg"
+      ],
+      "RELATIVE_CLAUSES": [
+        "relative clauses"
+      ],
+      "VERB_PHRASE": [
+        "verb phrases"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 06",
+    "is_sample": true,
     "chapter": "Chapter 5"
   },
   {
     "id": "WEEK_07",
+    "course_id": "CO3085",
     "week": 7,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Syntactic Processing",
+    "course_part_id": "SYNTACTIC_PROCESSING",
+    "chapter_ids": [
+      "CH06"
+    ],
     "topics": [
       "basic probability theory",
       "estimating probabilities",
@@ -106,28 +251,66 @@
       "lexical probabilities",
       "probabilistic context-free grammar"
     ],
-    "part": "Syntactic Processing",
+    "topic_ids": [
+      "PCFG",
+      "POS_TAGGING",
+      "PROBABILITY"
+    ],
+    "topic_evidence": {
+      "PCFG": [
+        "probabilistic context-free grammar"
+      ],
+      "POS_TAGGING": [
+        "part-of-speech tagging"
+      ],
+      "PROBABILITY": [
+        "basic probability theory"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 07",
+    "is_sample": true,
     "chapter": "Chapter 6"
   },
   {
     "id": "WEEK_08",
+    "course_id": "CO3085",
     "week": 8,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Syntactic Processing",
+    "course_part_id": "SYNTACTIC_PROCESSING",
+    "chapter_ids": [
+      "CH06"
+    ],
     "topics": [
       "best-first parsing",
       "simple context-dependent best-first parser"
     ],
-    "part": "Syntactic Processing",
+    "topic_ids": [
+      "BEST_FIRST_PARSING"
+    ],
+    "topic_evidence": {
+      "BEST_FIRST_PARSING": [
+        "best-first parsing"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 08",
+    "is_sample": true,
     "chapter": "Chapter 6",
     "activity": "ambiguity-resolution exercises",
     "milestone": "BTL checkpoint 1 - grammar and parser"
   },
   {
     "id": "WEEK_09",
+    "course_id": "CO3085",
     "week": 9,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Semantic Interpretation",
+    "course_part_id": "SEMANTIC_INTERPRETATION",
+    "chapter_ids": [
+      "CH07"
+    ],
     "topics": [
       "semantics and logical form",
       "word senses and ambiguity",
@@ -137,14 +320,37 @@
       "thematic roles",
       "speech acts and embedded sentences"
     ],
-    "part": "Semantic Interpretation",
+    "topic_ids": [
+      "LOGICAL_FORM",
+      "SPEECH_ACTS",
+      "THEMATIC_ROLES"
+    ],
+    "topic_evidence": {
+      "LOGICAL_FORM": [
+        "logical form"
+      ],
+      "SPEECH_ACTS": [
+        "speech acts"
+      ],
+      "THEMATIC_ROLES": [
+        "thematic roles"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 09",
+    "is_sample": true,
     "chapter": "Chapter 7"
   },
   {
     "id": "WEEK_10",
+    "course_id": "CO3085",
     "week": 10,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Semantic Interpretation",
+    "course_part_id": "SEMANTIC_INTERPRETATION",
+    "chapter_ids": [
+      "CH08"
+    ],
     "topics": [
       "semantic interpretation and compositionality",
       "grammar and lexicon with semantic interpretation",
@@ -153,43 +359,120 @@
       "semantic roles",
       "handling simple questions"
     ],
-    "part": "Semantic Interpretation",
+    "topic_ids": [
+      "COMPOSITIONALITY",
+      "LEXICON",
+      "VERB_PHRASE"
+    ],
+    "topic_evidence": {
+      "COMPOSITIONALITY": [
+        "compositionality"
+      ],
+      "LEXICON": [
+        "lexicon"
+      ],
+      "VERB_PHRASE": [
+        "verb phrases"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 10",
+    "is_sample": true,
     "chapter": "Chapter 8"
   },
   {
     "id": "WEEK_11",
+    "course_id": "CO3085",
     "week": 11,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Semantic Interpretation",
+    "course_part_id": "SEMANTIC_INTERPRETATION",
+    "chapter_ids": [
+      "CH09"
+    ],
     "topics": [
       "selectional restrictions",
       "semantic filtering",
       "semantic networks",
       "statistical word sense disambiguation"
     ],
-    "part": "Semantic Interpretation",
+    "topic_ids": [
+      "SELECTIONAL_RESTRICTION",
+      "SEMANTIC_FILTERING",
+      "SEMANTIC_NETWORK",
+      "WSD"
+    ],
+    "topic_evidence": {
+      "SELECTIONAL_RESTRICTION": [
+        "selectional restrictions"
+      ],
+      "SEMANTIC_FILTERING": [
+        "semantic filtering"
+      ],
+      "SEMANTIC_NETWORK": [
+        "semantic networks"
+      ],
+      "WSD": [
+        "word sense disambiguation"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 11",
+    "is_sample": true,
     "chapter": "Chapter 9"
   },
   {
     "id": "WEEK_12",
+    "course_id": "CO3085",
     "week": 12,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Semantic Interpretation",
+    "course_part_id": "SEMANTIC_INTERPRETATION",
+    "chapter_ids": [
+      "CH10"
+    ],
     "topics": [
       "grammatical relations",
       "semantic grammars",
       "template matching",
       "semantically driven parsing"
     ],
-    "part": "Semantic Interpretation",
+    "topic_ids": [
+      "GRAMMATICAL_RELATIONS",
+      "PARSING",
+      "SEMANTIC_GRAMMAR",
+      "TEMPLATE_MATCHING"
+    ],
+    "topic_evidence": {
+      "GRAMMATICAL_RELATIONS": [
+        "grammatical relations"
+      ],
+      "PARSING": [
+        "parsing"
+      ],
+      "SEMANTIC_GRAMMAR": [
+        "semantic grammars"
+      ],
+      "TEMPLATE_MATCHING": [
+        "template matching"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 12",
+    "is_sample": true,
     "chapter": "Chapter 10",
     "milestone": "BTL checkpoint 2 - semantic interpretation and QA"
   },
   {
     "id": "WEEK_13",
+    "course_id": "CO3085",
     "week": 13,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Context and World Knowledge",
+    "course_part_id": "CONTEXT_WORLD_KNOWLEDGE",
+    "chapter_ids": [
+      "CH11"
+    ],
     "topics": [
       "knowledge representation",
       "frames",
@@ -198,14 +481,41 @@
       "procedural semantics",
       "question answering"
     ],
-    "part": "Context and World Knowledge",
+    "topic_ids": [
+      "FRAMES",
+      "KNOWLEDGE_REPRESENTATION",
+      "PROCEDURAL_SEMANTICS",
+      "QUESTION_ANSWERING"
+    ],
+    "topic_evidence": {
+      "FRAMES": [
+        "frames"
+      ],
+      "KNOWLEDGE_REPRESENTATION": [
+        "knowledge representation"
+      ],
+      "PROCEDURAL_SEMANTICS": [
+        "procedural semantics"
+      ],
+      "QUESTION_ANSWERING": [
+        "question answering"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 13",
+    "is_sample": true,
     "chapter": "Chapter 11"
   },
   {
     "id": "WEEK_14",
+    "course_id": "CO3085",
     "week": 14,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Context and World Knowledge",
+    "course_part_id": "CONTEXT_WORLD_KNOWLEDGE",
+    "chapter_ids": [
+      "CH12"
+    ],
     "topics": [
       "local discourse context",
       "discourse entities",
@@ -216,14 +526,47 @@
       "ellipsis",
       "surface anaphora"
     ],
-    "part": "Context and World Knowledge",
+    "topic_ids": [
+      "ANAPHORA",
+      "CENTERING",
+      "DISCOURSE_ENTITIES",
+      "ELLIPSIS",
+      "LOCAL_DISCOURSE_CONTEXT",
+      "REFERENCE"
+    ],
+    "topic_evidence": {
+      "ANAPHORA": [
+        "anaphora"
+      ],
+      "CENTERING": [
+        "centering"
+      ],
+      "DISCOURSE_ENTITIES": [
+        "discourse entities"
+      ],
+      "ELLIPSIS": [
+        "ellipsis"
+      ],
+      "LOCAL_DISCOURSE_CONTEXT": [
+        "local discourse context"
+      ],
+      "REFERENCE": [
+        "reference"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 14",
+    "is_sample": true,
     "chapter": "Chapter 12"
   },
   {
     "id": "WEEK_15",
+    "course_id": "CO3085",
     "week": 15,
-    "source": "data/raw/schedule.txt",
-    "is_sample": true,
+    "part": "Integration and Evaluation",
+    "course_part_id": null,
+    "chapter_ids": [],
     "topics": [
       "integrate grammar/parser/semantic interpretation/QA",
       "local discourse context",
@@ -231,7 +574,18 @@
       "system evaluation",
       "demonstration and final BTL review"
     ],
-    "part": "Integration and Evaluation",
+    "topic_ids": [
+      "LOCAL_DISCOURSE_CONTEXT"
+    ],
+    "topic_evidence": {
+      "LOCAL_DISCOURSE_CONTEXT": [
+        "local discourse context"
+      ]
+    },
+    "topic_links_complete": false,
+    "source": "data/raw/schedule.txt",
+    "source_section": "WEEK 15",
+    "is_sample": true,
     "milestone": "BTL final submission and demo"
   }
 ]

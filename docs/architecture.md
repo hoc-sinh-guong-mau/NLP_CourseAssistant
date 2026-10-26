@@ -60,7 +60,7 @@ Tên file fragment mới được loader tự phát hiện theo thứ tự alpha
 4. Answer: viết hàm nhận records, trả `(status, answer)`, rồi đăng ký trong `ANSWER_HANDLERS` cùng key `(INTENT, QTYPE)`.
 5. Thêm test câu hỏi → semantic → query → thông tin trả lời; thêm trường hợp thiếu dữ liệu.
 
-`QuerySpec` hiện hỗ trợ lọc bằng nhau. Các phép tìm topic trong danh sách, so sánh ngày hoặc join chưa được triển khai; muốn hỗ trợ chúng cần mở rộng giao thức query/KB có test, không nhồi logic vào pipeline. `select` đang mô tả trường được hỏi, KB vẫn trả record đầy đủ cho renderer và nguồn.
+`QuerySpec` hỗ trợ lọc bằng nhau và ConditionSpec hỗ trợ contains/contains_all/contains_any. So sánh ngày và join chưa được triển khai. `select` thực hiện projection, giữ thêm ID, nguồn và tên/title để render. Xem queries.md để biết context và cách xử lý quan hệ chưa đầy đủ.
 
 ## Thêm collection KB
 

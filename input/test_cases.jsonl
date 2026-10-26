@@ -1,3 +1,3 @@
-{"input": "Deadline bài tập lớn là khi nào?", "expected": {"status": "ok", "semantic": {"predicate": "GET_DEADLINE", "arguments": {"assignment_id": "BTL01"}, "qtype": "DEADLINE"}, "query": {"collection": "assignments", "filters": {"id": "BTL01"}, "select": ["deadline"]}, "answer": "Hạn nộp bài tập lớn là 2030-01-15 23:59."}}
-{"input": "Hạn nộp bài tập lớn là khi nào?", "expected": {"status": "ok"}}
+{"input": "Deadline bài tập lớn là khi nào?", "expected": {"status": "missing_information", "semantic": {"predicate": "GET_DEADLINE", "arguments": {"assignment_id": "BTL01"}, "qtype": "DEADLINE"}, "query": {"collection": "assignments", "filters": {"id": "BTL01"}, "select": ["deadline"]}, "answer": "Dữ liệu môn học chưa có thời hạn của bài tập này."}}
+{"input": "Hạn nộp bài tập lớn là khi nào?", "expected": {"status": "missing_information"}}
 {"input": "Thời tiết hôm nay thế nào?", "expected": {"status": "parse_failed", "parse_tree": "()"}}

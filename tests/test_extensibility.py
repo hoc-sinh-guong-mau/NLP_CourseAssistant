@@ -17,8 +17,8 @@ from src.semantic import SemanticFrame
 
 class ExtensionTests(unittest.TestCase):
     def test_custom_query_and_answer_registries_are_isolated(self):
-        frame = SemanticFrame('GET_COURSE_INFO', {'course_id':'CO3085'}, 'CREDITS')
-        key = ('GET_COURSE_INFO','CREDITS')
+        frame = SemanticFrame('CUSTOM_COURSE_INFO', {'course_id':'CO3085'}, 'CREDITS')
+        key = ('CUSTOM_COURSE_INFO','CREDITS')
         builder = QueryBuilder({key: QuerySpec('course', (('id','course_id'),), ('credits',))})
         self.assertEqual(builder.build(frame), {
             'collection':'course', 'filters':{'id':'CO3085'}, 'select':['credits'],

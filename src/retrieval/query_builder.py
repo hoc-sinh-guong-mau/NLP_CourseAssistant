@@ -1,15 +1,18 @@
-"""Declarative query registry: add a spec without editing pipeline control flow."""
+"""Translate semantic slots to a whitelisted, serializable KB query."""
 from .exceptions import QueryError, UnsupportedQueryError
 from .models import QuerySpec
+from .query_rules import QUERY_SPECS
 
 
-QUERY_SPECS = {
-    ("GET_DEADLINE", "DEADLINE"): QuerySpec(
-        collection="assignments",
-        filters=(("id", "assignment_id"),),
-        select=("deadline",),
-    ),
-}
+def require_slot(frame, slot, *, multiple=False):
+    value = frame.arguments.get(slot)
+    valid = (isinstance(value, list) and bool(value) and all(isinstance(v, str) and v.strip() for v in value)
+             if multiple else isinstance(value, str) and bool(value.strip()))
+    if not valid:
+        raise QueryError('Missing or invalid semantic argument', context={
+            'slot': slot, 'intent': frame.predicate, 'qtype': frame.qtype,
+        })
+    return list(value) if multiple else value
 
 
 class QueryBuilder:
@@ -19,14 +22,23 @@ class QueryBuilder:
     def build(self, frame):
         key = (frame.predicate, frame.qtype)
         if key not in self.specs:
-            raise UnsupportedQueryError(f"Unsupported query: {key}")
+            raise UnsupportedQueryError(f'Unsupported query: {key}')
         spec = self.specs[key]
-        missing = [slot for _, slot in spec.filters if slot not in frame.arguments]
-        if missing:
-            raise QueryError("Missing semantic arguments", context={"slots": missing, "intent": frame.predicate, "qtype": frame.qtype})
-        return {
-            "collection": spec.collection,
-            "filters": {field: frame.arguments[slot] for field, slot in spec.filters},
-            "select": list(spec.select),
-        }
-
+        filters = {field: require_slot(frame, slot) for field, slot in spec.filters}
+        for field, value in spec.constants:
+            if field in filters:
+                raise QueryError('Conflicting query filters', context={'field':field})
+            filters[field] = value
+        query = {'collection':spec.collection, 'filters':filters, 'select':list(spec.select)}
+        if spec.conditions:
+            query['conditions'] = [
+                {'field': condition.field, 'operator': condition.operator,
+                 'value': require_slot(frame, condition.slot, multiple=condition.operator in {'contains_all','contains_any'})}
+                for condition in spec.conditions
+            ]
+        if spec.optional_context or spec.required_context:
+            context = {slot:require_slot(frame, slot) for slot in spec.required_context}
+            context.update({slot:require_slot(frame, slot) for slot in spec.optional_context if slot in frame.arguments})
+            if context:
+                query['context'] = context
+        return query

@@ -1,14 +1,61 @@
 [
   {
     "id": "BTL01",
+    "course_id": "CO3085",
     "name": "bài tập lớn",
-    "deadline": "2030-01-15 23:59",
-    "source": "SYNTHETIC_DEMO_ONLY"
-  },
-  {
-    "id": "HW1",
-    "name": "bài tập 1",
+    "title": "Intelligent Course Assistant",
+    "domain": "Course information and learning support",
+    "goal": "Xây dựng hệ thống xử lý câu hỏi tự nhiên trong miền thông tin của một môn học. Hệ thống phải thể hiện pipeline NLP từ parsing đến semantic interpretation và question answering.",
     "deadline": null,
-    "source": "SYNTHETIC_DEMO_ONLY"
+    "team_size": {
+      "min": 3,
+      "max": 4
+    },
+    "part_ids": [
+      "PART_I",
+      "PART_II",
+      "PART_III",
+      "PART_IV"
+    ],
+    "outputs": [
+      "output/grammar.txt",
+      "output/samples.txt",
+      "output/parse-results.txt"
+    ],
+    "outputs_complete": false,
+    "milestones": [
+      {
+        "week_id": "WEEK_08",
+        "description": "BTL checkpoint 1 - grammar and parser",
+        "date": null,
+        "source": "data/raw/schedule.txt"
+      },
+      {
+        "week_id": "WEEK_12",
+        "description": "BTL checkpoint 2 - semantic interpretation and QA",
+        "date": null,
+        "source": "data/raw/schedule.txt"
+      },
+      {
+        "week_id": "WEEK_15",
+        "description": "BTL final submission and demo",
+        "date": null,
+        "source": "data/raw/schedule.txt"
+      }
+    ],
+    "source": "data/raw/assignments.txt",
+    "source_section": "BTL01",
+    "is_sample": true,
+    "llm_rag_extension": {
+      "status": "optional",
+      "description": "Sinh viên có thể mở rộng bằng retrieval và/hoặc LLM. Phần này chỉ là mở rộng của NLP, không bắt buộc.",
+      "not_required": [
+        "agent",
+        "multi-agent",
+        "fine-tuning LLM",
+        "huấn luyện language model",
+        "RAG pipeline quy mô lớn"
+      ]
+    }
   }
 ]

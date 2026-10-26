@@ -1,6 +1,6 @@
 # Course Assistant — Classical NLP
 
-Khung CO3085 dùng FCFG, NLTK FeatureChartParser và semantic theo feature. Hiện chỉ có query/answer handler cho `GET_DEADLINE / DEADLINE`; những câu khác có thể parse và trích xuất semantic nhưng trả trạng thái `unsupported_query`.
+Khung CO3085 dùng FCFG, NLTK FeatureChartParser và semantic theo feature. Query builder đã có registry cho các QTYPE nghiệp vụ hiện tại; answer handler mới có `GET_DEADLINE / DEADLINE`. Những câu khác có query và result nhưng có thể trả `unsupported_answer`.
 
 ## Thành viên
 
@@ -16,6 +16,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
 python -m src.main grammar
+python -m src.main normalize-kb
 python -m src.main batch
 python -m src.main generate --limit 1000
 python -m src.main chat
@@ -91,7 +92,7 @@ NLP_Project/
 - `question_patterns.yaml`: mục từ để hỏi; `policies.yaml`: alias chính sách; `learning_outcomes.yaml`: mã chuẩn đầu ra. Mẫu câu hoàn chỉnh nằm trong grammar/rules.
 - `KB/*.json`: mỗi file là danh sách bản ghi có `id` duy nhất. Các tên thư mục có phân biệt hoa/thường trên Linux; phải dùng đúng `db`.
 
-`course.json` được trích từ các trường trong `raw/course_info.txt`; `schedule.json` được chuyển từ `raw/schedule.txt` và đánh dấu `is_sample: true` vì nguồn là kế hoạch mẫu, không phải lịch học chính thức. `assignments.json` vẫn chứa deadline **giả lập năm 2030**, có nguồn `SYNTHETIC_DEMO_ONLY`; thay bằng dữ liệu chính thức trước demo/đánh giá thực tế. Mã bài tập lớn được thống nhất là `BTL01`.
+KB JSON được chuẩn hóa từ `data/raw/` và ID trong `models/lexicon/`, gồm 14 collection. Xem [docs/kb-schema.md](docs/kb-schema.md) để biết schema, nguồn, giới hạn và cách tái tạo. Chỉ có một bài tập `BTL01`; “bài tập 1” là alias của bài tập lớn. Deadline là `null` vì nguồn chưa cung cấp ngày cụ thể; chưa có dữ liệu giảng viên. Lịch học, bài tập và quy định giữ `is_sample: true`. SQLite có sẵn được giữ nguyên nhưng không được đồng bộ hay truy vấn trong pipeline hiện tại.
 
 ## Lexicon và entity normalization
 
@@ -144,7 +145,7 @@ Cây cú pháp → semantic → intent/entity → query → KB → answer
 - `parsing/grammar_loader.py`: ghép và kiểm tra grammar; `parsing/parser.py`: `parse_all()` giữ các cây, `parse()` báo lỗi nếu có nhiều cây.
 - `semantic/interpreter.py`: đọc INTENT, ENTITY, QTYPE, TARGET từ gốc; tạo arguments có tên cụ thể cho deadline và nội dung tuần. Các loại khác giữ entity/target để phát triển handler sau.
 - `application/pipeline.py`: các cây có cùng semantic được gộp; nhiều semantic khác nhau trả `ambiguous`. Không parse được trả `parse_failed`; chưa có handler trả `unsupported_query`; thiếu deadline trả `missing_information`.
-- `retrieval/knowledge_base.py`: đọc ba collection, kiểm tra ID và lọc theo query. Trường `select` hiện mô tả trường cần hỏi; chưa thực hiện projection.
+- `retrieval/knowledge_base.py`: tự đọc các collection JSON, kiểm tra ID và lọc theo query. Thực hiện projection theo `select`, giữ ID/nguồn và hỗ trợ lọc bằng nhau, contains, contains_all, contains_any.
 - `parsing/generator.py`: sinh ứng viên từ CFG projection, rồi kiểm tra lại bằng feature parser; giới hạn độ sâu/số ứng viên và tối đa 10.000 câu đầu ra. Có thể trả ít hơn limit nếu hết ngân sách ứng viên.
 
 ## Đầu ra
@@ -219,3 +220,9 @@ Tests kiểm tra vai trò slot, coordination, optional target, missing/unbound f
 ## Hướng dẫn mở rộng
 
 Xem [docs/architecture.md](docs/architecture.md) để biết trách nhiệm module và các bước thêm alias, QTYPE, collection hoặc handler mới. Các lệnh CLI và định dạng output giữ tương thích. Chưa bổ sung handler trả lời ngoài deadline trong đợt refactor này.
+
+Lệnh `python -m src.main normalize-kb` tái tạo KB và ghi báo cáo chất lượng vào `output/kb-normalization.json`. Chênh lệch số giờ trong nguồn (150 tổng so với 135 khi cộng các thành phần) được báo cáo và giữ nguyên, không tự sửa.
+
+## Truy vấn KB (Phần II)
+
+Xem [docs/queries.md](docs/queries.md). Chạy `python -m src.main batch` để xuất `output/query.txt`. Các QTYPE nghiệp vụ hiện tại đã có query spec; UNKNOWN/context chưa giải quyết không tạo query. Phần answer của các intent ngoài deadline vẫn đang chờ phát triển.

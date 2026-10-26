@@ -1,0 +1,186 @@
+[
+  {
+    "id": "TEXTBOOK_1",
+    "course_id": "CO3085",
+    "kind": "textbook",
+    "title": "Lecture Slides from the Stanford Coursera course by Dan Jurafsky and Christopher Manning",
+    "authors": [],
+    "publisher": null,
+    "year": 2016,
+    "usage": "foundational NLP concepts",
+    "category_ids": [],
+    "category_evidence": {},
+    "topic_ids": [],
+    "topic_links_complete": false,
+    "source": "data/raw/resources.txt",
+    "source_section": "TEXTBOOK 1",
+    "is_sample": false
+  },
+  {
+    "id": "TEXTBOOK_2",
+    "course_id": "CO3085",
+    "kind": "textbook",
+    "title": "Introduction to Natural Language Processing",
+    "authors": [
+      "Jacob Eisenstein"
+    ],
+    "publisher": "The MIT Press",
+    "year": 2019,
+    "usage": "NLP foundations and statistical methods",
+    "category_ids": [
+      "STATISTICAL_NLP"
+    ],
+    "category_evidence": {
+      "STATISTICAL_NLP": [
+        "statistical methods"
+      ]
+    },
+    "topic_ids": [],
+    "topic_links_complete": false,
+    "source": "data/raw/resources.txt",
+    "source_section": "TEXTBOOK 2",
+    "is_sample": false
+  },
+  {
+    "id": "TEXTBOOK_3",
+    "course_id": "CO3085",
+    "kind": "textbook",
+    "title": "Xử lý ngôn ngữ tự nhiên",
+    "authors": [
+      "Phan Thị Tươi"
+    ],
+    "publisher": "Nhà xuất bản Đại học Quốc gia TP Hồ Chí Minh",
+    "year": 2012,
+    "usage": "Vietnamese NLP reference",
+    "category_ids": [],
+    "category_evidence": {},
+    "topic_ids": [],
+    "topic_links_complete": false,
+    "source": "data/raw/resources.txt",
+    "source_section": "TEXTBOOK 3",
+    "is_sample": false
+  },
+  {
+    "id": "REFERENCE_1",
+    "course_id": "CO3085",
+    "kind": "reference",
+    "title": "Foundation of Statistical Natural Language Processing",
+    "authors": [
+      "Christopher D. Manning",
+      "Hinrich Schütze"
+    ],
+    "publisher": "The MIT Press",
+    "year": 2001,
+    "usage": "statistical NLP",
+    "category_ids": [
+      "STATISTICAL_NLP"
+    ],
+    "category_evidence": {
+      "STATISTICAL_NLP": [
+        "statistical natural language processing",
+        "statistical nlp"
+      ]
+    },
+    "topic_ids": [],
+    "topic_links_complete": false,
+    "source": "data/raw/resources.txt",
+    "source_section": "REFERENCE 1",
+    "is_sample": false
+  },
+  {
+    "id": "REFERENCE_2",
+    "course_id": "CO3085",
+    "kind": "reference",
+    "title": "Natural Language Processing with Python",
+    "authors": [
+      "Steven Bird",
+      "Ewan Klein",
+      "Edward Loper"
+    ],
+    "publisher": null,
+    "year": 2009,
+    "usage": "practical NLP with Python",
+    "category_ids": [
+      "PYTHON_NLP"
+    ],
+    "category_evidence": {
+      "PYTHON_NLP": [
+        "natural language processing with python",
+        "nlp with python"
+      ]
+    },
+    "topic_ids": [],
+    "topic_links_complete": false,
+    "source": "data/raw/resources.txt",
+    "source_section": "REFERENCE 2",
+    "is_sample": false
+  },
+  {
+    "id": "REFERENCE_3",
+    "course_id": "CO3085",
+    "kind": "reference",
+    "title": "Speech and Language Processing",
+    "authors": [
+      "Daniel Jurafsky",
+      "James H. Martin"
+    ],
+    "publisher": null,
+    "year": 2019,
+    "usage": "broad NLP reference",
+    "category_ids": [],
+    "category_evidence": {},
+    "topic_ids": [],
+    "topic_links_complete": false,
+    "source": "data/raw/resources.txt",
+    "source_section": "REFERENCE 3",
+    "is_sample": false
+  },
+  {
+    "id": "REFERENCE_4",
+    "course_id": "CO3085",
+    "kind": "reference",
+    "title": "An Introduction to Machine Translation",
+    "authors": [
+      "W. John Hutchins"
+    ],
+    "publisher": null,
+    "year": 1992,
+    "usage": "machine translation background",
+    "category_ids": [
+      "MACHINE_TRANSLATION"
+    ],
+    "category_evidence": {
+      "MACHINE_TRANSLATION": [
+        "machine translation"
+      ]
+    },
+    "topic_ids": [],
+    "topic_links_complete": false,
+    "source": "data/raw/resources.txt",
+    "source_section": "REFERENCE 4",
+    "is_sample": false
+  },
+  {
+    "id": "REFERENCE_5",
+    "course_id": "CO3085",
+    "kind": "reference",
+    "title": "Natural Language Understanding and World Knowledge",
+    "authors": [],
+    "publisher": null,
+    "year": null,
+    "usage": "world knowledge and inference",
+    "category_ids": [
+      "WORLD_KNOWLEDGE"
+    ],
+    "category_evidence": {
+      "WORLD_KNOWLEDGE": [
+        "world knowledge"
+      ]
+    },
+    "topic_ids": [],
+    "topic_links_complete": false,
+    "source": "data/raw/resources.txt",
+    "source_section": "REFERENCE 5",
+    "is_sample": false
+  }
+]

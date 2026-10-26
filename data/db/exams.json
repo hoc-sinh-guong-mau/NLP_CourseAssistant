@@ -1,0 +1,22 @@
+[
+  {
+    "id": "MIDTERM",
+    "course_id": "CO3085",
+    "format": "open-book, written, 60 minutes",
+    "duration_minutes": 60,
+    "open_book": true,
+    "source": "data/raw/course_info.txt",
+    "source_section": "exam_format",
+    "is_sample": false
+  },
+  {
+    "id": "FINAL",
+    "course_id": "CO3085",
+    "format": "open-book, written, 90 minutes",
+    "duration_minutes": 90,
+    "open_book": true,
+    "source": "data/raw/course_info.txt",
+    "source_section": "exam_format",
+    "is_sample": false
+  }
+]

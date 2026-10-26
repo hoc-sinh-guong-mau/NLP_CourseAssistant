@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ATTENDANCE",
+    "course_id": "CO3085",
+    "description": "Sinh viên được khuyến khích tham dự đầy đủ các buổi học và thực hiện các bài tập được giao.",
+    "permission": null,
+    "source": "data/raw/regulations.txt",
+    "source_section": "attendance",
+    "is_sample": true
+  },
+  {
+    "id": "ACADEMIC_INTEGRITY",
+    "course_id": "CO3085",
+    "description": "Sinh viên phải tuân thủ nguyên tắc liêm chính học thuật và code of ethics.",
+    "permission": null,
+    "source": "data/raw/regulations.txt",
+    "source_section": "academic_integrity",
+    "is_sample": true
+  },
+  {
+    "id": "AI_USAGE",
+    "course_id": "CO3085",
+    "description": "Sinh viên phải khai báo việc sử dụng AI trong báo cáo, nghiên cứu và quá trình thực hiện theo quy định của môn học.",
+    "permission": null,
+    "source": "data/raw/regulations.txt",
+    "source_section": "AI_usage",
+    "is_sample": true
+  },
+  {
+    "id": "SOURCE_CODE",
+    "course_id": "CO3085",
+    "description": "Sinh viên phải hiểu và có khả năng giải thích mã nguồn do nhóm sử dụng.",
+    "permission": null,
+    "source": "data/raw/regulations.txt",
+    "source_section": "source_code",
+    "is_sample": true
+  },
+  {
+    "id": "ASSIGNMENT_SHARING",
+    "course_id": "CO3085",
+    "description": "Không được sao chép hoặc chia sẻ bài làm giữa các nhóm.",
+    "permission": null,
+    "source": "data/raw/regulations.txt",
+    "source_section": "assignment_sharing",
+    "is_sample": true
+  },
+  {
+    "id": "EXTERNAL_LIBRARIES",
+    "course_id": "CO3085",
+    "description": "Được phép sử dụng thư viện công khai nếu tuân thủ yêu cầu của bài tập.",
+    "permission": null,
+    "source": "data/raw/regulations.txt",
+    "source_section": "external_libraries",
+    "is_sample": true
+  },
+  {
+    "id": "LLM_RAG",
+    "course_id": "CO3085",
+    "description": "LLM/RAG nếu được sử dụng chỉ nên đóng vai trò mở rộng. Sinh viên phải mô tả rõ mô hình, dữ liệu, retrieval và cách đánh giá.",
+    "permission": null,
+    "source": "data/raw/regulations.txt",
+    "source_section": "LLM_RAG",
+    "is_sample": true
+  },
+  {
+    "id": "OUT_OF_SCOPE",
+    "course_id": "CO3085",
+    "description": "Hệ thống Course Assistant chỉ chịu trách nhiệm trong phạm vi dữ liệu môn học. Với câu hỏi ngoài phạm vi hoặc không có dữ liệu, hệ thống phải thông báo rằng không tìm thấy thông tin thay vì tự tạo thông tin.",
+    "permission": null,
+    "source": "data/raw/regulations.txt",
+    "source_section": "OUT_OF_SCOPE",
+    "is_sample": true
+  }
+]

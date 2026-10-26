@@ -1,0 +1,74 @@
+[
+  {
+    "id": "PART_I",
+    "assignment_id": "BTL01",
+    "title": "Grammar and Parser",
+    "requirements": [
+      "xây dựng grammar cho miền Course Assistant",
+      "sinh câu hợp lệ từ grammar",
+      "xây dựng parser",
+      "xuất parse tree",
+      "xử lý câu không hợp lệ"
+    ],
+    "outputs": [
+      "output/grammar.txt",
+      "output/samples.txt",
+      "output/parse-results.txt"
+    ],
+    "optional": false,
+    "source": "data/raw/assignments.txt",
+    "source_section": "PART I",
+    "is_sample": true
+  },
+  {
+    "id": "PART_II",
+    "assignment_id": "BTL01",
+    "title": "Semantic Interpretation and QA",
+    "requirements": [
+      "semantic representation",
+      "intent identification",
+      "entity extraction",
+      "query to knowledge base",
+      "answer generation",
+      "xử lý câu hỏi ngoài miền",
+      "xử lý trường hợp không tìm thấy thông tin"
+    ],
+    "outputs": [],
+    "optional": false,
+    "source": "data/raw/assignments.txt",
+    "source_section": "PART II",
+    "is_sample": true
+  },
+  {
+    "id": "PART_III",
+    "assignment_id": "BTL01",
+    "title": "Local Discourse Context",
+    "requirements": [
+      "xử lý một số hội thoại nhiều lượt",
+      "lưu discourse entities đơn giản",
+      "xử lý tham chiếu đại từ hoặc mô tả xác định",
+      "xử lý một số trường hợp ellipsis đơn giản"
+    ],
+    "outputs": [],
+    "optional": true,
+    "source": "data/raw/assignments.txt",
+    "source_section": "PART III",
+    "is_sample": true
+  },
+  {
+    "id": "PART_IV",
+    "assignment_id": "BTL01",
+    "title": "Evaluation",
+    "requirements": [
+      "tạo test set",
+      "đo accuracy hoặc metric phù hợp",
+      "phân tích lỗi",
+      "trình bày các trường hợp hệ thống không trả lời đúng"
+    ],
+    "outputs": [],
+    "optional": false,
+    "source": "data/raw/assignments.txt",
+    "source_section": "PART IV",
+    "is_sample": true
+  }
+]

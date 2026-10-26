@@ -87,12 +87,15 @@ class LexiconTests(unittest.TestCase):
 
     def test_kb_and_pipeline_after_migration(self):
         kb = KnowledgeBase()
-        self.assertEqual(set(kb.collections), {"course", "schedule", "assignments"})
+        self.assertTrue({"course", "schedule", "assignments", "chapters", "learning_outcomes", "resources", "policies"} <= set(kb.collections))
         self.assertEqual(len(kb.collections["schedule"]), 15)
         record = CourseAssistant().process("Deadline bài tập lớn là khi nào?")
-        self.assertEqual(record["status"], "ok")
+        self.assertEqual(record["status"], "missing_information")
         self.assertEqual(record["query"]["filters"], {"id": "BTL01"})
-        self.assertEqual(CourseAssistant().process("tuần ba học gì?")["status"], "unsupported_query")
+        week_record = CourseAssistant().process("tuần ba học gì?")
+        self.assertEqual(week_record["status"], "unsupported_answer")
+        self.assertEqual(week_record["query"]["filters"], {"id": "WEEK_03"})
+        self.assertEqual(week_record["result"][0]["week"], 3)
 
     def test_duplicate_yaml_keys_rejected(self):
         texts = [
