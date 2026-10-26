@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools>=77,<85"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nlp-course-assistant"
+version = "0.1.0"
+description = "Vietnamese course assistant using feature grammars, semantic rules and SQLite"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+  "nltk==3.10.4",
+  "PyYAML==6.0.3",
+  "streamlit==1.66.1",
+  "python-dotenv==1.2.4",
+]
+
+[project.optional-dependencies]
+dev = ["build>=1.2,<2"]
+
+[project.scripts]
+course-assistant = "src.main:main"
+course-assistant-ui = "src.ui.serve:main"
+course-assistant-workflow = "src.ui.launch:main"
+
+[tool.setuptools.packages.find]
+include = ["src", "src.*"]
+namespaces = false
+
+# External resources retain the assignment's directory structure in wheels.
+[tool.setuptools.data-files]
+"share/nlp-course-assistant" = ["streamlit_app.py"]
+"share/nlp-course-assistant/.streamlit" = [".streamlit/config.toml"]
+"share/nlp-course-assistant/models/grammar" = ["models/grammar/*.fcfg"]
+"share/nlp-course-assistant/models/grammar/rules" = ["models/grammar/rules/*.fcfg"]
+"share/nlp-course-assistant/models/lexicon" = ["models/lexicon/*.yaml"]
+"share/nlp-course-assistant/data/raw" = ["data/raw/*.txt"]
+"share/nlp-course-assistant/input" = ["input/*.txt", "input/*.jsonl"]
+"share/nlp-course-assistant/tests" = ["tests/*.py"]

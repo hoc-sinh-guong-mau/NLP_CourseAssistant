@@ -3,13 +3,13 @@ import json
 
 from src.common import run_stage
 from src.common.files import read_text, write_text
-from src.config import ROOT, OUTPUT_DIR
+from src.config import INPUT_DIR, OUTPUT_DIR
 from src.application.pipeline import CourseAssistant
 
 from .exceptions import EvaluationError
 
 
-def evaluate(assistant=None, *, cases_path=ROOT / "input/test_cases.jsonl", output_path=OUTPUT_DIR / "evaluation.txt"):
+def evaluate(assistant=None, *, cases_path=INPUT_DIR / "test_cases.jsonl", output_path=OUTPUT_DIR / "evaluation.txt"):
     assistant = CourseAssistant() if assistant is None else assistant
     cases = [run_stage("evaluation", json.loads, line) for line in read_text(cases_path, EvaluationError).splitlines() if line.strip()]
     if not cases:

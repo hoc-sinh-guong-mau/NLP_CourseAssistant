@@ -1,3 +1,2 @@
-nltk==3.10.4
-PyYAML==6.0.3
-streamlit==1.66.1
+# Compatibility entry point; dependencies are defined in pyproject.toml.
+-e .

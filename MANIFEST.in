@@ -1,0 +1,6 @@
+include LICENSE README.md streamlit_app.py .env.example
+include .streamlit/config.toml
+recursive-include models *.fcfg *.yaml
+recursive-include data/raw *.txt
+recursive-include input *.txt *.jsonl
+recursive-include tests *.py

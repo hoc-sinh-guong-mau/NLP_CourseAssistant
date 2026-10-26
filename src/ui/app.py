@@ -5,10 +5,10 @@ import streamlit as st
 
 from src.application.pipeline import CourseAssistant
 from src.common import NLPError
+from src.config import MAX_VISIBLE_TURNS
 from src.dialogue import DialogueSession
 
 LOGGER = logging.getLogger(__name__)
-MAX_VISIBLE_TURNS = 50
 
 
 def reset_conversation():
@@ -50,7 +50,7 @@ def main():
         st.write('• Môn NLP có mấy tín chỉ?')
         st.write('• Bài tập lớn có phần parser không?')
         st.write('• Phần này cần xuất file gì?')
-        st.caption('Ngữ cảnh được giữ riêng cho phiên này. Hiển thị tối đa 50 lượt gần nhất.')
+        st.caption(f'Ngữ cảnh được giữ riêng cho phiên này. Hiển thị tối đa {MAX_VISIBLE_TURNS} lượt gần nhất.')
         st.caption('Lịch và một số quy định là dữ liệu mẫu. Hệ thống sẽ nói rõ khi thiếu thông tin.')
 
     history = st.session_state['chat_history']

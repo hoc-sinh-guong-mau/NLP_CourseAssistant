@@ -1,9 +1,10 @@
 """CLI argument parsing; workflows live in application.runner."""
 import argparse
+import logging
 from pathlib import Path
 
 from src.application.runner import AssignmentRunner
-from src.config import DEFAULT_SAMPLE_LIMIT, MAX_SAMPLE_LIMIT, RunConfig
+from src.config import DEFAULT_SAMPLE_LIMIT, MAX_SAMPLE_LIMIT, LOG_LEVEL, RunConfig
 
 
 def sample_limit(value):
@@ -17,6 +18,7 @@ def sample_limit(value):
 
 
 def main():
+    logging.basicConfig(level=LOG_LEVEL, format='%(asctime)s %(levelname)s %(name)s: %(message)s')
     cli = argparse.ArgumentParser(description='Classical NLP Course Assistant (SQLite)')
     defaults = RunConfig()
     commands = cli.add_subparsers(dest='command', required=True)

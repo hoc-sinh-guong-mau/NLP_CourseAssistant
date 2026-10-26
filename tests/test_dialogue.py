@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -6,7 +7,7 @@ import tempfile
 import unittest
 
 from src.application.pipeline import CourseAssistant
-from src.config import ROOT
+from src.config import ROOT, SQLITE_PATH
 from src.dialogue import DialogueSession
 from src.retrieval import KnowledgeBase
 
@@ -100,7 +101,8 @@ class DialogueTests(unittest.TestCase):
             source=root/'dialogues.txt'
             source.write_text('Bài tập lớn có phần parser không?\nPhần này cần xuất file gì?\n\nPhần này cần xuất file gì?\n',encoding='utf-8')
             result=subprocess.run([sys.executable,'-m','src.main','dialogue','--input',str(source),'--output-dir',str(root/'out')],
-                                  cwd=ROOT,capture_output=True,text=True)
+                                  cwd=ROOT,capture_output=True,text=True,
+                                  env={**os.environ, 'COURSE_DATABASE': str(SQLITE_PATH)})
             self.assertEqual(result.returncode,0,result.stderr)
             self.assertEqual({p.name for p in (root/'out').iterdir()},{'dialogue.txt'})
             text=(root/'out/dialogue.txt').read_text()

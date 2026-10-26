@@ -2,23 +2,15 @@
 
 Trợ lý tra cứu thông tin môn học bằng **Classical NLP**: FCFG, Chart Parser, semantic rules, nhận diện intent/entity theo luật, SQLite và câu trả lời theo mẫu. Có CLI theo từng mục của đề và giao diện hội thoại Streamlit.
 
-## 1. Thành viên nhóm
-
-Điền thông tin thực tế trước khi nộp; các dòng dưới đây chưa phải danh sách thành viên đã xác nhận.
-
-| STT | Họ và tên | MSSV | Công việc phụ trách |
-| --- | --- | --- | --- |
-| 1 | Chưa điền | Chưa điền | Chưa điền |
-| 2 | Chưa điền | Chưa điền | Chưa điền |
-| 3 | Chưa điền | Chưa điền | Chưa điền |
-| 4 (nếu có) | Chưa điền | Chưa điền | Chưa điền |
+## 1. Tác giả
+    Trương Hiếu Quyền - MSSV: 2153756
 
 ## 2. Hướng dẫn cài đặt
 
 ### 2.1. Môi trường
 
 - Python 3.11 trở lên; Dockerfile sử dụng Python 3.11.
-- Dependency trực tiếp được pin trong [requirements.txt](requirements.txt): NLTK, PyYAML và Streamlit.
+- Metadata, dependency và entry point được khai báo tập trung trong [pyproject.toml](pyproject.toml): NLTK, PyYAML, Streamlit và python-dotenv. `requirements.txt` giữ làm lối cài đặt tương thích.
 - SQLite dùng thư viện chuẩn `sqlite3` của Python, cần hỗ trợ JSON functions; không cần database server riêng.
 - Không cần tải corpus NLTK, API key hoặc mô hình LLM.
 
@@ -27,7 +19,8 @@ Chạy tất cả lệnh trong README tại **thư mục project chứa README.m
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements.txt
+python -m pip install -e ".[dev]"
+cp .env.example .env
 ```
 
 Trên Windows PowerShell, thay lệnh activate bằng `.venv\Scripts\Activate.ps1`.
@@ -39,6 +32,50 @@ python -m src.main build-kb
 ```
 
 Lệnh đọc `data/raw/` và `models/lexicon/`, chuẩn hóa trong bộ nhớ rồi tạo `data/db/course_assistant_normalized.sqlite3`. Không cần KB JSON trung gian. Chạy lại khi thay đổi nguồn dữ liệu; database legacy `course_assistant.sqlite3` không được dùng hoặc ghi đè.
+
+### 2.3. Cấu hình môi trường và đóng gói
+
+[.env.example](.env.example) là mẫu cấu hình; `.env` dùng riêng trên máy và được loại khỏi Git/Docker build context. Thứ tự ưu tiên: **tham số CLI / RunConfig → biến môi trường tiến trình → .env → giá trị mặc định**. Cấu hình đọc một lần khi khởi động; cần khởi động lại sau khi sửa.
+
+| Biến | Mặc định | Mục đích |
+| --- | --- | --- |
+| `COURSE_ENV_FILE` | `.env` tại thư mục đang chạy | Chọn tệp môi trường; tệp được chỉ định phải tồn tại |
+| `COURSE_ROOT` | Root repository hoặc tài nguyên cài đặt | Gốc tài nguyên |
+| `COURSE_DATA_DIR`, `COURSE_MODELS_DIR`, `COURSE_INPUT_DIR` | `data`, `models`, `input` dưới root | Thư mục dữ liệu, grammar/lexicon, đầu vào |
+| `COURSE_RAW_DIR`, `COURSE_GRAMMAR_PATH`, `COURSE_LEXICON_DIR` | Theo data/models | Ghi đè từng nguồn |
+| `COURSE_OUTPUT_DIR` | `output` | Nơi ghi đúng 9 artifact |
+| `COURSE_DB_DIR`, `COURSE_DATABASE` | `data/db`, `data/db/course_assistant_normalized.sqlite3` | Thư mục và tệp SQLite; tệp cụ thể được ưu tiên |
+| `COURSE_SAMPLE_LIMIT` | `100` | Số câu sinh mặc định, 1–10.000 |
+| `COURSE_GENERATION_MAX_DEPTH` | `12` | Độ sâu sinh, 1–50 |
+| `COURSE_GENERATION_CANDIDATE_FACTOR` | `20` | Hệ số giới hạn ứng viên, 1–100 |
+| `COURSE_SQLITE_TIMEOUT` | `5` | Timeout SQLite, 0,1–300 giây |
+| `COURSE_UI_MAX_TURNS` | `50` | Số lượt hiển thị, 1–1.000 |
+| `COURSE_LOG_LEVEL` | `INFO` | Log CLI: DEBUG / INFO / WARNING / ERROR / CRITICAL |
+| `STREAMLIT_SERVER_ADDRESS`, `STREAMLIT_SERVER_PORT` | Local: `127.0.0.1:8501`; Docker: `0.0.0.0:8501` | Địa chỉ phục vụ UI |
+
+Đường dẫn nguồn tương đối được tính theo `COURSE_ROOT`. Đường dẫn DB/output tính theo root khi chạy source, theo thư mục đang chạy khi cài wheel để tránh ghi vào tài nguyên của môi trường Python. `.env` không nội suy `${...}`. Không đưa bí mật vào repository. Giá trị số/path rỗng không hợp lệ báo lỗi có stage `configuration` ngay khi khởi động.
+
+Sau khi cài đặt, có thể dùng entry point thay cho `python -m src.main`:
+
+```bash
+course-assistant --help
+course-assistant run
+course-assistant test
+course-assistant-ui
+# Hoặc tái hiện workflow rồi mở UI:
+course-assistant-workflow
+```
+
+`course-assistant-ui` chỉ mở UI; cần build KB trước. Launcher này nạp `.env` trước khi khởi động Streamlit. Có thể truyền thêm cờ như `course-assistant-ui --server.port=8502`.
+
+Tạo wheel/source distribution để chuyển sang môi trường khác:
+
+```bash
+python -m build
+python -m pip install dist/nlp_course_assistant-0.1.0-py3-none-any.whl
+```
+
+Wheel chứa code, grammar, lexicon, raw, input và tests dưới `share/nlp-course-assistant` của môi trường Python; không chứa `.env`, SQLite dựng sẵn hoặc output. Chạy tại thư mục có quyền ghi rồi dùng `course-assistant run`. Giữ cấu trúc `src/` hiện tại để tương thích các lệnh và import đã có. Cách khai báo tuân theo [hướng dẫn pyproject của PyPA](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/).
 
 ## 3. Hướng dẫn chạy chương trình
 
@@ -111,10 +148,10 @@ python -m src.main query --help
 
 ```bash
 python -m src.main build-kb
-python -m streamlit run streamlit_app.py
+course-assistant-ui
 ```
 
-Mở http://localhost:8501. UI dùng `DialogueSession` riêng trong `st.session_state` của từng người dùng, giữ context qua các lần rerun. **Hội thoại mới** xóa lịch sử/context. Bật **Hiện phân tích pipeline** để xem parse tree, semantic, entity, query và context khi demo. Hiển thị tối đa 50 lượt gần nhất.
+Mở http://localhost:8501. UI dùng `DialogueSession` riêng trong `st.session_state` của từng người dùng, giữ context qua các lần rerun. **Hội thoại mới** xóa lịch sử/context. Bật **Hiện phân tích pipeline** để xem parse tree, semantic, entity, query và context khi demo. Hiển thị số lượt theo `COURSE_UI_MAX_TURNS` (mặc định 50).
 
 UI gọi trực tiếp pipeline, không tự ghi các file output. CLI chat cũng có context; dùng `/reset` để bắt đầu phiên mới và `/exit` để thoát.
 
@@ -129,7 +166,18 @@ docker run --rm -p 127.0.0.1:8501:8501 \
   -v "$PWD/output:/app/output" nlp-course-assistant
 ```
 
-Lệnh mặc định của container chạy workflow để tái tạo 9 file, kiểm tra smoke evaluation rồi mở Streamlit. Mở http://localhost:8501; Ctrl+C để dừng. Nếu evaluation thất bại thì UI không khởi động. Dockerfile build KB từ raw, không phụ thuộc .venv/database/output dựng sẵn trên host; có HTTP health check cho UI.
+Lệnh mặc định của container chạy workflow để tái tạo 9 file, kiểm tra smoke evaluation rồi mở Streamlit. Mở http://localhost:8501; Ctrl+C để dừng. Nếu evaluation thất bại thì UI không khởi động. Dockerfile tạo venv tại `/opt/venv`, đưa `/opt/venv/bin` vào `PATH`, cài package trong venv, build KB từ raw và chạy bằng user `assistant` (UID 10001), không phụ thuộc .venv/database/output dựng sẵn trên host; có HTTP health check cho UI. Bind mount output cần cho UID này quyền ghi trên Linux; có thể dùng `--user "$(id -u):$(id -g)"` khi UID host khác.
+
+Đưa cấu hình vào container bằng `--env-file` và ghi đè địa chỉ lắng nghe để truy cập qua port mapping:
+
+```bash
+docker run --rm --env-file .env -e STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
+  -p 127.0.0.1:8501:8501 -v "$PWD/output:/app/output" nlp-course-assistant
+```
+
+Các path trong `.env` khi chạy Docker là path bên trong container. Nếu đổi `STREAMLIT_SERVER_PORT`, đổi cả cổng bên phải của `-p`. Không copy `.env` vào image.
+
+Không cần `source activate` trong container: `python`, `pip`, CLI, Streamlit và health check đều chọn venv qua `PATH`. Venv được tạo trong image Linux, không copy `.venv` từ host.
 
 Ghi đè command để chỉ chạy CLI hoặc test, không mở UI:
 
@@ -183,9 +231,11 @@ project/
 ├── input/                       # sentences.txt, dialogues.txt, test_cases.jsonl
 ├── output/                      # Kết quả theo đề
 ├── tests/
-├── docs/
 ├── .streamlit/config.toml
 ├── streamlit_app.py
+├── pyproject.toml              # Metadata, dependencies, CLI/UI entry points
+├── .env.example                # Mẫu cấu hình triển khai
+├── LICENSE                     # MIT
 ├── requirements.txt
 ├── README.md
 └── Dockerfile
@@ -373,13 +423,14 @@ output/
 
 Mỗi output câu độc lập có một dòng cho mỗi dòng input, kể cả dòng trống. Dữ liệu không diễn giải được là null; parse không hợp lệ là `()`. Dialogue/evaluation dùng định dạng báo cáo riêng. Không tự xuất kb-normalization.json, traces.jsonl, parse-traces.jsonl hoặc sql-query.txt.
 
-Trước khi nộp: điền thành viên, chạy run/test, kiểm tra output, hoàn thiện báo cáo/video demo và đóng gói src/data/models/input/output/README.md/Dockerfile theo đề. Giữ requirements.txt và entry point/config UI nếu nộp giao diện; tests/docs hỗ trợ tái hiện và giải thích. Không cần nộp .venv hoặc Docker image.
+Trước khi nộp: điền thành viên, chạy run/test, kiểm tra output, hoàn thiện báo cáo/video demo và đóng gói src/data/models/input/output/README.md/Dockerfile theo đề. Giữ requirements.txt và entry point/config UI nếu nộp giao diện; tests hỗ trợ tái hiện và kiểm chứng. Không cần nộp .venv hoặc Docker image.
 
 ## 14. Tài liệu và ghi nhận
 
-- [Kiến trúc](docs/architecture.md), [KB schema](docs/kb-schema.md), [Query](docs/queries.md).
-- [Answer](docs/answers.md), [Dialogue](docs/dialogue.md), [SQLite](docs/sqlite.md), [Streamlit](docs/streamlit.md).
+- Code theo module: [Pipeline](src/application/pipeline.py), [Query](src/retrieval/query_builder.py), [SQLite](src/retrieval/sqlite/storage.py), [Dialogue](src/dialogue/session.py), [UI](src/ui/app.py).
 - Nguồn dữ liệu: đặc tả bài tập và bộ raw/sample được cung cấp.
 - Thư viện: [NLTK](https://www.nltk.org/), [PyYAML](https://pyyaml.org/), [Streamlit](https://docs.streamlit.io/).
 
 Có hỗ trợ Codex trong phát triển; nhóm cần kiểm chứng, hiểu và giải thích thuật toán/code, ghi nhận nguồn và sự hỗ trợ theo quy định môn học.
+
+Mã nguồn phát hành theo [MIT License](LICENSE). Giấy phép này không thay thế quyền sử dụng tài liệu môn học, dữ liệu nguồn hoặc giấy phép riêng của dependency.

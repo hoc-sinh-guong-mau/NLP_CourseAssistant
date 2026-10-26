@@ -4,14 +4,14 @@ from pathlib import Path
 
 from src.artifacts.exceptions import ArtifactError
 from src.common.files import read_text, write_text
-from src.config import ROOT, OUTPUT_DIR
+from src.config import INPUT_DIR, OUTPUT_DIR
 from src.parsing import Parser
 from src.preprocessing import normalize, tokenize
 
 from .exceptions import ParseInputError
 
 
-def parse_file(input_path=ROOT / "input" / "sentences.txt",
+def parse_file(input_path=INPUT_DIR / "sentences.txt",
                output_path=OUTPUT_DIR / "parse-results.txt", trace_path=None):
     input_path, output_path = Path(input_path), Path(output_path)
     if input_path.resolve() == output_path.resolve():

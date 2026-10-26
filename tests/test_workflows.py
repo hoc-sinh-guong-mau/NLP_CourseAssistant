@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -7,7 +8,7 @@ import unittest
 from unittest.mock import Mock
 
 from src.application.runner import AssignmentRunner
-from src.config import ROOT, RunConfig
+from src.config import ROOT, SQLITE_PATH, RunConfig
 from src.evaluation.evaluator import evaluate
 from src.evaluation.exceptions import EvaluationError
 from src.parsing import GenerationError
@@ -62,7 +63,8 @@ class WorkflowTests(unittest.TestCase):
 
     def test_cli_rejects_invalid_limits(self):
         result=subprocess.run([sys.executable,'-m','src.main','run','--limit','10001'],
-                              cwd=ROOT,capture_output=True,text=True)
+                              cwd=ROOT,capture_output=True,text=True,
+                                  env={**os.environ, 'COURSE_DATABASE': str(SQLITE_PATH)})
         self.assertEqual(result.returncode,2)
         self.assertIn('limit must be between',result.stderr)
 
@@ -89,7 +91,8 @@ class WorkflowTests(unittest.TestCase):
                     if command == 'generate':args+=['--limit','3']
                     if command in {'parse','semantic','intent-entity','query','answer','batch'}:
                         args+=['--input',str(source)]
-                    result=subprocess.run(args,cwd=ROOT,capture_output=True,text=True)
+                    result=subprocess.run(args,cwd=ROOT,capture_output=True,text=True,
+                                  env={**os.environ, 'COURSE_DATABASE': str(SQLITE_PATH)})
                     self.assertEqual(result.returncode,0,result.stderr)
                     self.assertEqual({p.name for p in output.iterdir()},expected)
                     if 'query.txt' in expected:
@@ -122,6 +125,7 @@ class WorkflowTests(unittest.TestCase):
     def test_numbered_part_commands_are_rejected(self):
         for name in ('part1','part2','part3','part4'):
             with self.subTest(command=name):
-                result=subprocess.run([sys.executable,'-m','src.main',name],cwd=ROOT,capture_output=True,text=True)
+                result=subprocess.run([sys.executable,'-m','src.main',name],cwd=ROOT,capture_output=True,text=True,
+                                  env={**os.environ, 'COURSE_DATABASE': str(SQLITE_PATH)})
                 self.assertEqual(result.returncode,2)
                 self.assertIn('invalid choice',result.stderr)

@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 
 from src.common.files import write_text
-from src.config import DATA_DIR, KB_DIR, LEXICON_DIR
+from src.config import RAW_DIR, KB_DIR, LEXICON_DIR
 from src.lexical import Lexicon
 from src.preprocessing import normalize
 from src.retrieval.exceptions import KnowledgeBaseError
@@ -192,7 +192,7 @@ def parse_source(raw_dir, filename, parser, *args):
                                  context={'path': str(raw_dir / filename)}) from exc
 
 
-def build_collections(raw_dir=DATA_DIR / 'raw', lexicon_dir=LEXICON_DIR):
+def build_collections(raw_dir=RAW_DIR, lexicon_dir=LEXICON_DIR):
     raw_dir = Path(raw_dir)
     lexicon = Lexicon.load(lexicon_dir)
     topics = [entry for entry in lexicon.entries if entry.category == 'TOPIC']
@@ -223,7 +223,7 @@ def build_collections(raw_dir=DATA_DIR / 'raw', lexicon_dir=LEXICON_DIR):
     return collections
 
 
-def normalize_kb(raw_dir=DATA_DIR / 'raw', output_dir=KB_DIR, lexicon_dir=LEXICON_DIR, report_path=None):
+def normalize_kb(raw_dir=RAW_DIR, output_dir=KB_DIR, lexicon_dir=LEXICON_DIR, report_path=None):
     # Parse and validate all collections before touching existing JSON files.
     collections = build_collections(raw_dir, lexicon_dir)
     for name, records in collections.items():

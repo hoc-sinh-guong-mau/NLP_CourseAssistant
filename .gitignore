@@ -7,3 +7,13 @@ output/
 input/*
 
 data/db/course_assistant_normalized.sqlite3*
+
+.env
+.env.*
+!.env.example
+build/
+dist/
+*.egg-info/
+
+# Required default dialogue fixture must survive a fresh checkout.
+!input/dialogues.txt
