@@ -2,3 +2,4 @@
 __pycache__
 .git
 .DS_Store
+data/db/course_assistant_normalized.sqlite3*

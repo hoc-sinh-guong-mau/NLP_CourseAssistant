@@ -144,6 +144,10 @@ CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CHAPTER_R
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='NEXT_CHAPTER', TARGET='NONE'] -> 'còn' 'chương' 'sau'
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CONTENT_CHAPTER', TARGET='NONE'] -> 'nội' 'dung' 'này' 'nằm' 'ở' 'chương' 'nào'
 
+CONTEXT_QUERY[INTENT='CONTEXT_DEPENDENT', ENTITY='CONTEXT_REF', QTYPE='RELATED_RESOURCE', TARGET='NONE'] -> 'tài' 'liệu' 'của' 'phần' 'này' 'ở' 'đâu'
+CONTEXT_QUERY[INTENT='CONTEXT_DEPENDENT', ENTITY='CONTEXT_REF', QTYPE='CHAPTER_RESOURCE', TARGET='NONE'] -> 'tài' 'liệu' 'của' 'chương' 'này' 'ở' 'đâu'
+CONTEXT_QUERY[INTENT='CONTEXT_DEPENDENT', ENTITY='CONTEXT_REF', QTYPE='COURSE_CHAPTER_COUNT', TARGET='NONE'] -> 'môn' 'này' 'có' 'bao' 'nhiêu' 'chương'
+
 # Source: rules/course.fcfg
 # course: structural rules. Entity aliases belong in models/lexicon/.
 COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='CREDITS'] -> COURSE[ENTITY=?e] CREDIT_WH[]
@@ -171,6 +175,8 @@ COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='OBJECTIVES'] -> 'mục'
 COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_FORMAT'] -> EXAM[ENTITY=?e] 'thi' 'theo' 'hình' 'thức' 'nào'
 COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_OPEN_BOOK'] -> EXAM[ENTITY=?e] 'có' 'được' 'sử' 'dụng' 'tài' 'liệu' 'không'
 COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT_WEIGHT'] -> ASSESSMENT_ITEM[ENTITY=?e] 'chiếm' 'bao' 'nhiêu' 'phần' 'trăm' 'điểm'
+
+COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='CHAPTER_COUNT'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'chương'
 
 # Source: rules/deadlines.fcfg
 # deadlines: structural rules. Entity aliases belong in models/lexicon/.

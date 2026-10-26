@@ -82,6 +82,10 @@ def build_specs():
     for qtype in ('LO_INFO','LO_CONTENT'):
         add('GET_LO',qtype,'learning_outcomes','learning_outcome_id',
             ['description','parent_id','chapter_ids','topic_ids','links_complete'])
+    add('GET_COURSE_INFO','CHAPTER_COUNT','chapters','course_id',['number'],field='course_id')
+    add('GET_RESOURCE','RESOURCE_BY_CHAPTER','resources',select=['title','authors','year','topic_links_complete'],
+        conditions=[ConditionSpec('chapter_ids','contains','chapter_id')])
+    add('GET_TOPIC','FIND_CHAPTER_BY_LO','learning_outcomes','learning_outcome_id',['description','chapter_ids','links_complete'])
     return specs
 
 

@@ -93,7 +93,8 @@ class LexiconTests(unittest.TestCase):
         self.assertEqual(record["status"], "missing_information")
         self.assertEqual(record["query"]["filters"], {"id": "BTL01"})
         week_record = CourseAssistant().process("tuần ba học gì?")
-        self.assertEqual(week_record["status"], "unsupported_answer")
+        self.assertEqual(week_record["status"], "ok")
+        self.assertIn("Tuần 3", week_record["answer"])
         self.assertEqual(week_record["query"]["filters"], {"id": "WEEK_03"})
         self.assertEqual(week_record["result"][0]["week"], 3)
 

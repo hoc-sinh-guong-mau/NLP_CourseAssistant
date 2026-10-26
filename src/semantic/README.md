@@ -40,7 +40,7 @@ python -m unittest discover -s tests -p 'test_semantics.py' -v
 
 Pipeline gọi bước này với stage `intent_entity`, trước query, nên câu có semantic nhưng chưa có query handler vẫn có kết quả intent/entity. Parse thất bại, semantic chưa hỗ trợ hoặc nhiều cách hiểu khác nhau cho kết quả null; các ứng viên mơ hồ được giữ trong trace. Context chưa giải quyết vẫn giữ `context_ref`, không thay bằng ID đoán.
 
-`python -m src.main batch` xuất `output/intent-entity.txt`, một dòng JSON hoặc null cho mỗi câu đầu vào không rỗng theo thứ tự. Đối chiếu cùng dòng với semantic.txt và traces.jsonl. Nếu cần kiểm tra riêng:
+`python -m src.main batch` xuất `output/intent-entity.txt`, một dòng JSON hoặc null cho mỗi dòng đầu vào, kể cả dòng trống theo thứ tự. Đối chiếu cùng dòng với semantic.txt. API trả record để debug nhưng CLI không ghi trace phụ. Nếu cần kiểm tra riêng:
 
 ```bash
 python -m unittest discover -s tests -p 'test_intent_entity.py' -v

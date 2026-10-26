@@ -114,7 +114,8 @@ class QueryTests(unittest.TestCase):
 
     def test_query_export_keeps_nulls_and_does_not_need_answer_handler(self):
         records=[self.assistant.process(text) for text in ('Môn NLP có mấy tín chỉ?', 'Thời tiết hôm nay thế nào?', 'Còn chương sau?')]
-        self.assertEqual(records[0]['status'],'unsupported_answer')
+        self.assertEqual(records[0]['status'],'ok')
+        self.assertIn("3 tín chỉ", records[0]["answer"])
         with tempfile.TemporaryDirectory() as directory:
             export_records(records,output_dir=directory)
             lines=(Path(directory)/'query.txt').read_text(encoding='utf-8').splitlines()

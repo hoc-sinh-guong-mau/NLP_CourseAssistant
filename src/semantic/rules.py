@@ -17,7 +17,7 @@ def build_rules() -> dict[RuleKey, SemanticRule]:
                 raise InvalidSemanticError(f"Duplicate semantic rule: {key}")
             rules[key] = SemanticRule(dict(slots), dict(optional or {}))
 
-    group('GET_COURSE_INFO', '''CREDITS MAIN_PARTS COURSE_ID COURSE_NAME SEMESTER ECTS
+    group('GET_COURSE_INFO', '''CREDITS CHAPTER_COUNT MAIN_PARTS COURSE_ID COURSE_NAME SEMESTER ECTS
         COURSE_TYPE DEPARTMENT FORMAT DURATION_WEEKS TOTAL_HOURS LECTURE_HOURS
         ASSIGNMENT_HOURS SELF_STUDY_HOURS DESCRIPTION OBJECTIVES ASSESSMENT LEARNING_OUTCOMES''',
         {'course_id': 'ENTITY'})
@@ -41,12 +41,14 @@ def build_rules() -> dict[RuleKey, SemanticRule]:
     group('GET_DEADLINE', 'DEADLINE', {'assignment_id': 'ENTITY'})
     group('GET_RESOURCE', 'RESOURCE_BY_CATEGORY', {'resource_category_id': 'ENTITY'})
     group('GET_RESOURCE', 'RESOURCE_BY_TOPIC', {'topic_id': 'ENTITY'})
+    group('GET_RESOURCE', 'RESOURCE_BY_CHAPTER', {'chapter_id': 'ENTITY'})
+    group('GET_TOPIC', 'FIND_CHAPTER_BY_LO', {'learning_outcome_id': 'ENTITY'})
     group('GET_RESOURCE', 'TEXTBOOK_LIST REFERENCE_LIST', {'course_id': 'ENTITY'})
     group('GET_RESOURCE', 'RESOURCE_AUTHOR RESOURCE_YEAR', {'resource_id': 'ENTITY'})
     group('GET_INSTRUCTOR', 'INSTRUCTOR', {'course_id': 'ENTITY'})
     group('GET_RULE', 'PERMISSION RULE_INFO', {'rule_id': 'ENTITY'}, {'assignment_id': 'TARGET'})
     group('GET_LO', 'LO_INFO LO_CONTENT', {'learning_outcome_id': 'ENTITY'})
-    group('CONTEXT_DEPENDENT', 'NEXT_CHAPTER PART_OUTPUT CHAPTER_RESOURCE CONTENT_CHAPTER',
+    group('CONTEXT_DEPENDENT', 'NEXT_CHAPTER PART_OUTPUT CHAPTER_RESOURCE CONTENT_CHAPTER RELATED_RESOURCE COURSE_CHAPTER_COUNT',
           {'context_ref': 'ENTITY'})
     group('CONTEXT_DEPENDENT', 'RELATED_TOPIC', {'context_ref': 'ENTITY', 'topic_id': 'TARGET'})
     return rules

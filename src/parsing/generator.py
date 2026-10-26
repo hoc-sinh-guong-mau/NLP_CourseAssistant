@@ -1,4 +1,6 @@
 """Generate from a CFG projection, accepting only feature-valid sentences."""
+from src.config import DEFAULT_SAMPLE_LIMIT, MAX_SAMPLE_LIMIT, GENERATION_MAX_DEPTH, GENERATION_CANDIDATE_FACTOR
+
 from nltk.grammar import CFG, Nonterminal, Production
 from nltk.featstruct import TYPE
 from nltk.parse.generate import generate
@@ -8,8 +10,8 @@ from .parser import Parser
 from .grammar_loader import load_grammar
 
 
-def generate_sentences(limit=1000):
-    if not 1 <= limit <= 10000:
+def generate_sentences(limit=DEFAULT_SAMPLE_LIMIT):
+    if not isinstance(limit, int) or isinstance(limit, bool) or not 1 <= limit <= MAX_SAMPLE_LIMIT:
         raise GenerationError("limit must be between 1 and 10000")
     grammar = load_grammar()
     productions = list(dict.fromkeys(
@@ -22,7 +24,7 @@ def generate_sentences(limit=1000):
     parser = Parser(grammar)
     seen = set()
     sentences = []
-    for tokens in generate(projection, depth=12, n=limit * 20):
+    for tokens in generate(projection, depth=GENERATION_MAX_DEPTH, n=limit * GENERATION_CANDIDATE_FACTOR):
         sentence = " ".join(tokens)
         if sentence not in seen:
             seen.add(sentence)

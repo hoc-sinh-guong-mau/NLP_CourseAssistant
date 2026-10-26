@@ -4,4 +4,6 @@ __pycache__/
 .pytest_cache/
 .DS_Store
 output/
-input/
+input/*
+
+data/db/course_assistant_normalized.sqlite3*

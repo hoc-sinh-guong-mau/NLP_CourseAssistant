@@ -20,14 +20,19 @@ def export_grammar(path=OUTPUT_DIR / "grammar.txt"):
     return path
 
 
-def export_records(records, output_dir=None):
+PART_II_OUTPUTS = {
+    "semantic": "semantic.txt",
+    "intent_entity": "intent-entity.txt",
+    "query": "query.txt",
+    "answer": "answer.txt",
+}
+
+
+def export_records(records, output_dir=None, fields=None):
     output_dir = OUTPUT_DIR if output_dir is None else Path(output_dir)
-    export_grammar(output_dir / "grammar.txt")
-    fields = {
-        "parse-results.txt": "parse_tree", "semantic.txt": "semantic",
-        "intent-entity.txt": "intent_entity", "query.txt": "query", "answer.txt": "answer",
-    }
-    for filename, field in fields.items():
-        values = [r[field] if isinstance(r[field], str) else dump(r[field]) for r in records]
-        write_text(output_dir / filename, "".join(value + "\n" for value in values), ArtifactError)
-    write_text(output_dir / "traces.jsonl", "".join(dump(r) + "\n" for r in records), ArtifactError)
+    fields = tuple(PART_II_OUTPUTS) if fields is None else tuple(fields)
+    if any(field not in PART_II_OUTPUTS for field in fields):
+        raise ArtifactError("Only assignment Part II outputs may be exported")
+    for field in fields:
+        values = [r.get(field) if isinstance(r.get(field), str) else dump(r.get(field)) for r in records]
+        write_text(output_dir / PART_II_OUTPUTS[field], "".join(value + "\n" for value in values), ArtifactError)
