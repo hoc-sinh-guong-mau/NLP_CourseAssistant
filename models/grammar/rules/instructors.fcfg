@@ -1,4 +1,4 @@
-# instructors: structural rules. Entity aliases belong in data/lexicon/.
+# instructors: structural rules. Entity aliases belong in models/lexicon/.
 INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> 'giảng' 'viên' COURSE[] 'là' WHO[]
 INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> 'giảng' 'viên' 'môn' 'nlp' 'là' WHO[]
 INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> WHO[] 'là' 'giảng' 'viên' 'môn' 'nlp'

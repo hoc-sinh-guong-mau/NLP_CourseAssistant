@@ -1,4 +1,4 @@
-# course: structural rules. Entity aliases belong in data/lexicon/.
+# course: structural rules. Entity aliases belong in models/lexicon/.
 COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='CREDITS'] -> COURSE[ENTITY=?e] CREDIT_WH[]
 COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='MAIN_PARTS'] -> 'môn' 'học' MAIN_PARTS_WH[]
 COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_DURATION'] -> EXAM[ENTITY=?e] DURATION_WH[]

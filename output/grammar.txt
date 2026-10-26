@@ -12,7 +12,7 @@ S[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t] -> CONTEXT_QUERY[ENTITY=?e, INTENT=
 S[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t] -> REQUEST_PREFIX[] RULE_LO_REQUEST[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t] REQUEST_SUFFIX[]
 
 # Source: rules/assignments.fcfg
-# assignments: structural rules. Entity aliases belong in data/lexicon/.
+# assignments: structural rules. Entity aliases belong in models/lexicon/.
 ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='REQUIREMENTS'] -> ASSIGNMENT[] 'yêu' 'cầu' 'xây' 'dựng' WHAT_PLURAL[]
 ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='REQUIREMENTS'] -> ASSIGNMENT[] 'yêu' 'cầu' WHAT[]
 ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='REQUIREMENTS'] -> ASSIGNMENT[] 'có' 'những' 'yêu' 'cầu' WHAT[]
@@ -30,7 +30,7 @@ ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_REQUIREMENTS'] 
 ASSIGNMENT_QUERY[ENTITY='CO3085', INTENT='GET_ASSIGNMENT', QTYPE='ASSIGNMENT_LIST'] -> 'tôi' 'cần' 'hoàn' 'thành' 'những' 'bài' 'tập' 'nào'
 
 # Source: rules/common.fcfg
-# common: structural rules. Entity aliases belong in data/lexicon/.
+# common: structural rules. Entity aliases belong in models/lexicon/.
 MAIN_PARTS_WH[] -> 'gồm' 'những' 'phần' 'nào'
 MAIN_PARTS_WH[] -> 'có' 'những' 'phần' 'nào'
 DURATION_WH[] -> 'bao' 'nhiêu' 'phút'
@@ -137,7 +137,7 @@ LO_CONTENT_END[] -> 'liên' 'quan' 'đến' 'nội' 'dung' 'những' 'gì'
 ASSIGNMENT[] -> ASSIGNMENT_NAME[ENTITY='BTL01']
 
 # Source: rules/context.fcfg
-# context: structural rules. Entity aliases belong in data/lexicon/.
+# context: structural rules. Entity aliases belong in models/lexicon/.
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='RELATED_TOPIC', TARGET=?t] -> CONTEXT_PRONOUN[] 'có' 'liên' 'quan' 'đến' TOPIC[ENTITY=?t] 'không'
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='PART_OUTPUT', TARGET='NONE'] -> 'phần' 'này' 'cần' 'xuất' 'file' WHAT[]
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CHAPTER_RESOURCE', TARGET='NONE'] -> 'tài' 'liệu' 'của' 'chương' 'này' 'là' WHAT[]
@@ -145,7 +145,7 @@ CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='NEXT_CHAP
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CONTENT_CHAPTER', TARGET='NONE'] -> 'nội' 'dung' 'này' 'nằm' 'ở' 'chương' 'nào'
 
 # Source: rules/course.fcfg
-# course: structural rules. Entity aliases belong in data/lexicon/.
+# course: structural rules. Entity aliases belong in models/lexicon/.
 COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='CREDITS'] -> COURSE[ENTITY=?e] CREDIT_WH[]
 COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='MAIN_PARTS'] -> 'môn' 'học' MAIN_PARTS_WH[]
 COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_DURATION'] -> EXAM[ENTITY=?e] DURATION_WH[]
@@ -173,7 +173,7 @@ COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_OPEN_BOOK'] -> EXA
 COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT_WEIGHT'] -> ASSESSMENT_ITEM[ENTITY=?e] 'chiếm' 'bao' 'nhiêu' 'phần' 'trăm' 'điểm'
 
 # Source: rules/deadlines.fcfg
-# deadlines: structural rules. Entity aliases belong in data/lexicon/.
+# deadlines: structural rules. Entity aliases belong in models/lexicon/.
 DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' ASSIGNMENT[] 'là' WHEN[]
 DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' 'của' ASSIGNMENT[] 'là' WHEN[]
 DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'hạn' 'nộp' ASSIGNMENT[] 'là' WHEN[]
@@ -181,18 +181,18 @@ DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> ASSIG
 DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> WHEN[] 'nộp' ASSIGNMENT[]
 
 # Source: rules/instructors.fcfg
-# instructors: structural rules. Entity aliases belong in data/lexicon/.
+# instructors: structural rules. Entity aliases belong in models/lexicon/.
 INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> 'giảng' 'viên' COURSE[] 'là' WHO[]
 INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> 'giảng' 'viên' 'môn' 'nlp' 'là' WHO[]
 INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> WHO[] 'là' 'giảng' 'viên' 'môn' 'nlp'
 
 # Source: rules/learning_outcomes.fcfg
-# learning_outcomes: structural rules. Entity aliases belong in data/lexicon/.
+# learning_outcomes: structural rules. Entity aliases belong in models/lexicon/.
 LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE='LO_INFO'] -> LO[ENTITY=?e] LO_INFO_END[]
 LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE='LO_CONTENT'] -> LO[ENTITY=?e] LO_CONTENT_END[]
 
 # Source: rules/policies.fcfg
-# policies: structural rules. Entity aliases belong in data/lexicon/.
+# policies: structural rules. Entity aliases belong in models/lexicon/.
 RULE_LO_REQUEST[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t] -> RULE_QUERY[ENTITY=?e, INTENT=?i, QTYPE=?q, TARGET=?t]
 RULE_LO_REQUEST[ENTITY=?e, INTENT='GET_LO', QTYPE=?q, TARGET='NONE'] -> LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE=?q]
 RULE_QUERY[ENTITY=?e, INTENT='GET_RULE', QTYPE='PERMISSION', TARGET='NONE'] -> RULE_PERSON[] RULE_PERMISSION_START[] RULE_ACTION[ENTITY=?e] RULE_YESNO[]
@@ -214,7 +214,7 @@ RULE_QUERY[ENTITY='OUT_OF_SCOPE', INTENT='GET_RULE', QTYPE='RULE_INFO', TARGET='
 RULE_QUERY[ENTITY='OUT_OF_SCOPE', INTENT='GET_RULE', QTYPE='PERMISSION', TARGET='NONE'] -> RULE_SYSTEM[] 'có' 'được' 'tự' 'tạo' 'câu' 'trả' 'lời' RULE_YESNO[]
 
 # Source: rules/resources.fcfg
-# resources: structural rules. Entity aliases belong in data/lexicon/.
+# resources: structural rules. Entity aliases belong in models/lexicon/.
 RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_CATEGORY'] -> 'tài' 'liệu' 'tham' 'khảo' 'về' RESOURCE_TOPIC[ENTITY=?e] 'là' WHAT[]
 RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_CATEGORY'] -> 'tài' 'liệu' 'nào' 'liên' 'quan' 'đến' RESOURCE_TOPIC[ENTITY=?e]
 RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_TOPIC'] -> 'tài' 'liệu' 'nào' 'nói' 'về' TOPIC[ENTITY=?e]
@@ -226,7 +226,7 @@ RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_AUTHOR'] -> 'ai
 RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_YEAR'] -> RESOURCE_TITLE[ENTITY=?e] 'xuất' 'bản' 'năm' 'nào'
 
 # Source: rules/schedule.fcfg
-# schedule: structural rules. Entity aliases belong in data/lexicon/.
+# schedule: structural rules. Entity aliases belong in models/lexicon/.
 SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='WEEK_CONTENT', TARGET='NONE'] -> WEEK[ENTITY=?e] WEEK_CONTENT_WH[]
 SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='CHAPTER_WEEK', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'học' 'vào' 'tuần' 'nào'
 SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='CHAPTER_WEEK', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'được' 'học' 'ở' 'tuần' 'nào'
@@ -238,7 +238,7 @@ SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='WEEK_ACTIVITY', TARGET='
 SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='WEEK_MILESTONE', TARGET='NONE'] -> WEEK[ENTITY=?e] 'có' 'mốc' 'bài' 'tập' 'lớn' 'nào'
 
 # Source: rules/topics.fcfg
-# topics: structural rules. Entity aliases belong in data/lexicon/.
+# topics: structural rules. Entity aliases belong in models/lexicon/.
 TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> 'chương' 'nào' 'nói' 'về' TOPIC[ENTITY=?e]
 TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> 'chương' 'nào' 'học' 'về' TOPIC[ENTITY=?e]
 TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> TOPIC[ENTITY=?e] 'được' 'học' 'ở' 'đâu'
@@ -250,7 +250,7 @@ TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='CHAPTER_HAS_TOPIC', TARGET=?t]
 TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPICS', TARGET=?t] -> 'chương' 'nào' 'học' 'về' TOPIC[ENTITY=?e] 'và' TOPIC[ENTITY=?t]
 TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPICS', TARGET=?t] -> 'chương' 'nào' 'nói' 'về' TOPIC[ENTITY=?e] 'và' TOPIC[ENTITY=?t]
 
-# Generated lexical productions; edit data/lexicon/*.yaml.
+# Generated lexical productions; edit models/lexicon/*.yaml.
 CREDIT_WH[] -> 'có' 'bao' 'nhiêu' 'tín' 'chỉ'
 CREDIT_WH[] -> 'có' 'mấy' 'tín' 'chỉ'
 WEEK_CONTENT_WH[] -> 'học' 'gì'

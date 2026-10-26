@@ -1,4 +1,4 @@
-# deadlines: structural rules. Entity aliases belong in data/lexicon/.
+# deadlines: structural rules. Entity aliases belong in models/lexicon/.
 DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' ASSIGNMENT[] 'là' WHEN[]
 DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' 'của' ASSIGNMENT[] 'là' WHEN[]
 DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'hạn' 'nộp' ASSIGNMENT[] 'là' WHEN[]

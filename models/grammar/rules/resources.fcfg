@@ -1,4 +1,4 @@
-# resources: structural rules. Entity aliases belong in data/lexicon/.
+# resources: structural rules. Entity aliases belong in models/lexicon/.
 RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_CATEGORY'] -> 'tài' 'liệu' 'tham' 'khảo' 'về' RESOURCE_TOPIC[ENTITY=?e] 'là' WHAT[]
 RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_CATEGORY'] -> 'tài' 'liệu' 'nào' 'liên' 'quan' 'đến' RESOURCE_TOPIC[ENTITY=?e]
 RESOURCE_QUERY[ENTITY=?e, INTENT='GET_RESOURCE', QTYPE='RESOURCE_BY_TOPIC'] -> 'tài' 'liệu' 'nào' 'nói' 'về' TOPIC[ENTITY=?e]

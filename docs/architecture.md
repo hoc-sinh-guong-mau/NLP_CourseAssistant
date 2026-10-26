@@ -41,14 +41,14 @@ Luồng phụ thuộc: CLI → application → các module xử lý. Semantic kh
 
 ## Thêm một alias hoặc entity
 
-1. Chọn YAML đúng miền trong `data/lexicon/`; loader tự khám phá các file `.yaml`/`.yml` theo thứ tự tên.
+1. Chọn YAML đúng miền trong `models/lexicon/`; loader tự khám phá các file `.yaml`/`.yml` theo thứ tự tên.
 2. Alias mới của entity có sẵn: thêm vào entry đó. Không tạo hai entry trùng `(category, canonical_id)`.
 3. Giữ đúng category mà syntax tham chiếu và ID khớp KB. Trong miền hiện tại `bài tập 1`, `assignment 1`, `bài tập lớn` cùng là BTL01.
 4. Chạy test lexicon và xuất lại grammar. Alias trùng giữa các entity được giữ để parser/semantic xử lý; không tự chọn entity đầu tiên.
 
 ## Thêm cách hỏi có cùng ý nghĩa
 
-Sửa file tương ứng trong `data/grammar/rules/`; dùng lại INTENT/QTYPE và truyền đủ ENTITY/TARGET. Không thêm `% start` vào fragment. Nếu cùng semantic schema, không cần sửa interpreter. `syntax.fcfg` chỉ giữ entry rules S và start symbol. `common.fcfg` chứa helper dùng chung; mỗi query có file theo miền để tránh một file lớn.
+Sửa file tương ứng trong `models/grammar/rules/`; dùng lại INTENT/QTYPE và truyền đủ ENTITY/TARGET. Không thêm `% start` vào fragment. Nếu cùng semantic schema, không cần sửa interpreter. `syntax.fcfg` chỉ giữ entry rules S và start symbol. `common.fcfg` chứa helper dùng chung; mỗi query có file theo miền để tránh một file lớn.
 
 Tên file fragment mới được loader tự phát hiện theo thứ tự alphabet. Thứ tự cây và câu sinh có thể thay đổi sau khi di chuyển luật; thứ tự đó không phải xếp hạng xác suất. Lệnh parse vẫn xuất cây đại diện và lưu tất cả cây trong trace.
 
@@ -64,7 +64,7 @@ Tên file fragment mới được loader tự phát hiện theo thứ tự alpha
 
 ## Thêm collection KB
 
-Thêm `data/KB/<collection>.json`, chứa danh sách record với `id` duy nhất. KnowledgeBase tự khám phá các file JSON; tên file trở thành tên collection. Loader báo lỗi nếu rỗng thư mục, sai schema hoặc trùng ID. Thông tin mẫu/giả lập phải giữ source và nhãn mẫu.
+Thêm `data/db/<collection>.json`, chứa danh sách record với `id` duy nhất. KnowledgeBase tự khám phá các file JSON; tên file trở thành tên collection. Loader báo lỗi nếu rỗng thư mục, sai schema hoặc trùng ID. Thông tin mẫu/giả lập phải giữ source và nhãn mẫu.
 
 ## Thay component khi thử nghiệm
 

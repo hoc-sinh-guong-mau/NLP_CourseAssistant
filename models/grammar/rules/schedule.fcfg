@@ -1,4 +1,4 @@
-# schedule: structural rules. Entity aliases belong in data/lexicon/.
+# schedule: structural rules. Entity aliases belong in models/lexicon/.
 SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='WEEK_CONTENT', TARGET='NONE'] -> WEEK[ENTITY=?e] WEEK_CONTENT_WH[]
 SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='CHAPTER_WEEK', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'học' 'vào' 'tuần' 'nào'
 SCHEDULE_QUERY[ENTITY=?e, INTENT='GET_SCHEDULE', QTYPE='CHAPTER_WEEK', TARGET='NONE'] -> CHAPTER[ENTITY=?e] 'được' 'học' 'ở' 'tuần' 'nào'

@@ -50,7 +50,8 @@ class CourseAssistant:
             return set_status(record, "ambiguous", alternatives=[f.to_dict() for _, f in interpretations])
         tree, frame = interpretations[0]
         record.update(parse_tree=tree.pformat(margin=10000),
-                      semantic=frame.to_dict(), intent_entity=extract(frame))
+                      semantic=frame.to_dict(),
+                      intent_entity=run_stage("intent_entity", extract, frame))
         if frame.predicate == "CONTEXT_DEPENDENT":
             return set_status(record, "needs_context")
         record["query"] = run_stage("query", self.query_builder.build, frame)

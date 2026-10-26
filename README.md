@@ -64,34 +64,32 @@ Mỗi thư mục là một Python package có `__init__.py`. Import theo đườ
 ## Dữ liệu và cấu trúc
 
 ```text
-data/
-├── grammar/
-│   ├── syntax.fcfg          # Start symbol và entry rules
-│   └── rules/               # Structural rules theo miền
-├── lexicon/
-│   ├── course.yaml
-│   ├── weeks.yaml
-│   ├── topics.yaml
-│   ├── assignments.yaml
-│   ├── question_patterns.yaml
-│   ├── chapters.yaml
-│   ├── resources.yaml
-│   ├── policies.yaml
-│   └── learning_outcomes.yaml
-├── KB/
-│   ├── course.json
-│   ├── schedule.json
-│   └── assignments.json
-└── raw/                    # Giữ dữ liệu gốc để đối chiếu nguồn
+NLP_Project/
+├── src/                    # Mã nguồn, tổ chức theo module
+├── data/
+│   ├── raw/                # Tài liệu gốc và nguồn để đối chiếu
+│   └── db/                 # KB JSON và database SQLite được cung cấp
+├── models/
+│   ├── grammar/
+│   │   ├── syntax.fcfg     # Start symbol và entry rules
+│   │   └── rules/          # Luật cấu trúc theo miền
+│   └── lexicon/            # Từ vựng, aliases và ID chuẩn (YAML)
+├── input/                  # Câu hỏi và dữ liệu kiểm thử mẫu
+├── output/                 # Grammar đã ghép và kết quả chạy thử
+├── tests/                  # Kiểm thử tự động
+├── docs/                   # Tài liệu kiến trúc
+├── requirements.txt
+├── README.md
+└── Dockerfile
 ```
 
-- `syntax.fcfg`: start symbol và các entry rule. `grammar/rules/*.fcfg` chứa luật theo nhóm (course, schedule, topics, assignments, deadlines, resources, instructors, context, policies, learning_outcomes và common). Loader đọc các fragment theo thứ tự tên; fragment không được khai báo `% start`. Không lặp alias đã đưa vào YAML.
+- `models/grammar/syntax.fcfg`: start symbol và các entry rule. `grammar/rules/*.fcfg` chứa luật theo nhóm (course, schedule, topics, assignments, deadlines, resources, instructors, context, policies, learning_outcomes và common). Loader đọc các fragment theo thứ tự tên; fragment không được khai báo `% start`. Không lặp alias đã đưa vào YAML.
 - `course.yaml`: môn, kỳ thi và thành phần đánh giá. `resources.yaml`: tên/nhóm tài liệu.
 - `weeks.yaml`: tuần 1–15, có biến thể số viết bằng chữ và `week N`.
 - `topics.yaml`: chủ đề và phần nội dung môn học; `chapters.yaml`: chương.
 - `assignments.yaml`: tên bài tập lớn, phần và thành phần bài tập.
 - `question_patterns.yaml`: mục từ để hỏi; `policies.yaml`: alias chính sách; `learning_outcomes.yaml`: mã chuẩn đầu ra. Mẫu câu hoàn chỉnh nằm trong grammar/rules.
-- `KB/*.json`: mỗi file là danh sách bản ghi có `id` duy nhất. Các tên thư mục có phân biệt hoa/thường trên Linux; phải dùng đúng `KB`.
+- `KB/*.json`: mỗi file là danh sách bản ghi có `id` duy nhất. Các tên thư mục có phân biệt hoa/thường trên Linux; phải dùng đúng `db`.
 
 `course.json` được trích từ các trường trong `raw/course_info.txt`; `schedule.json` được chuyển từ `raw/schedule.txt` và đánh dấu `is_sample: true` vì nguồn là kế hoạch mẫu, không phải lịch học chính thức. `assignments.json` vẫn chứa deadline **giả lập năm 2030**, có nguồn `SYNTHETIC_DEMO_ONLY`; thay bằng dữ liệu chính thức trước demo/đánh giá thực tế. Mã bài tập lớn được thống nhất là `BTL01`.
 

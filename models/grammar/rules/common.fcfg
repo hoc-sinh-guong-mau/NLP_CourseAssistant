@@ -1,4 +1,4 @@
-# common: structural rules. Entity aliases belong in data/lexicon/.
+# common: structural rules. Entity aliases belong in models/lexicon/.
 MAIN_PARTS_WH[] -> 'gồm' 'những' 'phần' 'nào'
 MAIN_PARTS_WH[] -> 'có' 'những' 'phần' 'nào'
 DURATION_WH[] -> 'bao' 'nhiêu' 'phút'

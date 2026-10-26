@@ -1,4 +1,4 @@
-# topics: structural rules. Entity aliases belong in data/lexicon/.
+# topics: structural rules. Entity aliases belong in models/lexicon/.
 TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> 'chương' 'nào' 'nói' 'về' TOPIC[ENTITY=?e]
 TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> 'chương' 'nào' 'học' 'về' TOPIC[ENTITY=?e]
 TOPIC_QUERY[ENTITY=?e, INTENT='GET_TOPIC', QTYPE='FIND_CHAPTER_BY_TOPIC', TARGET='NONE'] -> TOPIC[ENTITY=?e] 'được' 'học' 'ở' 'đâu'

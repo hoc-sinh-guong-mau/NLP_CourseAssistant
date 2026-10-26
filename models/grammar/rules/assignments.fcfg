@@ -1,4 +1,4 @@
-# assignments: structural rules. Entity aliases belong in data/lexicon/.
+# assignments: structural rules. Entity aliases belong in models/lexicon/.
 ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='REQUIREMENTS'] -> ASSIGNMENT[] 'yêu' 'cầu' 'xây' 'dựng' WHAT_PLURAL[]
 ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='REQUIREMENTS'] -> ASSIGNMENT[] 'yêu' 'cầu' WHAT[]
 ASSIGNMENT_QUERY[ENTITY='BTL01', INTENT='GET_ASSIGNMENT', QTYPE='REQUIREMENTS'] -> ASSIGNMENT[] 'có' 'những' 'yêu' 'cầu' WHAT[]

@@ -1,4 +1,4 @@
-# context: structural rules. Entity aliases belong in data/lexicon/.
+# context: structural rules. Entity aliases belong in models/lexicon/.
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='RELATED_TOPIC', TARGET=?t] -> CONTEXT_PRONOUN[] 'có' 'liên' 'quan' 'đến' TOPIC[ENTITY=?t] 'không'
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='PART_OUTPUT', TARGET='NONE'] -> 'phần' 'này' 'cần' 'xuất' 'file' WHAT[]
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CHAPTER_RESOURCE', TARGET='NONE'] -> 'tài' 'liệu' 'của' 'chương' 'này' 'là' WHAT[]

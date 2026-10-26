@@ -26,7 +26,7 @@ def load_syntax(path=GRAMMAR_PATH):
 
 def grammar_text(grammar_path=None, lexicon_dir=None):
     syntax = load_syntax(GRAMMAR_PATH if grammar_path is None else grammar_path)
-    text = syntax + "\n# Generated lexical productions; edit data/lexicon/*.yaml.\n" + Lexicon.load(LEXICON_DIR if lexicon_dir is None else lexicon_dir).grammar_text()
+    text = syntax + "\n# Generated lexical productions; edit models/lexicon/*.yaml.\n" + Lexicon.load(LEXICON_DIR if lexicon_dir is None else lexicon_dir).grammar_text()
     validate_grammar(text)
     return text
 

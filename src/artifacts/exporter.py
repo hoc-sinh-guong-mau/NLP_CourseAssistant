@@ -20,13 +20,14 @@ def export_grammar(path=OUTPUT_DIR / "grammar.txt"):
     return path
 
 
-def export_records(records):
-    export_grammar()
+def export_records(records, output_dir=None):
+    output_dir = OUTPUT_DIR if output_dir is None else Path(output_dir)
+    export_grammar(output_dir / "grammar.txt")
     fields = {
         "parse-results.txt": "parse_tree", "semantic.txt": "semantic",
         "intent-entity.txt": "intent_entity", "query.txt": "query", "answer.txt": "answer",
     }
     for filename, field in fields.items():
         values = [r[field] if isinstance(r[field], str) else dump(r[field]) for r in records]
-        write_text(OUTPUT_DIR / filename, "\n".join(values) + "\n", ArtifactError)
-    write_text(OUTPUT_DIR / "traces.jsonl", "".join(dump(r) + "\n" for r in records), ArtifactError)
+        write_text(output_dir / filename, "".join(value + "\n" for value in values), ArtifactError)
+    write_text(output_dir / "traces.jsonl", "".join(dump(r) + "\n" for r in records), ArtifactError)
