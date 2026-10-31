@@ -29,6 +29,15 @@ PART_II_OUTPUTS = {
 
 
 def export_records(records, output_dir=None, fields=None):
+    """
+    export records (dict) to each file
+    
+    :args:
+    @records: dict
+    
+    save to the files
+    """
+    
     output_dir = OUTPUT_DIR if output_dir is None else Path(output_dir)
     fields = tuple(PART_II_OUTPUTS) if fields is None else tuple(fields)
     if any(field not in PART_II_OUTPUTS for field in fields):

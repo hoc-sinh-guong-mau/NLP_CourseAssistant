@@ -1,4 +1,6 @@
 """Dispatch grounded answers; handler configuration is independent of pipeline."""
+from src.semantic.models import SemanticFrame
+
 from .exceptions import UnsupportedAnswerError
 from .formatting import display, label, missing, present, qualify
 from .templates import FIELD_TEMPLATES
@@ -15,7 +17,11 @@ def field_handler(template):
 
 
 def build_handlers():
+
+    # Orginal Template
     handlers={key:field_handler(template) for key,template in FIELD_TEMPLATES.items()}
+
+    # Addition Template
     groups=[
         ('GET_COURSE_INFO','CHAPTER_COUNT MAIN_PARTS ASSESSMENT LEARNING_OUTCOMES',domain.course_list),
         ('GET_COURSE_INFO','EXAM_OPEN_BOOK',domain.exam_open_book),
@@ -39,18 +45,36 @@ ANSWER_HANDLERS=build_handlers()
 
 class AnswerGenerator:
     def __init__(self, handlers=None):
+        
         self._custom = handlers is not None
+        
         # Preserve the existing custom-handler API handler(records).
         self.handlers = dict(ANSWER_HANDLERS) if handlers is None else {
             key:(lambda frame, records, callback=callback: callback(records))
             for key,callback in handlers.items()
         }
 
-    def render(self, frame, records):
+    def render(self, frame: SemanticFrame, records) -> tuple[str, str]:
+        """
+        :args:
+
+        @frame: Semantic Frame
+        @records: sql answers table list
+        
+        :return:
+        @status and @text: actual answer
+        
+        """
+        
         key=(frame.predicate,frame.qtype)
+        
         if key not in self.handlers:
             raise UnsupportedAnswerError(f'Unsupported answer template: {key}')
+        
         status,text=self.handlers[key](frame,records)
+
+        # Extra process for GET_RULE
         if not self._custom and (status=='ok' or (frame.predicate=='GET_RULE' and records)):
             text=qualify(records,text)
-        return status,text
+            
+        return status, text

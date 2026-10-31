@@ -39,6 +39,9 @@ class AssignmentRunner:
         return export_grammar(self.config.output_dir / 'grammar.txt')
 
     def generate(self):
+        """
+        Generate sentences and write it to output dir.
+        """
         sentences = generate_sentences(self.config.sample_limit)
         write_text(self.config.output_dir / 'samples.txt', ''.join(s+'\n' for s in sentences), ArtifactError)
         print(f'Generated {len(sentences)} sentences.')
@@ -47,11 +50,24 @@ class AssignmentRunner:
     def parse(self):
         return parse_file(self.config.input_path, self.config.output_dir / 'parse-results.txt')
 
-    def process(self, text, *, stop_after='answer'):
+    def process(self, text: str, *, stop_after='answer'):
+        """
+        Process input text to get answer from the assistant
+
+        :args:
+        @text: str: input text
+
+        :return:
+        record of the answers (answer statement included)
+        
+        """
+        
         return self.assistant.process(text, stop_after=stop_after)
 
     def batch(self, *, fields=None, stop_after='answer'):
-        texts = read_text(self.config.input_path, ParseInputError, encoding='utf-8-sig').splitlines()
+        """
+        """
+        texts: list[str] = read_text(self.config.input_path, ParseInputError, encoding='utf-8-sig').splitlines()
         # Keep blank lines too: all output files stay aligned with input line numbers.
         records = [self.process(text, stop_after=stop_after) for text in texts]
         export_records(records, output_dir=self.config.output_dir, fields=fields)

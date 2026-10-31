@@ -49,6 +49,7 @@ def main():
         if name in {'grammar','generate','parse','batch','dialogue','semantic','intent-entity','query','answer','evaluate','run'}:
             command.add_argument('--output-dir', type=Path, default=defaults.output_dir)
     args = cli.parse_args()
+    
     config = RunConfig(
         input_path=getattr(args,'input',defaults.input_path),
         output_dir=getattr(args,'output_dir',defaults.output_dir),

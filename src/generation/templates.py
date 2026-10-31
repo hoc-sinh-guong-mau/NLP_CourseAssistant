@@ -1,4 +1,8 @@
-"""Simple field templates keyed by semantic request type."""
+"""
+Simple field templates keyed by semantic request type.
+
+Template for generating answers
+"""
 from dataclasses import dataclass
 
 

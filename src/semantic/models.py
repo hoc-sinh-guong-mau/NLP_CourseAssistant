@@ -10,6 +10,21 @@ RuleKey = tuple[str, str]
 
 @dataclass
 class SemanticFrame:
+    """
+    Dataclass to store sematic intent:
+
+    P(x,y,...): type=qtype
+    
+    predicate: P
+    arguments: x,y,...
+    qtype: question type
+
+    Example: GET_DEADLINE(assignment_id=BTL01): qtype=DEADLINE
+    => Predicate: GET_DEADLINE
+       Arguments:BTL01
+       qtype: DEADLINE
+    """
+    
     predicate: str
     arguments: dict[str, Any]
     qtype: str

@@ -1,4 +1,8 @@
-"""Grounded domain renderers for lists, relations and special field types."""
+"""
+Grounded domain renderers for lists, relations and special field types.
+
+Template for generations
+"""
 from .exceptions import AnswerError
 from .formatting import display, label, missing, present
 

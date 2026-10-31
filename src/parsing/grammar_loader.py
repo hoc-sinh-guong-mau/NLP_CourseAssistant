@@ -11,8 +11,15 @@ from src.lexical import Lexicon
 from .exceptions import GrammarError
 
 
-def load_syntax(path=GRAMMAR_PATH):
-    """Load the entry grammar and its sibling rules directory deterministically."""
+def load_syntax(path=GRAMMAR_PATH) -> str:    
+    """
+    Load the entry grammar and its sibling rules directory deterministically.
+
+    :args:
+    @path: grammar path
+    :return:
+    sentences: type
+    """
     path = Path(path)
     fragments = sorted((path.parent / "rules").glob("*.fcfg"))
     parts = [read_text(path, GrammarError)]
@@ -24,14 +31,34 @@ def load_syntax(path=GRAMMAR_PATH):
     return "\n".join(parts)
 
 
-def grammar_text(grammar_path=None, lexicon_dir=None):
+def grammar_text(grammar_path=None, lexicon_dir=None) -> str:
+    """
+    Generate text from grammar path:
+    1. Load syntax from grammar path
+    2. check grammar is valid (Parsing)
+
+    :arg:
+    @grammar_path
+    @lexicon_dir
+    :return:
+    text: str
+    """
+    
     syntax = load_syntax(GRAMMAR_PATH if grammar_path is None else grammar_path)
     text = syntax + "\n# Generated lexical productions; edit models/lexicon/*.yaml.\n" + Lexicon.load(LEXICON_DIR if lexicon_dir is None else lexicon_dir).grammar_text()
     validate_grammar(text)
     return text
 
 
-def validate_grammar(text):
+def validate_grammar(text: str) -> FeatureGrammar:
+    """
+    Try to read grammar using FeatureGrammar.
+
+    Args:
+    @text: str: loaded grammar text
+    Return:
+    -> Feature Grammar
+    """
     try:
         grammar = FeatureGrammar.fromstring(text)
     except ValueError as exc:
@@ -46,5 +73,8 @@ def validate_grammar(text):
 
 
 def load_grammar(grammar_path=None, lexicon_dir=None):
+    """
+    Wrapper of validate grammar
+    """
     return validate_grammar(grammar_text(grammar_path, lexicon_dir))
 

@@ -19,7 +19,15 @@ class CourseAssistant:
         self.answer_generator = run_stage("generation", AnswerGenerator) if answer_generator is None else answer_generator
 
     def _interpret_trees(self, trees):
-        """Deduplicate equivalent frames, without selecting an arbitrary meaning."""
+        """
+        Interpret trees by sematic.interpret module.
+        Deduplicate equivalent frames, without selecting an arbitrary meaning.
+
+        :args:
+        trees: ntlk tree
+        :return:
+        
+        """
         frames = {}
         for tree in trees:
             frame = run_stage("semantic", self.semantic.interpret, tree)
@@ -27,6 +35,16 @@ class CourseAssistant:
         return list(frames.values())
 
     def process(self, text, *, stop_after="answer", resolver=None):
+        """
+        Process input text to get the answer in record: dict
+
+        :args:
+        @text: input text
+
+        :return:
+        record (answer included)
+        """
+        
         if stop_after not in {"semantic", "intent_entity", "query", "answer"}:
             raise NLPError("Unknown pipeline stop stage", context={"stop_after": stop_after})
         record = {
@@ -41,36 +59,63 @@ class CourseAssistant:
             set_status(record, exc.status, detail=str(exc), error=exc.to_dict())
             if exc.stage == 'dialogue':
                 record['answer'] = exc.message
+                
             return record
 
-    def _process(self, text, record, stop_after, resolver):
+    def _process(self, text: str, record: dict, stop_after: str, resolver):
+        """
+        |input text*| -> preprocessing |Text*|
+                      -> parse |ParseTree*|
+                      -> interpret |Semantic Frame (Predicate, args, qtype)*|
+                      -> querry ||
+                      
+        """
+
+        # Preprocessing
         normalized = run_stage("preprocessing", normalize, text)
         record.update(normalized=normalized, tokens=run_stage("preprocessing", tokenize, normalized))
+
+        # Parsing
         trees = run_stage("parsing", self.parser.parse_all, record["tokens"])
         record["parse_count"] = len(trees)
         if not trees:
             raise ParseError("No complete parse for the normalized input")
         record["parse_tree"] = trees[0].pformat(margin=10000)
+
+        # Intepretation Step: Entity, Intent Extraction
         interpretations = self._interpret_trees(trees)
         if len(interpretations) > 1:
             return set_status(record, "ambiguous", alternatives=[f.to_dict() for _, f in interpretations])
         tree, frame = interpretations[0]
         record.update(parse_tree=tree.pformat(margin=10000), semantic=frame.to_dict())
+        
         if frame.predicate == "CONTEXT_DEPENDENT" and resolver is not None:
             record["raw_semantic"] = frame.to_dict()
             frame = run_stage("dialogue", resolver, frame)
             record["semantic"] = frame.to_dict()
+            
         if stop_after == "semantic":
             return dict(record, status="semantic_ready", answer=None)
+        
         record["intent_entity"] = run_stage("intent_entity", extract, frame)
+        
         if stop_after == "intent_entity":
             return dict(record, status="intent_entity_ready", answer=None)
+        
         if frame.predicate == "CONTEXT_DEPENDENT":
             return set_status(record, "needs_context")
+
+        # Querry
+        # build querry
         record["query"] = run_stage("query", self.query_builder.build, frame)
+        
         if stop_after == "query":
             return dict(record, status="query_ready", answer=None)
+
+        # execute querry
         record["result"] = run_stage("knowledge_base", self.kb.execute, record["query"])
+        
         status, answer = run_stage("generation", self.answer_generator.render, frame, record["result"])
+        
         record.update(status=status, answer=answer)
         return record

@@ -17,19 +17,60 @@ def field_path(field):
 
 
 def equality_clause(query):
+    """
+    Example query:
+    
+    SELECT *
+    FROM kb_records AS r
+    WHERE r.collection = ?
+    AND r.entity_id IS ?
+    AND (
+      json_type(r.document, ?) IS NOT NULL
+      AND json_extract(r.document, ?) IS ?
+    )
+    AND (
+      json_type(r.document, ?) IS NOT NULL
+      AND json_extract(r.document, ?) IS ?
+    );
+    
+    """
+    
     clauses, values = ['r.collection = ?'], [query['collection']]
+    
     for field, value in query['filters'].items():
         if field == 'id':
             clauses.append('r.entity_id IS ?')
             values.append(value)
         else:
-            path = field_path(field)
+            path = field_path(field) # $.feild
             clauses.append('(json_type(r.document, ?) IS NOT NULL AND json_extract(r.document, ?) IS ?)')
             values.extend((path, path, value))
+            
     return clauses, values
 
 
 def membership_clause(condition):
+    """
+    Example Query:
+
+    SELECT *
+    FROM kb_records AS r
+    WHERE (
+    json_type(r.document, ?) = 'array'
+
+    AND NOT EXISTS (
+        SELECT 1
+        FROM json_each(?) AS wanted
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM json_each(r.document, '$.skills') AS a
+            WHERE a.value = wanted.value
+        )
+    )
+    );
+    
+    """
+    
     path = field_path(condition['field'])
     value, operator = condition['value'], condition['operator']
     if operator == 'contains':
@@ -45,11 +86,13 @@ def membership_clause(condition):
             [path, json.dumps(value, ensure_ascii=False), path])
 
 
-def compile_query(query):
+def compile_query(query) -> SQLStatement:
     clauses, values = equality_clause(query)
+    
     for condition in query.get('conditions', []):
         clause, parameters = membership_clause(condition)
         clauses.append(clause)
         values.extend(parameters)
+        
     return SQLStatement('SELECT r.document FROM kb_records AS r WHERE ' +
                         ' AND '.join(clauses) + ' ORDER BY r.position', tuple(values))

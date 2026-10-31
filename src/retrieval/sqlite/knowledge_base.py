@@ -22,15 +22,38 @@ class SQLiteKnowledgeBase:
             connection.close()
 
     def compile(self, query):
+        """
+        Check the validation of querry and compile it
+        SQL Injection
+
+        :args:
+        @query: dict
+
+        :return:
+        @statement: SQLStatement
+        """
+        
         validate_query(query, self.collection_names)
         return compile_query(query)
 
     def execute(self, query):
+        """
+        Check valid querry and execute query
+
+        :args:
+        @query dict
+
+        :return:
+        sql table (result)        
+        """
+        
         statement = self.compile(query)
         connection = open_snapshot(self.database)
         try:
             # Match JSON's error for a present scalar used as an array field.
+            # Validate array - scalar becore running a true sql request
             clauses, values = equality_clause(query)
+            
             for condition in query.get('conditions', []):
                 path = field_path(condition['field'])
                 invalid = connection.execute(
@@ -38,15 +61,20 @@ class SQLiteKnowledgeBase:
                     " AND json_type(r.document, ?) IS NOT NULL AND json_type(r.document, ?) != 'array' LIMIT 1",
                     (*values, path, path),
                 ).fetchone()
+                
                 if invalid:
                     raise KnowledgeBaseError('Membership field must be a list', context={
                         'id':invalid[0], 'field':condition['field'],
                     })
+                
                 clause, parameters = membership_clause(condition)
                 clauses.append(clause)
                 values.extend(parameters)
+                
+            # Execute querry
             return [project_record(json.loads(row[0]), query)
                     for row in connection.execute(statement.sql, statement.parameters)]
+        
         except (sqlite3.Error, json.JSONDecodeError) as exc:
             raise KnowledgeBaseError('SQLite query execution failed', context={'path':str(self.database)}) from exc
         finally:

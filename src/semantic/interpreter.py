@@ -13,21 +13,34 @@ class SemanticInterpreter:
         self.rules = deepcopy(SEMANTIC_RULES if rules is None else rules)
 
     def interpret(self, tree) -> SemanticFrame:
+        """
+        collect Predicate, intent
+
+        :args:
+        @tree: ntlk tree
+
+        :args:
+        return SemanticFrame
+        """
+        
         features = tree.label()
-        intent = require_feature(features, 'INTENT')
-        qtype = require_feature(features, 'QTYPE')
+        intent: str = require_feature(features, 'INTENT')
+        qtype: str = require_feature(features, 'QTYPE')
         rule = self.rules.get((intent, qtype))
         if rule is None:
             raise UnsupportedSemanticError(f'Unsupported semantic mapping: {intent}/{qtype}')
         arguments = {}
+        
         for slot, source in rule.slots.items():
             if isinstance(source, tuple):
                 arguments[slot] = [read_source(tree, item) for item in source]
             else:
                 arguments[slot] = read_source(tree, source)
+                
         for slot, source in rule.optional_slots.items():
             # Only absent/NONE are optional; unbound variables are errors.
             if features.get(source) is not None and features.get(source) != 'NONE':
                 arguments[slot] = read_source(tree, source)
+                
         return SemanticFrame(intent, arguments, qtype)
 

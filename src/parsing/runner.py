@@ -13,13 +13,20 @@ from .exceptions import ParseInputError
 
 def parse_file(input_path=INPUT_DIR / "sentences.txt",
                output_path=OUTPUT_DIR / "parse-results.txt", trace_path=None):
+
+    """
+    |Text*| -> Preprocess -> Parse -> write to output dir
+    """
+    
     input_path, output_path = Path(input_path), Path(output_path)
     if input_path.resolve() == output_path.resolve():
         raise ParseInputError("Input and output must be different files")
+    
     if trace_path is not None:
         trace_path = Path(trace_path)
         if trace_path.resolve() in {input_path.resolve(), output_path.resolve()}:
             raise ParseInputError("Trace, input and output must be different files")
+        
     lines = read_text(input_path, ParseInputError, encoding="utf-8-sig").splitlines()
     parser = Parser()
     results, traces = [], []
