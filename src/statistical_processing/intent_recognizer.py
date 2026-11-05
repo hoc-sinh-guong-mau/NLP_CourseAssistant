@@ -335,5 +335,5 @@ if __name__ == "__main__":
     Xt, yt, _ = build_data("path/to/test")
     rec.eval(Xt, yt, eval_path="eval_out")
 
-    rec.save_model("models/qtype.joblib")
+    rec.save_model("models/statistical/qtype.joblib")
     print(rec.predict_intent("Hạn nộp BTL01 là khi nào?"))

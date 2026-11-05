@@ -3,6 +3,7 @@ lexical_entries:
   aliases:
   - có bao nhiêu tín chỉ
   - có mấy tín chỉ
+  - bao nhiêu tín chỉ
 - category: WEEK_CONTENT_WH
   aliases:
   - học gì
@@ -14,16 +15,20 @@ lexical_entries:
 - category: WHEN
   aliases:
   - khi nào
+  - lúc nào
+  - ngày nào
+  - vào lúc nào
+  - vào ngày nào
 - category: WHO
   aliases:
   - ai
+  - người nào
 - category: WHAT
   aliases:
   - gì
+  - nào
   - những gì
   - nội dung gì
-- category: WHAT_PLURAL
-  aliases:
-  - những gì
-  - gì
+  - bao nhiêu
+  - như thế nào
 entity_entries: []

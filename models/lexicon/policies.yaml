@@ -29,6 +29,25 @@ entity_entries:
   canonical_id: OUT_OF_SCOPE
   aliases:
   - câu hỏi ngoài phạm vi
+- category: RULE_SUBJECT
+  entity_type: rule_subject
+  canonical_id: AI_USAGE
+  aliases:
+  - ai
+  - công cụ ai
+  - trí tuệ nhân tạo
+- category: RULE_SUBJECT
+  entity_type: rule_subject
+  canonical_id: SOURCE_CODE
+  aliases:
+  - mã nguồn
+  - source code
+- category: RULE_SUBJECT
+  entity_type: rule_subject
+  canonical_id: ASSIGNMENT_SHARING
+  aliases:
+  - chia sẻ bài làm
+  - sao chép bài làm
 - category: USE_SUBJECT
   entity_type: use_subject
   canonical_id: LLM_RAG
