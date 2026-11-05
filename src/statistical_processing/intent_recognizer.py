@@ -319,21 +319,3 @@ class QTypeRecognizer:
     def _check_fitted(self):
         if not self.is_fitted:
             raise RuntimeError("QTypeRecognizer has not been trained or loaded.")
-
-
-# =====================================================================
-# Example usage
-# =====================================================================
-if __name__ == "__main__":
-    qtypes = load_qtypes_from_grammar("path/to/grammar")      # <- your grammar file or folder
-    X, y_qtype, y_intent = build_data("path/to/train")
-    qtype_to_intent = build_qtype_to_intent(y_qtype, y_intent)
-
-    rec = QTypeRecognizer(qtypes, qtype_to_intent)
-    rec.train(X, y_qtype)
-
-    Xt, yt, _ = build_data("path/to/test")
-    rec.eval(Xt, yt, eval_path="eval_out")
-
-    rec.save_model("models/statistical/qtype.joblib")
-    print(rec.predict_intent("Hạn nộp BTL01 là khi nào?"))
