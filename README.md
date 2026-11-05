@@ -10,7 +10,7 @@ Trợ lý tra cứu thông tin môn học bằng **Classical NLP**: FCFG, Chart 
 ### 2.1. Môi trường
 
 - Python 3.11 trở lên; Dockerfile sử dụng Python 3.11.
-- Metadata, dependency và entry point được khai báo tập trung trong [pyproject.toml](pyproject.toml): NLTK, PyYAML, Streamlit và python-dotenv. `requirements.txt` giữ làm lối cài đặt tương thích.
+- Metadata, dependency và entry point được khai báo tập trung trong [pyproject.toml](pyproject.toml): NLTK, PyYAML, Streamlit, python-dotenv, scikit-learn, joblib và matplotlib. `requirements.txt` giữ làm lối cài đặt tương thích.
 - SQLite dùng thư viện chuẩn `sqlite3` của Python, cần hỗ trợ JSON functions; không cần database server riêng.
 - Không cần tải corpus NLTK, API key hoặc mô hình LLM.
 
@@ -348,7 +348,7 @@ Project chọn **Classical NLP** trong lựa chọn Classical/Statistical NLP c�
 - Chuẩn hóa entity qua lexicon, truy vấn KB có cấu trúc.
 - Context resolution theo một tập quy tắc và answer template.
 
-Pipeline có bộ phân loại qtype TF-IDF + Logistic Regression làm phương án dự phòng sau FCFG. Cài `pip install .[statistical]` và chạy `python -m src.statistical_processing.train_intent_model` để tạo 1.000 câu gán nhãn, chia train/validation/test, huấn luyện và lưu mô hình. FCFG vẫn là bước xử lý chính.
+Pipeline có bộ phân loại qtype TF-IDF + Logistic Regression làm phương án dự phòng sau FCFG. Các dependency thống kê được cài mặc định qua `pip install .` hoặc `pip install -r requirements.txt`, bao gồm cả Docker. Chạy `python -m src.statistical_processing.train_intent_model` để tạo 1.000 câu gán nhãn, chia train/validation/test, huấn luyện và lưu mô hình. FCFG vẫn là bước xử lý chính.
 
 ## 11. Đánh giá và kiểm thử — Phần IV
 
