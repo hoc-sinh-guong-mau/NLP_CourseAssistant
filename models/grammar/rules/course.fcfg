@@ -1,28 +1,141 @@
-# course: structural rules. Entity aliases belong in models/lexicon/.
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='CREDITS'] -> COURSE[ENTITY=?e] CREDIT_WH[]
-COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='MAIN_PARTS'] -> 'môn' 'học' MAIN_PARTS_WH[]
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_DURATION'] -> EXAM[ENTITY=?e] DURATION_WH[]
-COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='COURSE_ID'] -> 'mã' 'môn' 'nlp' 'là' WHAT[]
-COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='COURSE_NAME'] -> 'co3085' 'là' 'môn' WHAT[]
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='MAIN_PARTS'] -> COURSE[ENTITY=?e] 'có' 'những' 'phần' 'chính' 'nào'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='SEMESTER'] -> COURSE[ENTITY=?e] 'thuộc' 'học' 'kỳ' 'nào'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ECTS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'ects'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='COURSE_TYPE'] -> COURSE[ENTITY=?e] 'thuộc' 'khối' 'kiến' 'thức' 'nào'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='DEPARTMENT'] -> COURSE[ENTITY=?e] 'thuộc' 'khoa' 'nào'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='FORMAT'] -> COURSE[ENTITY=?e] 'học' 'bao' 'nhiêu' 'tiết' 'mỗi' 'tuần'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='DURATION_WEEKS'] -> COURSE[ENTITY=?e] 'kéo' 'dài' 'bao' 'nhiêu' 'tuần'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='TOTAL_HOURS'] -> COURSE[ENTITY=?e] 'có' 'tổng' 'cộng' 'bao' 'nhiêu' 'giờ' 'học'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='LECTURE_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'lý' 'thuyết'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSIGNMENT_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'bài' 'tập' 'lớn'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='SELF_STUDY_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'tự' 'học'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='DESCRIPTION'] -> COURSE[ENTITY=?e] 'có' 'nội' 'dung' 'tổng' 'quan' 'gì'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='OBJECTIVES'] -> COURSE[ENTITY=?e] 'có' 'mục' 'tiêu' 'gì'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT'] -> COURSE[ENTITY=?e] 'được' 'đánh' 'giá' 'như' 'thế' 'nào'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='LEARNING_OUTCOMES'] -> COURSE[ENTITY=?e] 'có' 'những' 'chuẩn' 'đầu' 'ra' 'nào'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT'] -> 'cách' 'tính' 'điểm' 'của' COURSE[ENTITY=?e] 'là' WHAT[]
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='OBJECTIVES'] -> 'mục' 'tiêu' 'của' COURSE[ENTITY=?e] 'là' WHAT[]
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_FORMAT'] -> EXAM[ENTITY=?e] 'thi' 'theo' 'hình' 'thức' 'nào'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_OPEN_BOOK'] -> EXAM[ENTITY=?e] 'có' 'được' 'sử' 'dụng' 'tài' 'liệu' 'không'
-COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT_WEIGHT'] -> ASSESSMENT_ITEM[ENTITY=?e] 'chiếm' 'bao' 'nhiêu' 'phần' 'trăm' 'điểm'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='CREDITS'] -> COURSE[ENTITY=?e] CREDIT_WH[]
+# COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='MAIN_PARTS'] -> 'môn' 'học' MAIN_PARTS_WH[]
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_DURATION'] -> EXAM[ENTITY=?e] DURATION_WH[]
+# COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='COURSE_ID'] -> 'mã' 'môn' 'nlp' 'là' WHAT[]
+# COURSE_QUERY[ENTITY='CO3085', INTENT='GET_COURSE_INFO', QTYPE='COURSE_NAME'] -> 'co3085' 'là' 'môn' WHAT[]
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='MAIN_PARTS'] -> COURSE[ENTITY=?e] 'có' 'những' 'phần' 'chính' 'nào'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='SEMESTER'] -> COURSE[ENTITY=?e] 'thuộc' 'học' 'kỳ' 'nào'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ECTS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'ects'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='COURSE_TYPE'] -> COURSE[ENTITY=?e] 'thuộc' 'khối' 'kiến' 'thức' 'nào'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='DEPARTMENT'] -> COURSE[ENTITY=?e] 'thuộc' 'khoa' 'nào'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='FORMAT'] -> COURSE[ENTITY=?e] 'học' 'bao' 'nhiêu' 'tiết' 'mỗi' 'tuần'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='DURATION_WEEKS'] -> COURSE[ENTITY=?e] 'kéo' 'dài' 'bao' 'nhiêu' 'tuần'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='TOTAL_HOURS'] -> COURSE[ENTITY=?e] 'có' 'tổng' 'cộng' 'bao' 'nhiêu' 'giờ' 'học'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='LECTURE_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'lý' 'thuyết'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSIGNMENT_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'bài' 'tập' 'lớn'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='SELF_STUDY_HOURS'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'giờ' 'tự' 'học'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='DESCRIPTION'] -> COURSE[ENTITY=?e] 'có' 'nội' 'dung' 'tổng' 'quan' 'gì'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='OBJECTIVES'] -> COURSE[ENTITY=?e] 'có' 'mục' 'tiêu' 'gì'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT'] -> COURSE[ENTITY=?e] 'được' 'đánh' 'giá' 'như' 'thế' 'nào'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='LEARNING_OUTCOMES'] -> COURSE[ENTITY=?e] 'có' 'những' 'chuẩn' 'đầu' 'ra' 'nào'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT'] -> 'cách' 'tính' 'điểm' 'của' COURSE[ENTITY=?e] 'là' WHAT[]
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='OBJECTIVES'] -> 'mục' 'tiêu' 'của' COURSE[ENTITY=?e] 'là' WHAT[]
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_FORMAT'] -> EXAM[ENTITY=?e] 'thi' 'theo' 'hình' 'thức' 'nào'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_OPEN_BOOK'] -> EXAM[ENTITY=?e] 'có' 'được' 'sử' 'dụng' 'tài' 'liệu' 'không'
+# COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT_WEIGHT'] -> ASSESSMENT_ITEM[ENTITY=?e] 'chiếm' 'bao' 'nhiêu' 'phần' 'trăm' 'điểm'
+#
+# COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='CHAPTER_COUNT'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'chương'
 
-COURSE_QUERY[INTENT='GET_COURSE_INFO', ENTITY=?e, QTYPE='CHAPTER_COUNT'] -> COURSE[ENTITY=?e] 'có' 'bao' 'nhiêu' 'chương'
+
+# Generalized ---------------------------------------------------------------------------------------------------------------------------
+
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE=?q] -> COURSE[ENTITY=?e] COURSE_QUESTION[QTYPE=?q]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE=?q] -> COURSE_QUESTION[QTYPE=?q] 'của' COURSE[ENTITY=?e]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE=?q] -> COURSE[ENTITY=?e] COURSE_QUESTION[QTYPE=?q]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE=?q] -> COURSE_QUESTION[QTYPE=?q] 'của' COURSE[ENTITY=?e]
+
+# Course identity.
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='COURSE_ID'] -> COURSE_CODE_CUE[] COURSE[ENTITY=?e] 'là' WHAT[]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='COURSE_NAME'] -> COURSE[ENTITY=?e] COURSE_NAME_CUE[] WHAT[]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='COURSE_NAME'] -> COURSE_NAME_CUE[] 'của' COURSE[ENTITY=?e] 'là' WHAT[]
+COURSE_CODE_CUE[] -> 'mã' 'môn'
+COURSE_CODE_CUE[] -> 'mã' 'học' 'phần'
+COURSE_CODE_CUE[] -> 'mã' 'số' 'môn' 'học'
+COURSE_NAME_CUE[] -> 'là' 'môn'
+COURSE_NAME_CUE[] -> 'có' 'tên' 'là'
+COURSE_NAME_CUE[] -> 'tên' 'môn' 'là'
+
+# Credits, placement, and structure.
+COURSE_QUESTION[QTYPE='CREDITS'] -> CREDIT_WH[]
+COURSE_QUESTION[QTYPE='CREDITS'] -> 'số' 'tín' 'chỉ' 'là' WHAT[]
+COURSE_QUESTION[QTYPE='ECTS'] -> ECTS_QUESTION[]
+COURSE_QUESTION[QTYPE='SEMESTER'] -> 'thuộc' SEMESTER_CUE[] WHAT[]
+COURSE_QUESTION[QTYPE='COURSE_TYPE'] -> 'thuộc' KNOWLEDGE_BLOCK_CUE[] WHAT[]
+COURSE_QUESTION[QTYPE='DEPARTMENT'] -> 'thuộc' DEPARTMENT_CUE[] WHAT[]
+COURSE_QUESTION[QTYPE='MAIN_PARTS'] -> MAIN_PART_CUE[] MAIN_PART_QUESTION[]
+COURSE_QUESTION[QTYPE='CHAPTER_COUNT'] -> CHAPTER_COUNT_QUESTION[]
+ECTS_QUESTION[] -> 'có' 'bao' 'nhiêu' 'ects'
+ECTS_QUESTION[] -> 'bao' 'nhiêu' 'ects'
+ECTS_QUESTION[] -> 'số' 'ects' 'là' WHAT[]
+SEMESTER_CUE[] -> 'học' 'kỳ'
+SEMESTER_CUE[] -> 'kỳ' 'học'
+KNOWLEDGE_BLOCK_CUE[] -> 'khối' 'kiến' 'thức'
+KNOWLEDGE_BLOCK_CUE[] -> 'nhóm' 'kiến' 'thức'
+DEPARTMENT_CUE[] -> 'khoa'
+DEPARTMENT_CUE[] -> 'bộ' 'môn'
+MAIN_PART_CUE[] -> 'có' 'những' 'phần' 'chính'
+MAIN_PART_CUE[] -> 'gồm' 'những' 'phần' 'chính'
+MAIN_PART_CUE[] -> 'có' 'những' 'nội' 'dung' 'chính'
+MAIN_PART_QUESTION[] -> WHAT[]
+CHAPTER_COUNT_QUESTION[] -> 'có' 'bao' 'nhiêu' 'chương'
+CHAPTER_COUNT_QUESTION[] -> 'gồm' 'bao' 'nhiêu' 'chương'
+CHAPTER_COUNT_QUESTION[] -> 'bao' 'nhiêu' 'chương'
+
+# Workload and delivery format.
+COURSE_QUESTION[QTYPE='FORMAT'] -> WEEKLY_FORMAT_QUESTION[]
+COURSE_QUESTION[QTYPE='DURATION_WEEKS'] -> DURATION_CUE[] 'bao' 'nhiêu' 'tuần'
+COURSE_QUESTION[QTYPE='TOTAL_HOURS'] -> TOTAL_HOURS_QUESTION[]
+COURSE_QUESTION[QTYPE='LECTURE_HOURS'] -> HOURS_CUE[] LECTURE_CUE[]
+COURSE_QUESTION[QTYPE='ASSIGNMENT_HOURS'] -> HOURS_CUE[] ASSIGNMENT_CUE[]
+COURSE_QUESTION[QTYPE='SELF_STUDY_HOURS'] -> HOURS_CUE[] SELF_STUDY_CUE[]
+WEEKLY_FORMAT_QUESTION[] -> 'học' 'bao' 'nhiêu' 'tiết' 'mỗi' 'tuần'
+WEEKLY_FORMAT_QUESTION[] -> 'mỗi' 'tuần' 'học' 'bao' 'nhiêu' 'tiết'
+WEEKLY_FORMAT_QUESTION[] -> 'lịch' 'học' 'mỗi' 'tuần' 'như' 'thế' 'nào'
+DURATION_CUE[] -> 'kéo' 'dài'
+DURATION_CUE[] -> 'học' 'trong'
+DURATION_CUE[] -> 'thời' 'lượng'
+TOTAL_HOURS_QUESTION[] -> 'có' 'tổng' 'cộng' 'bao' 'nhiêu' 'giờ' 'học'
+TOTAL_HOURS_QUESTION[] -> 'tổng' 'số' 'giờ' 'học' 'là' WHAT[]
+TOTAL_HOURS_QUESTION[] -> 'tổng' 'thời' 'lượng' 'là' WHAT[]
+HOURS_CUE[] -> 'có' 'bao' 'nhiêu' 'giờ'
+HOURS_CUE[] -> 'bao' 'nhiêu' 'giờ'
+LECTURE_CUE[] -> 'lý' 'thuyết'
+ASSIGNMENT_CUE[] -> 'bài' 'tập' 'lớn'
+ASSIGNMENT_CUE[] -> 'làm' 'bài' 'tập'
+SELF_STUDY_CUE[] -> 'tự' 'học'
+
+# Description, objectives, learning outcomes, and assessment.
+COURSE_QUESTION[QTYPE='DESCRIPTION'] -> DESCRIPTION_CUE[] DESCRIPTION_QUESTION[]
+COURSE_QUESTION[QTYPE='OBJECTIVES'] -> OBJECTIVE_CUE[] WHAT[]
+COURSE_QUESTION[QTYPE='LEARNING_OUTCOMES'] -> OUTCOME_CUE[] WHAT[]
+COURSE_QUESTION[QTYPE='ASSESSMENT'] -> ASSESSMENT_CUE[] ASSESSMENT_QUESTION[]
+DESCRIPTION_CUE[] -> 'có' 'nội' 'dung' 'tổng' 'quan'
+DESCRIPTION_CUE[] -> 'nội' 'dung' 'tổng' 'quan'
+DESCRIPTION_CUE[] -> 'mô' 'tả' 'môn' 'học'
+DESCRIPTION_QUESTION[] -> WHAT[]
+DESCRIPTION_QUESTION[] -> 'là' WHAT[]
+OBJECTIVE_CUE[] -> 'có' 'mục' 'tiêu'
+OBJECTIVE_CUE[] -> 'mục' 'tiêu'
+OBJECTIVE_CUE[] -> 'mục' 'đích'
+OUTCOME_CUE[] -> 'có' 'những' 'chuẩn' 'đầu' 'ra'
+OUTCOME_CUE[] -> 'chuẩn' 'đầu' 'ra'
+OUTCOME_CUE[] -> 'kết' 'quả' 'học' 'tập'
+ASSESSMENT_CUE[] -> 'được' 'đánh' 'giá'
+ASSESSMENT_CUE[] -> 'cách' 'tính' 'điểm'
+ASSESSMENT_CUE[] -> 'hình' 'thức' 'đánh' 'giá'
+ASSESSMENT_QUESTION[] -> 'như' 'thế' 'nào'
+ASSESSMENT_QUESTION[] -> 'ra' 'sao'
+ASSESSMENT_QUESTION[] -> 'là' WHAT[]
+
+# Exam queries use their own entity supplied by the lexicon.
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_DURATION'] -> EXAM[ENTITY=?e] EXAM_DURATION_QUESTION[]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_FORMAT'] -> EXAM[ENTITY=?e] EXAM_FORMAT_QUESTION[]
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='EXAM_OPEN_BOOK'] -> EXAM[ENTITY=?e] EXAM_MATERIAL_QUESTION[]
+EXAM_DURATION_QUESTION[] -> 'kéo' 'dài' WHAT[]
+EXAM_DURATION_QUESTION[] -> 'thời' 'lượng' 'là' WHAT[]
+EXAM_DURATION_QUESTION[] -> 'bao' 'nhiêu' 'phút'
+EXAM_DURATION_QUESTION[] -> 'thi' 'trong' 'bao' 'lâu'
+EXAM_DURATION_QUESTION[] -> 'thi' 'bao' 'nhiêu' 'phút'
+EXAM_FORMAT_QUESTION[] -> 'thi' 'theo' 'hình' 'thức' WHAT[]
+EXAM_FORMAT_QUESTION[] -> 'có' 'hình' 'thức' 'thi' WHAT[]
+EXAM_FORMAT_QUESTION[] -> 'thi' 'như' 'thế' 'nào'
+EXAM_MATERIAL_QUESTION[] -> 'có' 'được' 'sử' 'dụng' 'tài' 'liệu' 'không'
+EXAM_MATERIAL_QUESTION[] -> 'có' 'được' 'mở' 'tài' 'liệu' 'không'
+EXAM_MATERIAL_QUESTION[] -> 'là' 'thi' 'mở' 'hay' 'đóng'
+
+# Weight of an assessment item. Its name/aliases are lexicon data.
+COURSE_QUERY[ENTITY=?e, INTENT='GET_COURSE_INFO', QTYPE='ASSESSMENT_WEIGHT'] -> ASSESSMENT_ITEM[ENTITY=?e] WEIGHT_QUESTION[]
+WEIGHT_QUESTION[] -> 'chiếm' 'bao' 'nhiêu' 'phần' 'trăm' 'điểm'
+WEIGHT_QUESTION[] -> 'chiếm' 'bao' 'nhiêu' 'phần' 'trăm'
+WEIGHT_QUESTION[] -> 'có' 'trọng' 'số' 'bao' 'nhiêu'
+WEIGHT_QUESTION[] -> 'được' 'tính' 'bao' 'nhiêu' 'phần' 'trăm'

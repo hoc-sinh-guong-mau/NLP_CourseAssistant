@@ -37,9 +37,9 @@ RULE_PERMISSION_START[] -> 'được' 'phép'
 RULE_PERMISSION_START[] -> 'có' 'được' 'phép'
 RULE_YESNO[] -> 'không'
 RULE_YESNO[] -> 'hay' 'không'
-RULE_ASSIGNMENT_CONTEXT[] -> 'trong' ASSIGNMENT[]
-RULE_ASSIGNMENT_CONTEXT[] -> 'cho' ASSIGNMENT[]
-RULE_ASSIGNMENT_CONTEXT[] -> 'khi' 'làm' ASSIGNMENT[]
+RULE_ASSIGNMENT_CONTEXT[ENTITY=?e] -> 'trong' ASSIGNMENT[ENTITY=?e]
+RULE_ASSIGNMENT_CONTEXT[ENTITY=?e] -> 'cho' ASSIGNMENT[ENTITY=?e]
+RULE_ASSIGNMENT_CONTEXT[ENTITY=?e] -> 'khi' 'làm' ASSIGNMENT[ENTITY=?e]
 USE[] -> 'dùng'
 USE[] -> 'sử' 'dụng'
 RULE_ACTION[ENTITY=?e] -> USE[] USE_SUBJECT[ENTITY=?e]
@@ -102,4 +102,4 @@ LO_CONTENT_END[] -> 'học' 'về' 'gì'
 LO_CONTENT_END[] -> 'nói' 'về' 'gì'
 LO_CONTENT_END[] -> 'đề' 'cập' 'đến' 'nội' 'dung' 'gì'
 LO_CONTENT_END[] -> 'liên' 'quan' 'đến' 'nội' 'dung' 'những' 'gì'
-ASSIGNMENT[] -> ASSIGNMENT_NAME[ENTITY='BTL01']
+ASSIGNMENT[ENTITY=?e] -> ASSIGNMENT_NAME[ENTITY=?e]

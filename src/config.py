@@ -58,6 +58,8 @@ KB_DIR = env_path("COURSE_DB_DIR", _RUNTIME_ROOT / "data/db", base=_RUNTIME_ROOT
 RAW_DIR = env_path("COURSE_RAW_DIR", DATA_DIR / "raw", base=ROOT)
 GRAMMAR_PATH = env_path("COURSE_GRAMMAR_PATH", MODELS_DIR / "grammar/syntax.fcfg", base=ROOT)
 LEXICON_DIR = env_path("COURSE_LEXICON_DIR", MODELS_DIR / "lexicon", base=ROOT)
+QTYPE_MODEL_PATH = env_path("COURSE_QTYPE_MODEL", MODELS_DIR / "statistical/qtype.joblib", base=ROOT)
+QTYPE_MODEL_CONFIGURED = "COURSE_QTYPE_MODEL" in os.environ
 SQLITE_PATH = env_path("COURSE_DATABASE", KB_DIR / "course_assistant_normalized.sqlite3", base=_RUNTIME_ROOT)
 
 # Hard ceilings stay in code; deployment settings may lower working limits.

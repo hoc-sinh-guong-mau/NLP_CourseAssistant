@@ -348,7 +348,7 @@ Project chọn **Classical NLP** trong lựa chọn Classical/Statistical NLP c�
 - Chuẩn hóa entity qua lexicon, truy vấn KB có cấu trúc.
 - Context resolution theo một tập quy tắc và answer template.
 
-Chưa có mô hình thống kê, classifier ML, Deep Learning, LLM hoặc RAG. Không coi việc dùng NLTK/SQLite là học máy thống kê. TF-IDF + classifier/fallback có thể là hướng mở rộng, nhưng chưa có trong pipeline hiện tại.
+Pipeline có bộ phân loại qtype TF-IDF + Logistic Regression làm phương án dự phòng sau FCFG. Cài `pip install .[statistical]` và chạy `python -m src.statistical_processing.train_intent_model` để tạo 1.000 câu gán nhãn, chia train/validation/test, huấn luyện và lưu mô hình. FCFG vẫn là bước xử lý chính.
 
 ## 11. Đánh giá và kiểm thử — Phần IV
 
@@ -396,7 +396,7 @@ Tests bao phủ dữ liệu/đường lỗi, registry, output alignment, session
 
 ## 12. Hạn chế của hệ thống
 
-- Độ bao phủ phụ thuộc grammar/alias; chưa có sửa lỗi gõ hoặc ML fallback.
+- Độ bao phủ phụ thuộc grammar/alias; chưa có sửa lỗi gõ.
 - Context chỉ hỗ trợ những mẫu định trước, không phải coreference/dialogue manager tổng quát.
 - Liên kết tài liệu–chương, LO–chương và một số quan hệ topic chưa đầy đủ; có thể resolution thành công nhưng answer vẫn thiếu thông tin.
 - Không có deadline chính thức hoặc tên giảng viên trong nguồn; không suy đoán.

@@ -19,6 +19,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["build>=1.2,<2"]
+statistical = ["scikit-learn>=1.5,<2", "joblib>=1.4,<2", "matplotlib>=3.8,<4"]
 
 [project.scripts]
 course-assistant = "src.main:main"

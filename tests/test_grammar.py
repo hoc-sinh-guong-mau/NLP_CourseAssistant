@@ -53,6 +53,58 @@ class GrammarTests(unittest.TestCase):
         self.assertTrue(trees)
         self.assertTrue(all(t.label()["TARGET"] == "CFG" for t in trees))
 
+    def test_request_framing_is_shared_across_query_families(self):
+        cases = [
+            ("vui lòng cho biết tuần ba học gì nhé", "GET_SCHEDULE", "WEEK_03", "WEEK_CONTENT"),
+            ("cho tôi biết tài liệu nào nói về cfg nhé", "GET_RESOURCE", "CFG", "RESOURCE_BY_TOPIC"),
+            ("cho tôi biết giảng viên của môn nlp là người nào nhé", "GET_INSTRUCTOR", "CO3085", "INSTRUCTOR"),
+            ("cho tôi biết deadline của btl khi nào nhé", "GET_DEADLINE", "BTL01", "DEADLINE"),
+        ]
+        for text, intent, entity, qtype in cases:
+            with self.subTest(text=text):
+                trees = self.parser.parse_all(tokenize(normalize(text)))
+                self.assertTrue(trees)
+                for tree in trees:
+                    self.assertEqual(tree.label()["INTENT"], intent)
+                    self.assertEqual(tree.label()["ENTITY"], entity)
+                    self.assertEqual(tree.label()["QTYPE"], qtype)
+
+    def test_question_word_variants_are_lexicon_backed(self):
+        for text in ("Môn NLP có bao nhiêu tín chỉ?", "Giảng viên môn NLP là người nào?"):
+            with self.subTest(text=text):
+                self.assertTrue(self.parser.parse_all(tokenize(normalize(text))))
+
+    def test_generalized_domain_grammar_examples(self):
+        cases = [
+            ("Python NLP có tài liệu nào không?", "GET_RESOURCE", "PYTHON_NLP", "RESOURCE_BY_CATEGORY"),
+            ("Chương 3 nên đọc tài liệu nào?", "GET_RESOURCE", "CH03", "RESOURCE_BY_CHAPTER"),
+            ("Ai là tác giả của Natural Language Processing with Python?", "GET_RESOURCE", "REFERENCE_2", "RESOURCE_AUTHOR"),
+            ("Tài liệu tham khảo về Python NLP là gì?", "GET_RESOURCE", "PYTHON_NLP", "RESOURCE_BY_CATEGORY"),
+            ("Giáo trình của môn NLP là gì?", "GET_RESOURCE", "CO3085", "TEXTBOOK_LIST"),
+            ("Tuần ba có nội dung gì?", "GET_SCHEDULE", "WEEK_03", "WEEK_CONTENT"),
+            ("Chương 3 được dạy khi nào?", "GET_SCHEDULE", "CH03", "CHAPTER_WEEK"),
+            ("Tuần 3 có chủ đề gì?", "GET_SCHEDULE", "WEEK_03", "WEEK_CHAPTER"),
+            ("Những tuần nào học về xử lý cú pháp?", "GET_SCHEDULE", "SYNTACTIC_PROCESSING", "PART_WEEKS"),
+            ("Tuần 3 có deadline nào?", "GET_SCHEDULE", "WEEK_03", "WEEK_MILESTONE"),
+            ("Chương nào đề cập đến PCFG?", "GET_TOPIC", "PCFG", "FIND_CHAPTER_BY_TOPIC"),
+            ("Chương nào đáp ứng L.O.2.5?", "GET_TOPIC", "LO2.5", "FIND_CHAPTER_BY_LO"),
+            ("Chương 3 có nội dung về CFG không?", "GET_TOPIC", "CH03", "CHAPTER_HAS_TOPIC"),
+            ("Chương nào học về CFG và parsing?", "GET_TOPIC", "CFG", "FIND_CHAPTER_BY_TOPICS"),
+            ("Chương 4 dạy những gì?", "GET_TOPIC", "CH04", "CHAPTER_CONTENT"),
+            ("Chương 4 đề cập đến những phương pháp nào?", "GET_TOPIC", "CH04", "CHAPTER_METHODS"),
+            ("Quy định về điểm danh là gì?", "GET_RULE", "ATTENDANCE", "RULE_INFO"),
+            ("Trong bài tập lớn có được dùng AI không?", "GET_RULE", "AI_USAGE", "PERMISSION"),
+            ("Quy định của bài tập lớn về liêm chính học thuật là gì?", "GET_RULE", "ACADEMIC_INTEGRITY", "RULE_INFO"),
+        ]
+        for text, intent, entity, qtype in cases:
+            with self.subTest(text=text):
+                trees = self.parser.parse_all(tokenize(normalize(text)))
+                self.assertTrue(trees)
+                for tree in trees:
+                    self.assertEqual(tree.label()["INTENT"], intent)
+                    self.assertEqual(tree.label()["ENTITY"], entity)
+                    self.assertEqual(tree.label()["QTYPE"], qtype)
+
     def test_export_round_trip_and_determinism(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory, "output", "grammar.txt")

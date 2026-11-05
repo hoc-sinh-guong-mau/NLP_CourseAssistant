@@ -25,7 +25,8 @@ def render_turn(record, show_analysis):
             with st.expander('Phân tích câu hỏi'):
                 st.json({key: record.get(key) for key in (
                     'status', 'tokens', 'parse_tree', 'raw_semantic', 'semantic',
-                    'intent_entity', 'context_used', 'query', 'context_after',
+                    'intent_entity', 'statistical_used', 'statistical_prediction',
+                    'context_used', 'query', 'context_after',
                 )})
 
 

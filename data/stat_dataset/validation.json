@@ -1,0 +1,902 @@
+[
+  {
+    "sentence": "giải thích môn co3085 có mục tiêu nào nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "OBJECTIVES",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "week 15 có chủ đề gì nhé ạ",
+    "intent": "GET_SCHEDULE",
+    "qtype": "WEEK_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "mình muốn biết hình thức đánh giá ra sao của co3085 nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ASSESSMENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết thuộc kỳ học nội dung gì của môn co3085 nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "SEMESTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "chương chương nào đáp ứng chuẩn đầu ra lo4 nhé",
+    "intent": "GET_TOPIC",
+    "qtype": "FIND_CHAPTER_BY_LO",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết tham dự được quy định như thế nào nhé",
+    "intent": "GET_RULE",
+    "qtype": "RULE_INFO",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "môn xử lý ngôn ngữ tự nhiên nội dung tổng quan là những gì nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "DESCRIPTION",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết co3085 tổng cộng có bao nhiêu chương nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "CHAPTER_COUNT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích tuần mười hai có deadline nào",
+    "intent": "GET_SCHEDULE",
+    "qtype": "WEEK_MILESTONE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi co3085 bao nhiêu giờ lý thuyết ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "LECTURE_HOURS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích nlp dùng giáo trình nào nhé ạ",
+    "intent": "GET_RESOURCE",
+    "qtype": "TEXTBOOK_LIST",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết chương phần này tài liệu gì ạ",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "CHAPTER_RESOURCE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết bài tập lớn miền dữ liệu liên quan đến gì",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "DOMAIN",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích chương nội dung này sách là ra sao nhé",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "CHAPTER_RESOURCE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích số ects là những gì của nlp nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ECTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "học vào tuần nào của speech acts",
+    "intent": "GET_SCHEDULE",
+    "qtype": "TOPIC_WEEK",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết nlp số tín chỉ là những gì ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "CREDITS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích chương chương nào trình bày logical form nhé",
+    "intent": "GET_TOPIC",
+    "qtype": "FIND_CHAPTER_BY_TOPIC",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "mình muốn biết môn nlp gồm những phần chính gì",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "MAIN_PARTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho mình biết tri thức thế giới tài liệu tham khảo về nhé",
+    "intent": "GET_RESOURCE",
+    "qtype": "RESOURCE_BY_CATEGORY",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "chương tiếp theo là gì",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "NEXT_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi co3085 bao nhiêu giờ tự học nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "SELF_STUDY_HOURS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết nlp có bao nhiêu giờ bài tập lớn ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ASSIGNMENT_HOURS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết nội dung này nằm ở chương nào nhé",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "CONTENT_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "gồm như thế nào phần chương này ạ",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "PART_OUTPUT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích học vào tuần nào của biểu diễn tri thức và nét nhé ạ",
+    "intent": "GET_SCHEDULE",
+    "qtype": "TOPICS_WEEK",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết tên môn là của co3085 là nào nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "COURSE_NAME",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết phần này có liên quan đến biểu diễn tri thức không ạ",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "RELATED_TOPIC",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết xuất bản năm nào speech and language processing nhé ạ",
+    "intent": "GET_RESOURCE",
+    "qtype": "RESOURCE_YEAR",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết mục tiêu nhằm gì assignment 1 nhé",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "GOAL",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho mình biết chương 2 bao gồm những nội dung gì",
+    "intent": "GET_TOPIC",
+    "qtype": "CHAPTER_CONTENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết nlp tài liệu tham khảo gồm những gì ạ",
+    "intent": "GET_RESOURCE",
+    "qtype": "REFERENCE_LIST",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết giảng viên của nlp do người nào giảng dạy nhé ạ",
+    "intent": "GET_INSTRUCTOR",
+    "qtype": "INSTRUCTOR",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "mình muốn biết giáo trình của phần ở trên gồm nào nhé ạ",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "RELATED_RESOURCE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích cách tính điểm như thế nào của môn co3085 nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ASSESSMENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết thời lượng bao nhiêu tuần của natural language processing nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "DURATION_WEEKS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết môn co3085 thuộc học kỳ những gì nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "SEMESTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết môn co3085 thuộc khoa gì nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "DEPARTMENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết khóa học đang nói bao nhiêu chương nhé ạ",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "COURSE_CHAPTER_COUNT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích tuần 4 có những hoạt động nào",
+    "intent": "GET_SCHEDULE",
+    "qtype": "WEEK_ACTIVITY",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi mình cần btl làm ra sao ạ",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "ASSIGNMENT_LIST",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi nlp thời lượng bao nhiêu tuần ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "DURATION_WEEKS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi nằm trong tuần nào của chương 11 ạ",
+    "intent": "GET_SCHEDULE",
+    "qtype": "CHAPTER_WEEK",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết mã học phần natural language processing là gì ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "COURSE_ID",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho mình biết natural language processing dùng giáo trình nào ạ",
+    "intent": "GET_RESOURCE",
+    "qtype": "TEXTBOOK_LIST",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích natural language processing có bao nhiêu ects ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ECTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết lo3.3 nói lên điều gì",
+    "intent": "GET_LO",
+    "qtype": "LO_INFO",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi bao nhiêu giờ làm bài tập của môn xử lý ngôn ngữ tự nhiên ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ASSIGNMENT_HOURS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết có những phần chính nào của co3085",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "MAIN_PARTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết nội dung đó thuộc chương ra sao",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "CONTENT_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "mình muốn biết môn xử lý ngôn ngữ tự nhiên thuộc nhóm kiến thức nào",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "COURSE_TYPE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết phải nộp nào phần ở trên ạ",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "PART_OUTPUT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết ai là tác giả của an introduction to machine translation ạ",
+    "intent": "GET_RESOURCE",
+    "qtype": "RESOURCE_AUTHOR",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "có bao nhiêu giờ tự học của môn nlp nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "SELF_STUDY_HOURS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi natural language processing thuộc khoa nào nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "DEPARTMENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi intelligent course assistant đề bài yêu cầu những yêu cầu những gì nhé",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "REQUIREMENTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích ngày nào nộp assignment 1 nhé",
+    "intent": "GET_DEADLINE",
+    "qtype": "DEADLINE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích môn xử lý ngôn ngữ tự nhiên chuẩn đầu ra nội dung gì nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "LEARNING_OUTCOMES",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết bao gồm knowledge representation nằm ở chương nào",
+    "intent": "GET_TOPIC",
+    "qtype": "FIND_CHAPTER_BY_TOPIC",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích phần ii thuộc về intelligent course assistant cần xuất file như thế nào nhé ạ",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "PART_OUTPUTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết các chủ đề trong chuẩn đầu ra lo2.1 gồm những nội dung nào nhé ạ",
+    "intent": "GET_LO",
+    "qtype": "LO_CONTENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích gồm bao nhiêu chương của nlp ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "CHAPTER_COUNT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết chương 5 đề cập đến những phương pháp nào nhé",
+    "intent": "GET_TOPIC",
+    "qtype": "CHAPTER_METHODS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho mình biết chương 10 được học ở tuần nào",
+    "intent": "GET_SCHEDULE",
+    "qtype": "CHAPTER_WEEK",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết phần unification và văn phạm gia tố nằm ở tuần nào nhé ạ",
+    "intent": "GET_SCHEDULE",
+    "qtype": "TOPICS_WEEK",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết mã môn môn co3085 là gì ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "COURSE_ID",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết tuần mười một diễn ra hoạt động gì",
+    "intent": "GET_SCHEDULE",
+    "qtype": "WEEK_ACTIVITY",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi tổng số giờ học là nội dung gì của nlp nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "TOTAL_HOURS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết cho btl01 có thể dùng mã nguồn không nhé ạ",
+    "intent": "GET_RULE",
+    "qtype": "PERMISSION",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích foundation of statistical natural language processing tác giả là ai nhé",
+    "intent": "GET_RESOURCE",
+    "qtype": "RESOURCE_AUTHOR",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết final có hình thức thi như thế nào ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "EXAM_FORMAT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích ellipsis tài liệu của ạ",
+    "intent": "GET_RESOURCE",
+    "qtype": "RESOURCE_BY_TOPIC",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích mô tả môn học như thế nào của natural language processing ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "DESCRIPTION",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích week 11 sẽ học gì ạ",
+    "intent": "GET_SCHEDULE",
+    "qtype": "WEEK_CONTENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích môn co3085 lịch học mỗi tuần như thế nào nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "FORMAT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết khóa học vừa nhắc đến gồm bao nhiêu chương ạ",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "COURSE_CHAPTER_COUNT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết có những chuẩn đầu ra nội dung gì của co3085",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "LEARNING_OUTCOMES",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết chuẩn đầu ra chuẩn đầu ra lo3 mô tả điều gì",
+    "intent": "GET_LO",
+    "qtype": "LO_INFO",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích giữa kỳ có được mở tài liệu không nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "EXAM_OPEN_BOOK",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích thuộc khối kiến thức như thế nào của môn co3085 ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "COURSE_TYPE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi môn nlp mỗi tuần học bao nhiêu tiết nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "FORMAT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết chương 11 có unification grammar không ạ",
+    "intent": "GET_TOPIC",
+    "qtype": "CHAPTER_HAS_TOPIC",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết btl01 phạm vi là ra sao",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "DOMAIN",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi sản phẩm phải nộp những gì bài tập 1 ạ",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "OUTPUTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tuần 9 có nội dung gì nhé",
+    "intent": "GET_SCHEDULE",
+    "qtype": "WEEK_CONTENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi bao nhiêu tín chỉ của môn xử lý ngôn ngữ tự nhiên nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "CREDITS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết phần iv của btl nói về gì nhé ạ",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "PART_INFO",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết chương 11 giáo trình có những gì nhé",
+    "intent": "GET_RESOURCE",
+    "qtype": "RESOURCE_BY_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết tuần 5 có bài tập lớn nào",
+    "intent": "GET_SCHEDULE",
+    "qtype": "WEEK_MILESTONE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích code of ethics được quy định như thế nào ạ",
+    "intent": "GET_RULE",
+    "qtype": "RULE_INFO",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "intelligent course assistant tên gọi gì ạ",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "TITLE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết co3085 có tổng cộng bao nhiêu giờ học",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "TOTAL_HOURS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết hạn cuối của assignment 1 là vào ngày nào ạ",
+    "intent": "GET_DEADLINE",
+    "qtype": "DEADLINE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết có bao nhiêu giờ lý thuyết của môn xử lý ngôn ngữ tự nhiên nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "LECTURE_HOURS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích phần iii thuộc về bài tập 1 phải hoàn thành như thế nào",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "PART_REQUIREMENTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích ngày nộp của bài tập 1 ngày nào nhé",
+    "intent": "GET_DEADLINE",
+    "qtype": "DEADLINE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết thầy cô của co3085 do người nào giảng dạy",
+    "intent": "GET_INSTRUCTOR",
+    "qtype": "INSTRUCTOR",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết nội dung ấy nằm ở chương gì nhé ạ",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "CONTENT_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "mình muốn biết btl có được phép vắng mặt trong buổi học không nhé",
+    "intent": "GET_RULE",
+    "qtype": "PERMISSION",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho mình biết mỗi nhóm gồm bao nhiêu thành viên assignment 1 nhé",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "TEAM_SIZE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết khóa học nội dung này gồm bao nhiêu chương",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "COURSE_CHAPTER_COUNT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi btl sản phẩm phải nộp những gì",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "OUTPUTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết chương nào đề cập đến basic probability theory và parsing ạ",
+    "intent": "GET_TOPIC",
+    "qtype": "FIND_CHAPTER_BY_TOPICS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi midterm thi trong bao lâu nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "EXAM_DURATION",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "chương trước là gì nhé ạ",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "PREVIOUS_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết chương 9 nói về như thế nào nhé",
+    "intent": "GET_TOPIC",
+    "qtype": "CHAPTER_CONTENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích phần iv trong btl cần xuất file như thế nào nhé",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "PART_OUTPUTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích diễn dịch ngữ nghĩa học vào những tuần nào ạ",
+    "intent": "GET_SCHEDULE",
+    "qtype": "PART_WEEKS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi tổng cộng có bao nhiêu chương của môn xử lý ngôn ngữ tự nhiên ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "CHAPTER_COUNT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích chương những chương nào học về lexicon và selectional restriction",
+    "intent": "GET_TOPIC",
+    "qtype": "FIND_CHAPTER_BY_TOPICS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích có semantic không assignment 1 nhé",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "HAS_COMPONENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho tôi biết mục đích nội dung gì của môn xử lý ngôn ngữ tự nhiên",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "OBJECTIVES",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tôi muốn biết vừa nói có liên quan đến augmented transition networks hay không nhé",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "RELATED_TOPIC",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết chương 2 có nội dung gì",
+    "intent": "GET_TOPIC",
+    "qtype": "CHAPTER_CONTENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi những tuần nào học về xử lý cú pháp nhé ạ",
+    "intent": "GET_SCHEDULE",
+    "qtype": "PART_WEEKS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho mình biết mỗi nhóm gồm bao nhiêu thành viên bài tập lớn ạ",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "TEAM_SIZE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi mã học phần natural language processing là những gì",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "COURSE_ID",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "phần ellipsis nằm ở tuần nào ạ",
+    "intent": "GET_SCHEDULE",
+    "qtype": "TOPIC_WEEK",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích chương tiếp theo là gì",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "NEXT_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "mình muốn biết chương 11 có liên quan đến top-down chart parsing không nhé",
+    "intent": "GET_TOPIC",
+    "qtype": "CHAPTER_HAS_TOPIC",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích lo3 được đề cập trong chương nào nhé ạ",
+    "intent": "GET_TOPIC",
+    "qtype": "FIND_CHAPTER_BY_LO",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "mình muốn biết các chủ đề trong chuẩn đầu ra lo2.5 sẽ học những gì ạ",
+    "intent": "GET_LO",
+    "qtype": "LO_CONTENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi lĩnh vực là nào btl ạ",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "DOMAIN",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "mình muốn biết natural language processing tên môn là nào nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "COURSE_NAME",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích chương trước là gì",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "PREVIOUS_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi được xuất bản khi nào foundation of statistical natural language processing",
+    "intent": "GET_RESOURCE",
+    "qtype": "RESOURCE_YEAR",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin cho biết final có được mở tài liệu không",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "EXAM_OPEN_BOOK",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "hãy giải thích assignment 1 phải hoàn thành những yêu cầu nào nhé",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "REQUIREMENTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi top-down chart parsing tài liệu nào nói về",
+    "intent": "GET_RESOURCE",
+    "qtype": "RESOURCE_BY_TOPIC",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho mình biết chương 11 đề cập đến những phương pháp nào nhé",
+    "intent": "GET_TOPIC",
+    "qtype": "CHAPTER_METHODS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết phần i thuộc về assignment 1 đề bài yêu cầu ra sao",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "PART_REQUIREMENTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi hãy liệt kê hoàn thành những bài tập những gì nhé ạ",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "ASSIGNMENT_LIST",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "mình muốn biết mô tả môn học bao nhiêu của môn xử lý ngôn ngữ tự nhiên ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "DESCRIPTION",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi tuần hai học chương nào",
+    "intent": "GET_SCHEDULE",
+    "qtype": "WEEK_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "bài tập lớn tên gọi là gì nhé",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "TITLE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích giữa kỳ có trọng số bao nhiêu nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ASSESSMENT_WEIGHT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết chuyên cần và bài tập được tính bao nhiêu phần trăm ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ASSESSMENT_WEIGHT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết chương 10 có tài liệu nào để học",
+    "intent": "GET_RESOURCE",
+    "qtype": "RESOURCE_BY_CHAPTER",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi được đánh giá là những gì của nlp nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ASSESSMENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết cuối kỳ thời lượng là bao nhiêu nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "EXAM_DURATION",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho mình biết môn nlp tài liệu tham khảo là gì",
+    "intent": "GET_RESOURCE",
+    "qtype": "REFERENCE_LIST",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi gồm phần đánh giá không bài tập 1 nhé ạ",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "HAS_COMPONENT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho mình biết giáo trình của phần nó gồm ở đâu",
+    "intent": "CONTEXT_DEPENDENT",
+    "qtype": "RELATED_RESOURCE",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "tài liệu nào liên quan đến dịch máy là gì",
+    "intent": "GET_RESOURCE",
+    "qtype": "RESOURCE_BY_CATEGORY",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "vui lòng cho biết môn nlp số ects là như thế nào nhé",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ECTS",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "mình muốn biết lo2.5 được đề cập trong chương nào",
+    "intent": "GET_TOPIC",
+    "qtype": "FIND_CHAPTER_BY_LO",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "cho mình biết bài tập 1 thuộc về phần ii là như thế nào",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "PART_INFO",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "giải thích mục tiêu là những gì btl01 nhé ạ",
+    "intent": "GET_ASSIGNMENT",
+    "qtype": "GOAL",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi cuối kỳ thi theo hình thức bao nhiêu nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "EXAM_FORMAT",
+    "source": "synthetic_fcfg"
+  },
+  {
+    "sentence": "xin hỏi bài tập lớn chiếm bao nhiêu phần trăm nhé ạ",
+    "intent": "GET_COURSE_INFO",
+    "qtype": "ASSESSMENT_WEIGHT",
+    "source": "synthetic_fcfg"
+  }
+]

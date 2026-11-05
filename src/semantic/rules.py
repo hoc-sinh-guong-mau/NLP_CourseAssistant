@@ -35,9 +35,9 @@ def build_rules() -> dict[RuleKey, SemanticRule]:
     group('GET_ASSIGNMENT', 'REQUIREMENTS TEAM_SIZE TITLE GOAL DOMAIN OUTPUTS', {'assignment_id': 'ENTITY'})
     group('GET_ASSIGNMENT', 'ASSIGNMENT_LIST', {'course_id': 'ENTITY'})
     group('GET_ASSIGNMENT', 'PART_INFO PART_OUTPUTS PART_REQUIREMENTS',
-          {'part_id': 'ENTITY', 'assignment_id': 'ASSIGNMENT_NAME.ENTITY'})
+          {'part_id': 'PART.ENTITY', 'assignment_id': 'ASSIGNMENT_NAME.ENTITY'})
     group('GET_ASSIGNMENT', 'HAS_COMPONENT',
-          {'component_id': 'ENTITY', 'assignment_id': 'ASSIGNMENT_NAME.ENTITY'})
+          {'component_id': 'ASSIGNMENT_COMPONENT.ENTITY', 'assignment_id': 'ASSIGNMENT_NAME.ENTITY'})
     group('GET_DEADLINE', 'DEADLINE', {'assignment_id': 'ENTITY'})
     group('GET_RESOURCE', 'RESOURCE_BY_CATEGORY', {'resource_category_id': 'ENTITY'})
     group('GET_RESOURCE', 'RESOURCE_BY_TOPIC', {'topic_id': 'ENTITY'})
@@ -48,7 +48,7 @@ def build_rules() -> dict[RuleKey, SemanticRule]:
     group('GET_INSTRUCTOR', 'INSTRUCTOR', {'course_id': 'ENTITY'})
     group('GET_RULE', 'PERMISSION RULE_INFO', {'rule_id': 'ENTITY'}, {'assignment_id': 'TARGET'})
     group('GET_LO', 'LO_INFO LO_CONTENT', {'learning_outcome_id': 'ENTITY'})
-    group('CONTEXT_DEPENDENT', 'NEXT_CHAPTER PART_OUTPUT CHAPTER_RESOURCE CONTENT_CHAPTER RELATED_RESOURCE COURSE_CHAPTER_COUNT',
+    group('CONTEXT_DEPENDENT', 'NEXT_CHAPTER PREVIOUS_CHAPTER PART_OUTPUT CHAPTER_RESOURCE CONTENT_CHAPTER RELATED_RESOURCE COURSE_CHAPTER_COUNT',
           {'context_ref': 'ENTITY'})
     group('CONTEXT_DEPENDENT', 'RELATED_TOPIC', {'context_ref': 'ENTITY', 'topic_id': 'TARGET'})
     return rules

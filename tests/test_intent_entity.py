@@ -2,11 +2,13 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import Mock, patch
 
 from nltk.grammar import FeatureGrammar
 
 from src.application.pipeline import CourseAssistant
 from src.artifacts.exporter import export_records
+from src.config import ConfigurationError
 from src.parsing import Parser
 from src.semantic import SemanticFrame, extract
 
@@ -73,6 +75,93 @@ class IntentEntityTests(unittest.TestCase):
         self.assertEqual(record['status'], 'ambiguous')
         self.assertIsNone(record['intent_entity'])
         self.assertEqual({f['arguments']['assignment_id'] for f in record['alternatives']}, {'A', 'B'})
+
+    def test_statistical_fallback_extracts_entities_when_grammar_has_no_parse(self):
+        parser = Mock()
+        parser.parse_all.return_value = []
+        recognizer = Mock()
+        recognizer.predict_with_confidence.return_value = ('DEADLINE', 0.91)
+
+        record = CourseAssistant(
+            parser=parser,
+            statistical_recognizer=recognizer,
+        ).process('When is the deadline for BTL?', stop_after='query')
+
+        self.assertEqual(record['status'], 'query_ready')
+        self.assertTrue(record['statistical_used'])
+        self.assertEqual(record['statistical_prediction'], {
+            'intent': 'GET_DEADLINE', 'qtype': 'DEADLINE', 'confidence': 0.91,
+        })
+        self.assertEqual(record['semantic'], {
+            'predicate': 'GET_DEADLINE',
+            'arguments': {'assignment_id': 'BTL01'},
+            'qtype': 'DEADLINE',
+        })
+        self.assertEqual(record['intent_entity']['entities'], {'assignment_id': 'BTL01'})
+        self.assertEqual(record['query']['filters'], {'id': 'BTL01'})
+
+    def test_statistical_fallback_extracts_multiple_entities_in_mention_order(self):
+        parser = Mock()
+        parser.parse_all.return_value = []
+        recognizer = Mock()
+        recognizer.predict_with_confidence.return_value = ('TOPICS_WEEK', 0.87)
+
+        record = CourseAssistant(
+            parser=parser,
+            statistical_recognizer=recognizer,
+        ).process('When are CFG and parsing taught?', stop_after='semantic')
+
+        self.assertTrue(record['statistical_used'])
+        self.assertEqual(record['semantic']['arguments'], {
+            'topic_ids': ['CFG', 'PARSING'],
+        })
+
+    def test_statistical_fallback_extracts_optional_policy_context(self):
+        parser = Mock()
+        parser.parse_all.return_value = []
+        recognizer = Mock()
+        recognizer.predict_with_confidence.return_value = ('PERMISSION', 0.88)
+
+        record = CourseAssistant(
+            parser=parser,
+            statistical_recognizer=recognizer,
+        ).process('Can we use AI in BTL?', stop_after='semantic')
+
+        self.assertTrue(record['statistical_used'])
+        self.assertEqual(record['semantic']['arguments'], {
+            'rule_id': 'AI_USAGE',
+            'assignment_id': 'BTL01',
+        })
+
+    def test_statistical_fallback_is_not_used_when_the_grammar_parses(self):
+        recognizer = Mock()
+        record = CourseAssistant(statistical_recognizer=recognizer).process(
+            'Môn NLP có mấy tín chỉ?', stop_after='semantic'
+        )
+
+        self.assertFalse(record['statistical_used'])
+        self.assertIsNone(record['statistical_prediction'])
+        recognizer.predict_with_confidence.assert_not_called()
+
+    def test_statistical_fallback_does_not_guess_unknown_or_missing_entities(self):
+        for prediction in (('UNKNOWN', 0.2), ('DEADLINE', 0.9)):
+            with self.subTest(prediction=prediction):
+                parser = Mock()
+                parser.parse_all.return_value = []
+                recognizer = Mock()
+                recognizer.predict_with_confidence.return_value = prediction
+                record = CourseAssistant(
+                    parser=parser,
+                    statistical_recognizer=recognizer,
+                ).process('when is it due?', stop_after='semantic')
+                self.assertEqual(record['status'], 'parse_failed')
+                self.assertFalse(record['statistical_used'])
+
+    def test_explicit_missing_statistical_model_path_is_reported(self):
+        with patch('src.application.pipeline.QTYPE_MODEL_PATH', Path('missing-qtype-model.joblib')), \
+             patch('src.application.pipeline.QTYPE_MODEL_CONFIGURED', True), \
+             self.assertRaises(ConfigurationError):
+            CourseAssistant()
 
     def test_export_preserves_record_order_and_null(self):
         records = [self.assistant.process(text) for text in (
