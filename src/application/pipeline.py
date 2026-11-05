@@ -47,10 +47,12 @@ class CourseAssistant:
         
         if stop_after not in {"semantic", "intent_entity", "query", "answer"}:
             raise NLPError("Unknown pipeline stop stage", context={"stop_after": stop_after})
+        
         record = {
             "input": text, "normalized": None, "tokens": [], "parse_tree": "()",
             "semantic": None, "intent_entity": None, "query": None, "result": [],
         }
+        
         try:
             return self._process(text, record, stop_after, resolver)
         except NLPError as exc:
@@ -81,6 +83,7 @@ class CourseAssistant:
         if not trees:
             raise ParseError("No complete parse for the normalized input")
         record["parse_tree"] = trees[0].pformat(margin=10000)
+        
 
         # Intepretation Step: Entity, Intent Extraction
         interpretations = self._interpret_trees(trees)
@@ -96,6 +99,7 @@ class CourseAssistant:
             
         if stop_after == "semantic":
             return dict(record, status="semantic_ready", answer=None)
+
         
         record["intent_entity"] = run_stage("intent_entity", extract, frame)
         

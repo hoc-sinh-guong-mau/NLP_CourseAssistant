@@ -31,7 +31,12 @@ class StageExecutionError(NLPError):
 
 
 def run_stage(stage, operation, *args, **kwargs):
-    """Preserve domain errors; attach stage and original cause to unexpected ones."""
+    """
+    Preserve domain errors; attach stage and original cause to unexpected ones.
+    
+    :return:
+    -> operation(args, kwargs)
+    """
     try:
         return operation(*args, **kwargs)
     except NLPError:

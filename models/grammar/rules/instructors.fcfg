@@ -1,4 +1,39 @@
 # instructors: structural rules. Entity aliases belong in models/lexicon/.
-INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> 'giảng' 'viên' COURSE[] 'là' WHO[]
-INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> 'giảng' 'viên' 'môn' 'nlp' 'là' WHO[]
-INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> WHO[] 'là' 'giảng' 'viên' 'môn' 'nlp'
+# INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> 'giáº£ng' 'viÃªn' COURSE[] 'lÃ ' WHO[]
+# INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> 'giáº£ng' 'viÃªn' 'mÃ´n' 'nlp' 'lÃ ' WHO[]
+# INSTRUCTOR_QUERY[ENTITY='CO3085', INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> WHO[] 'lÃ ' 'giáº£ng' 'viÃªn' 'mÃ´n' 'nlp'
+
+
+# Generalized ---------------------------------------------------------------------------------------------------------------------------
+
+# Course-first, role-first, and question-word-first word orders.
+INSTRUCTOR_QUERY[ENTITY=?e, INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> COURSE[ENTITY=?e] INSTRUCTOR_QUESTION[]
+INSTRUCTOR_QUERY[ENTITY=?e, INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> INSTRUCTOR_ROLE[] 'của' COURSE[ENTITY=?e] INSTRUCTOR_QUESTION[]
+INSTRUCTOR_QUERY[ENTITY=?e, INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> INSTRUCTOR_ROLE[] COURSE[ENTITY=?e] INSTRUCTOR_QUESTION[]
+INSTRUCTOR_QUERY[ENTITY=?e, INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> WHO[] 'là' INSTRUCTOR_ROLE[] 'của' COURSE[ENTITY=?e]
+INSTRUCTOR_QUERY[ENTITY=?e, INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> WHO[] 'dạy' COURSE[ENTITY=?e]
+INSTRUCTOR_QUERY[ENTITY=?e, INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> COURSE[ENTITY=?e] 'do' WHO[] 'dạy'
+INSTRUCTOR_QUERY[ENTITY=?e, INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> COURSE[ENTITY=?e] 'do' WHO[] 'phụ' 'trách'
+INSTRUCTOR_QUERY[ENTITY=?e, INTENT='GET_INSTRUCTOR', QTYPE='INSTRUCTOR'] -> QUESTION_FRAME[] INSTRUCTOR_ROLE[] 'của' COURSE[ENTITY=?e] INSTRUCTOR_QUESTION[]
+
+QUESTION_FRAME[] -> 'cho' 'tôi' 'hỏi'
+QUESTION_FRAME[] -> 'cho' 'mình' 'hỏi'
+QUESTION_FRAME[] -> 'tôi' 'muốn' 'biết'
+QUESTION_FRAME[] -> 'mình' 'muốn' 'biết'
+QUESTION_FRAME[] -> 'cho' 'tôi' 'biết'
+
+WHO[] -> 'ai'
+WHO[] -> 'người' 'nào'
+
+INSTRUCTOR_ROLE[] -> 'giảng' 'viên'
+INSTRUCTOR_ROLE[] -> 'thầy' 'cô'
+INSTRUCTOR_ROLE[] -> 'giáo' 'viên'
+INSTRUCTOR_ROLE[] -> 'người' 'dạy'
+INSTRUCTOR_ROLE[] -> 'người' 'phụ' 'trách'
+
+INSTRUCTOR_QUESTION[] -> 'là' WHO[]
+INSTRUCTOR_QUESTION[] -> WHO[]
+INSTRUCTOR_QUESTION[] -> 'là' 'thầy' 'cô' 'nào'
+INSTRUCTOR_QUESTION[] -> 'dạy' WHO[]
+INSTRUCTOR_QUESTION[] -> 'do' WHO[] 'giảng' 'dạy'
+INSTRUCTOR_QUESTION[] -> 'do' WHO[] 'phụ' 'trách'

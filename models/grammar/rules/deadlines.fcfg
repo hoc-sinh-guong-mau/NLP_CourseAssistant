@@ -1,6 +1,40 @@
 # deadlines: structural rules. Entity aliases belong in models/lexicon/.
-DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' ASSIGNMENT[] 'là' WHEN[]
-DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' 'của' ASSIGNMENT[] 'là' WHEN[]
-DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'hạn' 'nộp' ASSIGNMENT[] 'là' WHEN[]
-DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> ASSIGNMENT[] 'nộp' WHEN[]
-DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> WHEN[] 'nộp' ASSIGNMENT[]
+# DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' ASSIGNMENT[] 'là' WHEN[]
+# DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' 'của' ASSIGNMENT[] 'là' WHEN[]
+# DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'hạn' 'nộp' ASSIGNMENT[] 'là' WHEN[]
+# DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> ASSIGNMENT[] 'nộp' WHEN[]
+# DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> WHEN[] 'nộp' ASSIGNMENT[]
+
+# Generalize grammar ----------------------------------------------------------------------------------------------------
+
+# Assignment-first, deadline-first, and question-word-first forms.
+DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> ASSIGNMENT[ENTITY=?e] DEADLINE_QUESTION[]
+DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> DEADLINE_CUE[] 'của' ASSIGNMENT[ENTITY=?e] DEADLINE_QUESTION[]
+DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> DEADLINE_CUE[] ASSIGNMENT[ENTITY=?e] DEADLINE_QUESTION[]
+DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> WHEN[] 'nộp' ASSIGNMENT[ENTITY=?e]
+DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> QUESTION_FRAME[] DEADLINE_CUE[] 'của' ASSIGNMENT[ENTITY=?e] DEADLINE_QUESTION[]
+
+QUESTION_FRAME[] -> 'cho' 'tôi' 'hỏi'
+QUESTION_FRAME[] -> 'cho' 'mình' 'hỏi'
+QUESTION_FRAME[] -> 'tôi' 'muốn' 'biết'
+QUESTION_FRAME[] -> 'mình' 'muốn' 'biết'
+QUESTION_FRAME[] -> 'cho' 'tôi' 'biết'
+
+WHEN[] -> 'khi' 'nào'
+WHEN[] -> 'lúc' 'nào'
+WHEN[] -> 'ngày' 'nào'
+WHEN[] -> 'vào' 'lúc' 'nào'
+WHEN[] -> 'vào' 'ngày' 'nào'
+
+DEADLINE_CUE[] -> 'deadline'
+DEADLINE_CUE[] -> 'hạn' 'nộp'
+DEADLINE_CUE[] -> 'hạn' 'chót'
+DEADLINE_CUE[] -> 'thời' 'hạn' 'nộp'
+DEADLINE_CUE[] -> 'ngày' 'nộp'
+DEADLINE_CUE[] -> 'hạn' 'cuối'
+
+DEADLINE_QUESTION[] -> 'là' WHEN[]
+DEADLINE_QUESTION[] -> WHEN[]
+DEADLINE_QUESTION[] -> 'phải' 'nộp' 'trước' 'khi' 'nào'
+DEADLINE_QUESTION[] -> 'cần' 'nộp' 'trước' 'khi' 'nào'
+DEADLINE_QUESTION[] -> 'nộp' 'khi' 'nào'

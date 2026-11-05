@@ -1,3 +1,62 @@
 # learning_outcomes: structural rules. Entity aliases belong in models/lexicon/.
-LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE='LO_INFO'] -> LO[ENTITY=?e] LO_INFO_END[]
-LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE='LO_CONTENT'] -> LO[ENTITY=?e] LO_CONTENT_END[]
+# LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE='LO_INFO'] -> LO[ENTITY=?e] LO_INFO_END[]
+# LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE='LO_CONTENT'] -> LO[ENTITY=?e] LO_CONTENT_END[]
+
+# Generalize
+
+# FCFG learning-outcome queries.
+LO_QUERY[ENTITY=?e, INTENT='GET_LO', QTYPE=?q] -> REQUEST_PREFIX[] LO_QUESTION[ENTITY=?e, QTYPE=?q] REQUEST_SUFFIX[]
+
+LO_QUESTION[ENTITY=?e, QTYPE='LO_INFO'] -> LO[ENTITY=?e] LO_INFO_PREDICATE[]
+LO_QUESTION[ENTITY=?e, QTYPE='LO_INFO'] -> LO_INFO_FRONT[] LO[ENTITY=?e] LO_INFO_VERB[]
+LO_QUESTION[ENTITY=?e, QTYPE='LO_CONTENT'] -> LO[ENTITY=?e] LO_CONTENT_PREDICATE[]
+LO_QUESTION[ENTITY=?e, QTYPE='LO_CONTENT'] -> LO_CONTENT_FRONT[] LO[ENTITY=?e] LO_CONTENT_VERB[]
+
+# Meaning, definition, and expected achievement.
+LO_INFO_PREDICATE[] -> 'là' 'gì'
+LO_INFO_PREDICATE[] -> 'có' 'nghĩa' 'là' 'gì'
+LO_INFO_PREDICATE[] -> 'yêu' 'cầu' 'gì'
+LO_INFO_PREDICATE[] -> 'có' 'yêu' 'cầu' 'gì'
+LO_INFO_PREDICATE[] -> 'mô' 'tả' 'điều' 'gì'
+LO_INFO_PREDICATE[] -> 'nói' 'lên' 'điều' 'gì'
+LO_INFO_PREDICATE[] -> 'cần' 'đạt' 'được' 'những' 'gì'
+LO_INFO_PREDICATE[] -> 'sinh' 'viên' 'cần' 'đạt' 'được' 'những' 'gì'
+LO_INFO_PREDICATE[] -> 'sau' 'khi' 'học' 'xong' 'thì' 'có' 'thể' 'làm' 'được' 'gì'
+
+LO_INFO_FRONT[] -> 'ý' 'nghĩa' 'của'
+LO_INFO_FRONT[] -> 'nội' 'dung' 'của'
+LO_INFO_FRONT[] -> 'yêu' 'cầu' 'của'
+LO_INFO_FRONT[] -> 'chuẩn' 'đầu' 'ra'
+LO_INFO_VERB[] -> 'là' 'gì'
+LO_INFO_VERB[] -> 'có' 'ý' 'nghĩa' 'gì'
+LO_INFO_VERB[] -> 'yêu' 'cầu' 'điều' 'gì'
+LO_INFO_VERB[] -> 'đòi' 'hỏi' 'những' 'gì'
+LO_INFO_VERB[] -> 'mô' 'tả' 'điều' 'gì'
+
+# Subject matter, knowledge, and skills covered.
+LO_CONTENT_PREDICATE[] -> 'liên' 'quan' 'đến' 'nội' 'dung' 'nào'
+LO_CONTENT_PREDICATE[] -> 'liên' 'quan' 'đến' 'những' 'nội' 'dung' 'nào'
+LO_CONTENT_PREDICATE[] -> 'học' 'về' 'gì'
+LO_CONTENT_PREDICATE[] -> 'học' 'những' 'gì'
+LO_CONTENT_PREDICATE[] -> 'nói' 'về' 'gì'
+LO_CONTENT_PREDICATE[] -> 'đề' 'cập' 'đến' 'nội' 'dung' 'gì'
+LO_CONTENT_PREDICATE[] -> 'bao' 'gồm' 'những' 'kiến' 'thức' 'và' 'kỹ' 'năng' 'nào'
+LO_CONTENT_PREDICATE[] -> 'bao' 'gồm' 'những' 'gì'
+LO_CONTENT_PREDICATE[] -> 'trang' 'bị' 'cho' 'sinh' 'viên' 'những' 'kiến' 'thức' 'gì'
+LO_CONTENT_PREDICATE[] -> 'giúp' 'sinh' 'viên' 'phát' 'triển' 'những' 'kỹ' 'năng' 'nào'
+
+LO_CONTENT_FRONT[] -> 'nội' 'dung' 'của'
+LO_CONTENT_FRONT[] -> 'kiến' 'thức' 'và' 'kỹ' 'năng' 'trong'
+LO_CONTENT_FRONT[] -> 'các' 'chủ' 'đề' 'trong'
+LO_CONTENT_FRONT[] -> 'những' 'gì' 'được' 'đề' 'cập' 'trong'
+LO_CONTENT_VERB[] -> 'gồm' 'những' 'nội' 'dung' 'nào'
+LO_CONTENT_VERB[] -> 'bao' 'gồm' 'những' 'gì'
+LO_CONTENT_VERB[] -> 'liên' 'quan' 'đến' 'những' 'chủ' 'đề' 'nào'
+LO_CONTENT_VERB[] -> 'đề' 'cập' 'đến' 'những' 'gì'
+LO_CONTENT_VERB[] -> 'sẽ' 'học' 'những' 'gì'
+
+# Example readings:
+# LO_QUERY -> REQUEST_PREFIX LO LO_INFO_PREDICATE REQUEST_SUFFIX
+#   "Cho tôi biết LO1 có nghĩa là gì nhé"
+# LO_QUERY -> REQUEST_PREFIX LO_CONTENT_FRONT LO LO_CONTENT_VERB REQUEST_SUFFIX
+#   "Nội dung của LO1 gồm những nội dung nào?"
