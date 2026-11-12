@@ -91,7 +91,8 @@ class AssignmentRunner:
 
     def evaluate(self):
         return evaluate(self.assistant, cases_path=self.config.evaluation_path,
-                        output_path=self.config.output_dir / 'evaluation.txt')
+                        output_path=self.config.output_dir / 'evaluation.txt',
+                        compare=self.config.evaluation_compare)
 
     def run(self):
         limit = self.config.sample_limit

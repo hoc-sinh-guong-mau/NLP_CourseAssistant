@@ -352,22 +352,62 @@ Pipeline có bộ phân loại qtype TF-IDF + Logistic Regression làm phương 
 
 ## 11. Đánh giá và kiểm thử — Phần IV
 
-### 11.1. Đánh giá theo tập expected
+### 11.1. Evaluation theo từng bước và so sánh fallback
+
+Smoke evaluation mặc định giữ 3 case để kiểm tra hồi quy và dùng trong `run`/Docker:
 
 ```bash
 python -m src.main build-kb
 python -m src.main evaluate
 ```
 
-Đọc input/test_cases.jsonl, so sánh chính xác các trường expected và xuất evaluation.txt. Hiện có **3 smoke cases**, không phải benchmark độc lập hoặc accuracy trên toàn bộ input/sample.
+Đánh giá rộng hơn bằng tập [input/evaluation_cases.jsonl](input/evaluation_cases.jsonl):
 
-Thêm dòng JSON để mở rộng tập đánh giá:
-
-```json
-{"input":"Môn NLP có mấy tín chỉ?","expected":{"status":"ok","intent_entity":{"intent":"GET_COURSE_INFO","qtype":"CREDITS","entities":{"course_id":"CO3085"}}}}
+```bash
+python -m src.main evaluate --input input/evaluation_cases.jsonl --compare
+# Tương đương sau khi pip install project:
+course-assistant evaluate --input input/evaluation_cases.jsonl --compare
 ```
 
-Báo cáo cuối kỳ còn cần test độc lập bao phủ intent/QTYPE, paraphrase, ngoài miền, thiếu dữ liệu và hội thoại; báo số đúng, accuracy/F1, lỗi và nguyên nhân.
+Bộ mở đầu có **42 case / 45 lượt**, bao phủ 9 intent nghiệp vụ, UNKNOWN, câu chuẩn, paraphrase, lỗi gõ, biến thể entity, chuẩn hóa văn bản, thiếu entity/dữ liệu, 4 hội thoại và chuyển chủ đề. Nhãn được viết theo yêu cầu miền và dữ liệu raw, không lấy dự đoán hiện tại làm đáp án. Đây là **tập phát triển/regression do dự án biên soạn**, chưa phải test mù hoặc tập khảo sát người dùng; một số câu có thể trùng dữ liệu huấn luyện. Không dùng điểm số của tập này để khẳng định khả năng tổng quát hóa.
+
+`--compare` chạy cùng dữ liệu qua hai cấu hình: `grammar_only` tắt model bằng `CourseAssistant(use_statistical=False)`; `hybrid` dùng model hiện cấu hình. Hai hệ thống dùng cùng grammar, lexicon, KB và bộ sinh câu trả lời. Mỗi case hội thoại có session riêng; session được tạo lại giữa các hệ thống. Nếu chưa có model, báo cáo ghi rõ hybrid không thể chạy fallback. Không tự huấn luyện lại hoặc điều chỉnh ngưỡng trên test set.
+
+Đầu ra duy nhất là `output/evaluation.txt` (JSON, schema version 2); `--output-dir` đổi thư mục. Chạy lần sau ghi đè báo cáo. Exit code **1** nếu hệ thống chính không đạt tất cả expected, kể cả khi benchmark cố ý chứa câu hệ thống chưa hỗ trợ; báo cáo vẫn được xuất đầy đủ. Baseline sai không làm CLI thất bại nếu hybrid đạt toàn bộ. Lỗi hệ thống/cấu hình thực sự được giữ nguyên, không bị tính như một câu hỏi sai thông thường.
+
+| Nhóm | Báo cáo |
+| --- | --- |
+| Parser | Số lượt có cây và parse rate; đây là độ bao phủ, không phải độ đúng |
+| Intent / qtype | Accuracy, Macro-F1, precision/recall/F1 từng nhãn, confusion counts |
+| Entity | Exact match và micro precision/recall/F1 trên cặp `(slot, canonical_id)` |
+| Semantic | So sánh frame kỳ vọng; tách với so sánh literal trường `semantic` nếu có nhãn |
+| Query | Exact match query logic; bỏ qua thứ tự `select` và các điều kiện AND |
+| Truy xuất | Kiểm tra các sự kiện kỳ vọng trong các row được trả về |
+| Answer | Exact text hoặc các cụm bắt buộc/cấm; không suy diễn độ đúng sự kiện chỉ từ văn bản |
+| Dialogue | Tỷ lệ cả session đúng và độ đúng ở các lượt có nhãn context |
+| Fallback | Số lần thử/chấp nhận, độ đúng của các lượt chấp nhận, số lượt phục hồi/làm sai thêm so với baseline |
+| Ngoài miền | False acceptance trên các câu gán intent UNKNOWN |
+| Thời gian | Median/p95 xử lý từng lượt; không tính khởi tạo model/grammar, không phải load test |
+
+Mỗi accuracy có `total`, `correct`, `accuracy`. Thành phần không có nhãn có `total=0`, `accuracy=null`; không bị báo thành 0%. Macro-F1 trung bình trên các nhãn có gold support. Dự đoán rỗng được quy về UNKNOWN để tính metric, không thêm luật UNKNOWN vào grammar. Entity dạng danh sách được chấm như tập ID không phụ thuộc thứ tự. Nhãn UNKNOWN và `entities={}` giúp phát hiện entity bị đoán sai trên câu ngoài miền. Số nhóm trong `groups` có thể chồng lấp vì một case có nhiều tag.
+
+Một case câu đơn:
+
+```json
+{"id":"credits_custom","tags":["paraphrase"],"input":"Cho mình hỏi số tín chỉ của NLP với","expected":{"intent":"GET_COURSE_INFO","qtype":"CREDITS","entities":{"course_id":"CO3085"},"status":"ok","query":{"collection":"course","filters":{"id":"CO3085"},"select":["credits"]},"result_contains":[{"credits":3}],"answer_contains":["3 tín chỉ"]}}
+```
+
+Một case hội thoại (lưu cả object trên một dòng JSONL):
+
+```json
+{"id":"part_reference","tags":["dialogue","reference"],"turns":[{"input":"Bài tập lớn có phần parser không?","expected":{"status":"ok"}},{"input":"Phần này cần xuất file gì?","expected":{"intent":"GET_ASSIGNMENT","qtype":"PART_OUTPUTS","entities":{"assignment_id":"BTL01","part_id":"PART_I"},"context_used":{"source_turn":1},"answer_contains":["output/grammar.txt"]}}]}
+```
+
+Các expected cũ như `semantic`, `intent_entity`, `status`, `answer` vẫn hoạt động. Nhãn `intent`, `qtype`, `entities` là dạng viết gọn của kết quả cuối; nếu pipeline từ chối thì các metric nhận UNKNOWN / `{}`. `result_contains` yêu cầu từng mapping con xuất hiện trong ít nhất một row; `context_used`/`context_after` kiểm tra mapping con, nhưng `{}` yêu cầu context rỗng. Các nhãn khác so sánh chính xác; `answer_contains` và `answer_not_contains` chuẩn hóa NFC, hoa/thường và khoảng trắng. Không coi việc có đúng vài từ khóa là bằng chứng câu trả lời hoàn toàn chính xác.
+
+Report có SHA-256 của dataset, phiên bản thư viện, trạng thái model/ngưỡng, kết quả từng hệ thống, từng nhóm, expected/actual từng lượt và `failures` để phân tích lỗi. Một case hội thoại chỉ đúng khi **mọi lượt** đạt tất cả nhãn. `total/passed` trên cùng luôn đếm case của hybrid để giữ tương thích workflow; `turn_accuracy` đếm riêng số lượt. `fallback.accepted_semantic_accuracy` chỉ chấm những lượt có đủ nhãn intent/qtype/entities. Kết quả không đạt phải được phân tích; không sửa gold chỉ để tăng điểm.
+
+Mã evaluation được chia thành `dataset.py` (validation), `scoring.py` (so sánh), `metrics.py` (chỉ số), `reporting.py` (artifact) và `evaluator.py` (điều phối). Mở rộng tiếp bằng case được người dùng khác viết, kiểm tra trùng với train/validation, và chọn ngưỡng chỉ trên validation set.
 
 ### 11.2. Unit/integration tests
 
@@ -388,6 +428,7 @@ python -m unittest discover -s tests -p "test_queries.py" -v
 python -m unittest discover -s tests -p "test_answers.py" -v
 python -m unittest discover -s tests -p "test_dialogue.py" -v
 python -m unittest discover -s tests -p "test_ui.py" -v
+python -m unittest discover -s tests -p "test_evaluation.py" -v
 ```
 
 Có thể dùng cùng mẫu `-p "<tên_file>"` với test_normalizer.py, test_tokenizer.py, test_lexicon.py, test_parser.py, test_intent_entity.py, test_kb_normalization.py, test_sqlite.py, test_errors.py, test_extensibility.py và test_workflows.py.

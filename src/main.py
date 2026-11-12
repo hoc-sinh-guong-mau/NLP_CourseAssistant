@@ -33,13 +33,18 @@ def main():
         'intent-entity':'Part II / 2: intent-entity.txt only',
         'query':'Part II / 3: query.txt only',
         'answer':'Part II / 4: answer.txt only',
-        'evaluate':'Part IV: evaluate the provided smoke cases',
+        'evaluate':'Part IV: score labeled cases and optionally compare grammar with fallback',
         'chat':'Interactive demo; /exit to quit',
         'run':'Rebuild KB and reproduce all implemented assignment outputs',
         'test':'Build KB and run unit/integration tests',
     }
     for name, description in descriptions.items():
         command = commands.add_parser(name, help=description)
+        if name == 'evaluate':
+            command.add_argument('--input', type=Path, default=defaults.evaluation_path,
+                                 help='Labeled JSONL evaluation cases, including dialogue cases')
+            command.add_argument('--compare', action='store_true',
+                                 help='Compare grammar-only and the configured hybrid assistant')
         if name == 'run':
             command.add_argument('--dialogue-input', type=Path, default=defaults.dialogue_path)
         if name in {'generate','run'}:
@@ -55,6 +60,8 @@ def main():
         output_dir=getattr(args,'output_dir',defaults.output_dir),
         sample_limit=getattr(args,'limit',DEFAULT_SAMPLE_LIMIT),
         dialogue_path=args.input if args.command=='dialogue' else getattr(args,'dialogue_input',defaults.dialogue_path),
+        evaluation_path=args.input if args.command=='evaluate' else defaults.evaluation_path,
+        evaluation_compare=getattr(args,'compare',False),
     )
     result = getattr(AssignmentRunner(config), args.command.replace('-','_'))()
     if args.command == 'test' and not result:
