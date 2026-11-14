@@ -44,7 +44,7 @@ class SemanticTests(unittest.TestCase):
                     self.assertEqual(self.semantic.interpret(tree).arguments, expected)
 
     def test_existing_input_has_no_semantic_failures(self):
-        for text in (ROOT / 'input/sentences.txt').read_text().splitlines():
+        for text in (ROOT / 'input/sentences.txt').read_text(encoding="utf-8").splitlines():
             for tree in self.parser.parse_all(tokenize(normalize(text))):
                 with self.subTest(text=text):
                     self.semantic.interpret(tree)

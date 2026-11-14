@@ -7,6 +7,7 @@ TOPIC_SECTION[ENTITY=?e] -> TOPIC[ENTITY=?e]
 TOPIC_SECTION[ENTITY=?e] -> 'phần' TOPIC[ENTITY=?e]
 TOPIC_WEEK_WH[] -> 'nằm' 'ở' 'tuần' 'nào'
 TOPIC_WEEK_WH[] -> 'học' 'vào' 'tuần' 'nào'
+TOPIC_WEEK_WH[] -> 'được' 'dạy' 'vào' 'tuần' 'nào'
 CONTEXT_PRONOUN[] -> 'nó'
 CONTEXT_PRONOUN[] -> 'phần' 'này'
 CONTEXT_PRONOUN[] -> 'chương' 'này'

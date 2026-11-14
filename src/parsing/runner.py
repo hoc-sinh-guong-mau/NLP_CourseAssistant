@@ -36,6 +36,7 @@ def parse_file(input_path=INPUT_DIR / "sentences.txt",
         trees = parser.parse_all(tokens) if tokens else []
         # Very large margin alone is not enough to promise a single output line.
         formatted = [" ".join(tree.pformat(margin=1000000).split()) for tree in trees]
+        # Select the first parse tree if at leat one exists.
         results.append(formatted[0] if formatted else "()")
         traces.append({
             "line": line_number, "input": text, "normalized": normalized,

@@ -1,7 +1,7 @@
 """
 Grounded domain renderers for lists, relations and special field types.
 
-Template for generations
+Template for generations. These handlers contain conditional logic.
 """
 from .exceptions import AnswerError
 from .formatting import display, label, missing, present

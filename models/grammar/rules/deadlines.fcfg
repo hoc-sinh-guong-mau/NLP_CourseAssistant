@@ -1,18 +1,24 @@
-# deadlines: structural rules. Entity aliases belong in models/lexicon/.
-# DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' ASSIGNMENT[] 'là' WHEN[]
-# DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'deadline' 'của' ASSIGNMENT[] 'là' WHEN[]
-# DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> 'hạn' 'nộp' ASSIGNMENT[] 'là' WHEN[]
-# DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> ASSIGNMENT[] 'nộp' WHEN[]
-# DEADLINE_QUERY[ENTITY='BTL01', INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> WHEN[] 'nộp' ASSIGNMENT[]
-
 # Generalize grammar ----------------------------------------------------------------------------------------------------
 
-# Assignment-first, deadline-first, and question-word-first forms.
+# deadlines: structural rules. Assignment aliases belong in models/lexicon/.
+# Every production keeps the assignment entity and deadline question purpose.
+
+# Assignment-first and deadline-first forms.
 DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> ASSIGNMENT[ENTITY=?e] DEADLINE_QUESTION[]
-DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> DEADLINE_CUE[] 'của' ASSIGNMENT[ENTITY=?e] DEADLINE_QUESTION[]
+DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> ASSIGNMENT[ENTITY=?e] DEADLINE_CUE[] DEADLINE_QUESTION[]
 DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> DEADLINE_CUE[] ASSIGNMENT[ENTITY=?e] DEADLINE_QUESTION[]
-DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> WHEN[] 'nộp' ASSIGNMENT[ENTITY=?e]
 DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> DEADLINE_CUE[] 'của' ASSIGNMENT[ENTITY=?e] DEADLINE_QUESTION[]
+DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> DEADLINE_CUE[] 'cho' ASSIGNMENT[ENTITY=?e] DEADLINE_QUESTION[]
+
+# Natural question-word-first and submit-before forms.
+DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> WHEN[] 'nộp' ASSIGNMENT[ENTITY=?e]
+DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> WHEN[] 'là' DEADLINE_CUE[] 'của' ASSIGNMENT[ENTITY=?e]
+DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> ASSIGNMENT[ENTITY=?e] 'nộp' WHEN[]
+#===1
+# Redundant with ASSIGNMENT + DEADLINE_QUESTION[], which already expands to
+# DEADLINE_SUBMIT_QUESTION[] and would create a duplicate parse tree.
+# DEADLINE_QUERY[ENTITY=?e, INTENT='GET_DEADLINE', QTYPE='DEADLINE'] -> ASSIGNMENT[ENTITY=?e] DEADLINE_SUBMIT_QUESTION[]
+#===2
 
 DEADLINE_CUE[] -> 'deadline'
 DEADLINE_CUE[] -> 'hạn' 'nộp'
@@ -23,6 +29,9 @@ DEADLINE_CUE[] -> 'hạn' 'cuối'
 
 DEADLINE_QUESTION[] -> 'là' WHEN[]
 DEADLINE_QUESTION[] -> WHEN[]
-DEADLINE_QUESTION[] -> 'phải' 'nộp' 'trước' 'khi' 'nào'
-DEADLINE_QUESTION[] -> 'cần' 'nộp' 'trước' 'khi' 'nào'
-DEADLINE_QUESTION[] -> 'nộp' 'khi' 'nào'
+DEADLINE_QUESTION[] -> DEADLINE_SUBMIT_QUESTION[]
+
+DEADLINE_SUBMIT_QUESTION[] -> 'phải' 'nộp' 'trước' 'khi' 'nào'
+DEADLINE_SUBMIT_QUESTION[] -> 'cần' 'nộp' 'trước' 'khi' 'nào'
+DEADLINE_SUBMIT_QUESTION[] -> 'nộp' 'khi' 'nào'
+DEADLINE_SUBMIT_QUESTION[] -> 'nộp' 'trước' 'khi' 'nào'

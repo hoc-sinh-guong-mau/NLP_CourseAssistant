@@ -53,11 +53,12 @@ def grammar_text(grammar_path=None, lexicon_dir=None) -> str:
 def validate_grammar(text: str) -> FeatureGrammar:
     """
     Try to read grammar using FeatureGrammar.
+    (Checks whether nonterminal categories exist.)
 
     Args:
     @text: str: loaded grammar text
     Return:
-    -> Feature Grammar
+    -> Feature Grammar (NLTK FeatureGrammar object)
     """
     try:
         grammar = FeatureGrammar.fromstring(text)

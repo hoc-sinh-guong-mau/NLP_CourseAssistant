@@ -19,6 +19,7 @@ class Parser:
         """
         tokens = list(tokens)
         try:
+            # Checks whether the grammar contains lexical productions covering all input tokens.
             self.grammar.check_coverage(tokens)
         except ValueError:
             return []  # Normal no-match result; grammar coverage is not a system failure.
