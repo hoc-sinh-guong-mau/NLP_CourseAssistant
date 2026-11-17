@@ -19,6 +19,13 @@ _ABSTENTION_STATUSES = {
     "parse_failed" 
 }
 
+# These pipeline outcomes also mean the assistant did not provide an answer.
+# They are response-side abstentions; they are not used as expected labels
+# unless explicitly added to _ABSTENTION_STATUSES.
+_SYSTEM_ABSTENTION_STATUSES = _ABSTENTION_STATUSES | {
+    "invalid_semantic", "needs_context",
+}
+
 
 def _safe_divide(numerator, denominator):
     return numerator / denominator if denominator else 0.0
@@ -166,7 +173,8 @@ def evaluate(assistant=None, *, cases_path=INPUT_DIR / "test_cases.jsonl", outpu
             abstention_truth.append(_expected_abstention(case["expected"]))
             abstention_predictions.append(
                 actual.get("abstained") is True
-                or actual.get("status") in _ABSTENTION_STATUSES
+                # Note the _SYSTEM_ABSTENTION_STATUSES and ABSTENTION_STATUSES.
+                or actual.get("status") in _SYSTEM_ABSTENTION_STATUSES
             )
             abstention_task_correct.append(correct)
 
