@@ -40,6 +40,9 @@ def main():
     }
     for name, description in descriptions.items():
         command = commands.add_parser(name, help=description)
+        if name == 'evaluate':
+            command.add_argument('--input', type=Path, default=defaults.evaluation_path,
+                                 help='Labeled JSONL cases; defaults to startup smoke checks')
         if name == 'run':
             command.add_argument('--dialogue-input', type=Path, default=defaults.dialogue_path)
         if name in {'generate','run'}:
@@ -55,6 +58,7 @@ def main():
         output_dir=getattr(args,'output_dir',defaults.output_dir),
         sample_limit=getattr(args,'limit',DEFAULT_SAMPLE_LIMIT),
         dialogue_path=args.input if args.command=='dialogue' else getattr(args,'dialogue_input',defaults.dialogue_path),
+        evaluation_path=args.input if args.command=='evaluate' else defaults.evaluation_path,
     )
     result = getattr(AssignmentRunner(config), args.command.replace('-','_'))()
     if args.command == 'test' and not result:

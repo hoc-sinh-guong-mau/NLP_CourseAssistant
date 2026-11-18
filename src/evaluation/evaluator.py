@@ -1,30 +1,24 @@
 """Evaluate end-to-end, intent/entity, and abstention performance."""
 import json
+from pathlib import Path
 
 from src.common import run_stage
 from src.common.files import read_text, write_text
-from src.config import INPUT_DIR, OUTPUT_DIR
+from src.config import SMOKE_CASES_PATH, OUTPUT_DIR
 from src.application.pipeline import CourseAssistant
 
 from .exceptions import EvaluationError
 
 
 _ABSTENTION_STATUSES = {
-    "missing_information", "unsupported_query", # Outside of KB
-    "unsupported_semantic", "unsupported_answer", # Outside of Domain
-
-    # Temporily treated as abstention,
-    # but unable to parse does not mean 
-    # the answer is out of domain
-    "parse_failed" 
+    "missing_information", "unsupported_query", "unsupported_semantic",
+    "unsupported_answer", "parse_failed", "invalid_semantic", "needs_context", "ambiguous",
 }
 
-# These pipeline outcomes also mean the assistant did not provide an answer.
-# They are response-side abstentions; they are not used as expected labels
-# unless explicitly added to _ABSTENTION_STATUSES.
-_SYSTEM_ABSTENTION_STATUSES = _ABSTENTION_STATUSES | {
-    "invalid_semantic", "needs_context",
-}
+
+def _abstained(record):
+    """A clarification or failed parse is a non-answer, not proof of being outside the domain."""
+    return record.get("abstained") is True or record.get("status") in _ABSTENTION_STATUSES
 
 
 def _safe_divide(numerator, denominator):
@@ -115,13 +109,17 @@ def _entity_match(case, record):
     expected_semantic = expected.get("semantic")
     if expected_semantic is not None and "arguments" in expected_semantic:
         expected_entities = expected_semantic["arguments"]
-    elif "intent_entity" in expected and "entities" in expected["intent_entity"]:
+    elif isinstance(expected.get("intent_entity"), dict) and "entities" in expected["intent_entity"]:
         expected_entities = expected["intent_entity"]["entities"]
+    elif any(key in expected and expected[key] is None for key in ("semantic", "intent_entity")):
+        expected_entities = None
     else:
         return None
     actual_entities = (record.get("semantic") or {}).get("arguments")
     if actual_entities is None:
         actual_entities = (record.get("intent_entity") or {}).get("entities")
+    if expected_entities is None:
+        return actual_entities in (None, {})
     return actual_entities == expected_entities
 
 
@@ -130,11 +128,14 @@ def _expected_abstention(expected):
     if "abstain" in expected:
         return expected["abstain"]
     status = expected.get("status")
-    return status in _ABSTENTION_STATUSES if isinstance(status, str) else None
+    if status == "ok":
+        return False
+    return True if isinstance(status, str) and status in _ABSTENTION_STATUSES else None
 
 
-def evaluate(assistant=None, *, cases_path=INPUT_DIR / "test_cases.jsonl", output_path=OUTPUT_DIR / "evaluation.txt"):
-    assistant = CourseAssistant() if assistant is None else assistant
+def evaluate(assistant=None, *, cases_path=SMOKE_CASES_PATH, output_path=OUTPUT_DIR / "evaluation.txt"):
+    if Path(cases_path).resolve() == Path(output_path).resolve():
+        raise EvaluationError("Evaluation input and output must be different files")
 
     cases = [run_stage("evaluation", json.loads, line) for line in read_text(cases_path, EvaluationError).splitlines() if line.strip()]
 
@@ -145,6 +146,12 @@ def evaluate(assistant=None, *, cases_path=INPUT_DIR / "test_cases.jsonl", outpu
             raise EvaluationError("Each evaluation case needs input and nonempty expected fields", context={"case": number})
         if "abstain" in case["expected"] and not isinstance(case["expected"]["abstain"], bool):
             raise EvaluationError("expected.abstain must be a boolean", context={"case": number})
+        for key, entity_key in (("semantic", "arguments"), ("intent_entity", "entities")):
+            value = case["expected"].get(key)
+            if value is not None and (not isinstance(value, dict) or
+                                      entity_key in value and not isinstance(value[entity_key], dict)):
+                raise EvaluationError(f"expected.{key} must be a mapping with entity slots or null",
+                                      context={"case": number})
 
     results = []
     intent_truth, intent_predictions = [], []
@@ -155,11 +162,18 @@ def evaluate(assistant=None, *, cases_path=INPUT_DIR / "test_cases.jsonl", outpu
     if any(abstention_annotations) and not all(abstention_annotations):
         raise EvaluationError("Abstention evaluation needs expected.abstain or a recognized expected.status on every case")
 
+    assistant = CourseAssistant() if assistant is None else assistant
     for case in cases:
         actual = assistant.process(case["input"])
         expected_output = {key: value for key, value in case["expected"].items() if key != "abstain"}
-        correct = all(actual.get(key) == value for key, value in expected_output.items())
-        results.append({"input": case["input"], "correct": correct, "actual": actual})
+        actual_abstention = _abstained(actual)
+        checks = {key: actual.get(key) == value for key, value in expected_output.items()}
+        if "abstain" in case["expected"]:
+            checks["abstain"] = actual_abstention == case["expected"]["abstain"]
+        correct = all(checks.values())
+        results.append({"input": case["input"], "correct": correct,
+                        "expected": case["expected"], "checks": checks,
+                        "actual_abstained": actual_abstention, "actual": actual})
 
         expected_intent, actual_intent = _intent(case, actual)
         if expected_intent is not None:
@@ -171,17 +185,15 @@ def evaluate(assistant=None, *, cases_path=INPUT_DIR / "test_cases.jsonl", outpu
 
         if all(abstention_annotations):
             abstention_truth.append(_expected_abstention(case["expected"]))
-            abstention_predictions.append(
-                actual.get("abstained") is True
-                # Note the _SYSTEM_ABSTENTION_STATUSES and ABSTENTION_STATUSES.
-                or actual.get("status") in _SYSTEM_ABSTENTION_STATUSES
-            )
+            abstention_predictions.append(actual_abstention)
             abstention_task_correct.append(correct)
 
     intent = _intent_metrics(intent_truth, intent_predictions) if intent_truth else None
     report = {
-        "note": "",
+        "note": "Exact match of supplied labels only; not a representative benchmark. "
+                "Abstention includes clarification and parse failures, not just outside-domain requests.",
         "backend": "sqlite",
+        "dataset": str(cases_path),
         "total": len(results),
         "passed": sum(r["correct"] for r in results),
         "task_performance": {
