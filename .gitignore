@@ -18,3 +18,4 @@ dist/
 # Required default dialogue fixture must survive a fresh checkout.
 !input/dialogues.txt
 !input/smoke_cases.jsonl
+!input/evaluation_dialogues.jsonl

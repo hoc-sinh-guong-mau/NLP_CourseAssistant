@@ -11,7 +11,6 @@ from src.retrieval import QueryBuilder
 from src.retrieval.sqlite import SQLiteKnowledgeBase
 from src.generation import AnswerGenerator
 from src.statistical_processing.entity_extractor import EntityExtractor
-from src.statistical_processing.intent_recognizer import QTypeRecognizer
 
 from .messages import set_status
 
@@ -30,6 +29,8 @@ def _load_statistical_recognizer():
             )
         return None
 
+    # CLI/help and grammar-only runs do not need sklearn or model deserialization.
+    from src.statistical_processing.intent_recognizer import QTypeRecognizer
     return run_stage("statistical", QTypeRecognizer.load_model, QTYPE_MODEL_PATH)
 
 
@@ -44,13 +45,14 @@ class CourseAssistant:
         answer_generator=None,
         statistical_recognizer=None,
         entity_extractor=None,
+        use_statistical=True,
     ):
         self.parser = run_stage("grammar", Parser) if parser is None else parser
         self.semantic = run_stage("semantic", SemanticInterpreter) if semantic is None else semantic
         self.kb = run_stage("knowledge_base", SQLiteKnowledgeBase) if kb is None else kb
         self.query_builder = run_stage("query", QueryBuilder) if query_builder is None else query_builder
         self.answer_generator = run_stage("generation", AnswerGenerator) if answer_generator is None else answer_generator
-        self.statistical_recognizer = (
+        self.statistical_recognizer = None if not use_statistical else (
             _load_statistical_recognizer()
             if statistical_recognizer is None else statistical_recognizer
         )
@@ -63,6 +65,7 @@ class CourseAssistant:
         if self.statistical_recognizer is None:
             return None
 
+        record["statistical_attempted"] = True
         qtype, confidence = run_stage(
             "statistical", self.statistical_recognizer.predict_with_confidence, text
         )
@@ -124,6 +127,7 @@ class CourseAssistant:
         record = {
             "input": text, "normalized": None, "tokens": [], "parse_tree": "()",
             "semantic": None, "intent_entity": None, "query": None, "result": [],
+            "statistical_attempted": False,
             "statistical_used": False, "statistical_prediction": None,
         }
         

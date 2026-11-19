@@ -6,14 +6,20 @@ ENV PATH="${VIRTUAL_ENV}/bin:${PATH}"
 ENV COURSE_ROOT=/app PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
     STREAMLIT_SERVER_ADDRESS=0.0.0.0 STREAMLIT_SERVER_PORT=8501 \
     STREAMLIT_SERVER_HEADLESS=true STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
-COPY pyproject.toml MANIFEST.in README.md LICENSE streamlit_app.py ./
+COPY pyproject.toml .
+COPY constraints/python311.txt constraints/python311.txt
+# Cache runtime dependencies independently of frequently changing application code.
+RUN python -c "import subprocess, sys, tomllib; \
+    dependencies = tomllib.load(open('pyproject.toml', 'rb'))['project']['dependencies']; \
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', '--no-cache-dir', '-c', 'constraints/python311.txt', *dependencies])"
+COPY MANIFEST.in README.md LICENSE streamlit_app.py ./
 COPY .streamlit/ .streamlit/
 COPY src/ src/
 COPY models/ models/
 COPY data/raw/ data/raw/
 COPY input/ input/
 COPY tests/ tests/
-RUN python -m pip install --no-cache-dir . \
+RUN python -m pip install --no-cache-dir --no-deps . \
     && useradd --create-home --uid 10001 assistant \
     && mkdir -p /app/data/db /app/output \
     && chown -R assistant:assistant /app

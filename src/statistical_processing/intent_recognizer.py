@@ -2,10 +2,6 @@ import re
 from pathlib import Path
 
 import joblib
-import matplotlib
-
-matplotlib.use("Agg")  # no display needed; we only save figures
-import matplotlib.pyplot as plt
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
@@ -13,7 +9,6 @@ from sklearn.metrics import (
     accuracy_score,
     classification_report,
     confusion_matrix,
-    ConfusionMatrixDisplay,
 )
 
 UNKNOWN = "UNKNOWN"
@@ -214,6 +209,11 @@ class QTypeRecognizer:
         print(report)
 
         if eval_path is not None:
+            import matplotlib
+            matplotlib.use("Agg")
+            import matplotlib.pyplot as plt
+            from sklearn.metrics import ConfusionMatrixDisplay
+
             eval_path = Path(eval_path)
             eval_path.mkdir(parents=True, exist_ok=True)
 
@@ -313,6 +313,7 @@ class QTypeRecognizer:
             unknown_threshold=data.get("unknown_threshold", 0.40),
         )
         obj.is_fitted = True
+        obj.model_path = model_path.resolve()
         return obj
 
     # --------------------------------------------------------- internal

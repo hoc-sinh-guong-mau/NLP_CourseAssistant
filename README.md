@@ -7,14 +7,15 @@ Trợ lý hỏi đáp tiếng Việt trong miền thông tin môn học **Xử l
 | Họ và tên | MSSV |
 | --- | --- |
 | Trương Hiếu Quyền | 2153756 |
-
-Bổ sung các thành viên còn lại và phân công công việc theo thông tin thực tế của nhóm trước khi nộp bài.
+| Ngô Chí Lực | 2312001 |
+| Huỳnh Hồ Nam | 2312159 |
+| Thân Trọng Minh Văn | 2313864 |
 
 ## 2. Hướng dẫn cài đặt
 
 ### 2.1. Yêu cầu môi trường
 
-- Python **3.11 trở lên**; Dockerfile dùng Python 3.11.
+- Python **3.11 trở lên** theo metadata; môi trường tham chiếu để tái hiện là **Python 3.11 trong Docker**. Python 3.14 cũng đã được kiểm thử trên máy phát triển; chưa xác minh mọi phiên bản Python/OS.
 - Dependency khai báo trong [pyproject.toml](pyproject.toml): NLTK, PyYAML, Streamlit, python-dotenv, scikit-learn, joblib và matplotlib.
 - SQLite dùng thư viện chuẩn `sqlite3`, cần hỗ trợ JSON functions; không cần cài database server.
 - Không cần API key, mô hình LLM hoặc tải corpus NLTK.
@@ -24,12 +25,17 @@ Thực hiện các lệnh từ **thư mục project chứa README.md và pyproje
 ### 2.2. Cài đặt trên máy
 
 ```bash
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
-python -m pip install -e ".[dev]"
+python -m pip install -c constraints/python311.txt -e ".[dev]"
+python -m pip check
 ```
 
-Trên Windows PowerShell, dùng `python -m venv .venv` và `.venv\Scripts\Activate.ps1`. Có thể thay bước cài dependency bằng `python -m pip install -r requirements.txt`; file này trỏ về project để giữ một nguồn khai báo dependency.
+Trên Windows PowerShell, dùng `py -3.11 -m venv .venv` và `.venv\Scripts\Activate.ps1`. Có thể thay bước cài dependency bằng `python -m pip install -c constraints/python311.txt -r requirements.txt`; file requirements trỏ về project. Extra `dev` chỉ cần thêm khi muốn build wheel/sdist.
+
+[constraints/python311.txt](constraints/python311.txt) lưu phiên bản runtime trực tiếp và gián tiếp đã kiểm chứng trong Docker Linux/Python 3.11. Constraints chỉ giới hạn những dependency cần cài, không ép cài mọi package trong file. Docker dùng cùng constraints. Khi dùng Python khác, có thể cài `python -m pip install -e ".[dev]"` để resolver chọn dependency tương thích, nhưng đó là môi trường khác và cần chạy lại test/benchmark. Không mang constraints Python 3.11 sang Python khác nếu resolver báo không tương thích.
+
+Model joblib đi kèm dùng scikit-learn 1.9.1 và joblib 1.6.0; hai phiên bản này được pin trong pyproject.toml. Giữ nguyên model khi tái hiện; huấn luyện lại làm thay đổi artifact và có thể thay đổi kết quả. Chỉ nạp model joblib từ nguồn tin cậy.
 
 Ở lần cài mới, tạo cấu hình local từ mẫu:
 
@@ -83,6 +89,19 @@ Lệnh tự build KB, chạy các phần đã hiện thực của đề và xu�
 python -m src.main run --limit 1000 --input input/sentences.txt \
   --dialogue-input input/dialogues.txt --output-dir /tmp/nlp-output
 ```
+
+Để tái hiện kết quả nộp bài từ một checkout mới, sau bước cài đặt và cấu hình:
+
+```bash
+python -m src.main test
+python -m src.main run --limit 100
+python -m src.main evaluate --input input/test_cases.jsonl \
+  --dialogue-cases input/evaluation_dialogues.jsonl --compare
+```
+
+Hai lệnh đầu phải trả exit code 0. Lệnh cuối hiện trả **1** vì benchmark còn case chưa đạt; đây là kết quả chấm, vẫn có báo cáo. Không nối benchmark bằng `&&` với lệnh mở UI. Với phiên bản dữ liệu/model đã kiểm chứng: smoke **3/3**, benchmark tổng hợp **94/130 case**, trong đó hội thoại **5/5**. Hash dataset/model nằm trong report để đối chiếu; latency và thông tin runtime không giống byte giữa các máy. Không sửa gold hoặc retrain chỉ để khớp các con số này.
+
+Checkout phải có `input/sentences.txt`, `input/smoke_cases.jsonl`, `input/test_cases.jsonl`, `input/dialogues.txt`, `input/evaluation_dialogues.jsonl` và `models/statistical/qtype.joblib`. Không cần `.env`, DB hay output từ máy tác giả; `.env` là tùy chọn vì đã có mặc định. Bộ source nộp bài cần giữ các fixture/model này.
 
 ### 3.2. CLI theo từng phần của đề
 
@@ -152,8 +171,11 @@ Chạy riêng CLI hoặc test trong container:
 docker run --rm -v "$PWD/output:/app/output" nlp-course-assistant course-assistant run
 docker run --rm nlp-course-assistant course-assistant test
 docker run --rm -v "$PWD/output:/app/output" nlp-course-assistant \
-  course-assistant evaluate --input input/test_cases.jsonl
+  course-assistant evaluate --input input/test_cases.jsonl \
+    --dialogue-cases input/evaluation_dialogues.jsonl --compare
 ```
+
+Lệnh Docker `evaluate` cũng trả exit code 1 khi benchmark chưa đạt toàn bộ. Trước khi chạy lệnh này trong một container mới, DB đã được build trong image; không cần giữ container trước đó.
 
 Dùng cấu hình local với container:
 
@@ -162,7 +184,17 @@ docker run --rm --env-file .env -e STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
   -p 127.0.0.1:8501:8501 -v "$PWD/output:/app/output" nlp-course-assistant
 ```
 
-Path trong `.env` phải phù hợp filesystem của container. Đổi port phải đổi cả cổng bên phải của `-p`. Trên Linux, thư mục output bind mount cần cho UID 10001 quyền ghi; có thể dùng named volume như `-v nlp-output:/app/output` để lưu kết quả trong Docker. Có thể mount input bằng `-v "$PWD/input:/app/input:ro"`. SQLite nhúng trong ứng dụng, không có container DB riêng.
+Path trong `.env` phải phù hợp filesystem của container; không dùng `.env` có `COURSE_ROOT` trỏ đến đường dẫn trên máy host. Nếu đổi `STREAMLIT_SERVER_PORT`, đổi cả cổng container bên phải của `-p`; nếu chỉ đổi cổng truy cập trên host, đổi cổng bên trái. Trên Linux, thư mục output bind mount cần cho UID 10001 quyền ghi; có thể dùng named volume như `-v nlp-output:/app/output` để lưu kết quả trong Docker. Có thể mount input bằng `-v "$PWD/input:/app/input:ro"`. SQLite nhúng trong ứng dụng, không có container DB riêng.
+
+Nếu bind mount báo `PermissionError`, có thể chạy CLI bằng UID/GID của người dùng Linux (DB/output ghi vào mount) hoặc dùng named volume. Ví dụ tránh đổi quyền thư mục trên host:
+
+```bash
+docker run --rm --user "$(id -u):$(id -g)" \
+  -e COURSE_DATABASE=/tmp/course-assistant.sqlite3 \
+  -v "$PWD/output:/app/output" nlp-course-assistant course-assistant run
+```
+
+`pyproject.toml` và constraints cố định dependency runtime; tag base `python:3.11-slim` và build tooling vẫn có thể cập nhật. Muốn lưu đúng môi trường đã chấm, lưu image bằng `docker save -o /tmp/nlp-course-assistant.tar nlp-course-assistant` hoặc ghi lại image digest. Không đưa file image vào ZIP source nộp bài.
 
 ### 3.5. Các file đầu ra theo đề
 
@@ -377,54 +409,67 @@ models/statistical/metrics.json
 
 Script training đặt ngưỡng UNKNOWN là `0.05`; inference dùng ngưỡng được lưu trong model. Lệnh training ghi đè các artifact tương ứng và không phải một bước của `run`. Điểm số trên dữ liệu sinh từ grammar chưa chứng minh khả năng xử lý câu thực tế; cần validation độc lập để điều chỉnh ngưỡng.
 
-Có thể build package bằng `python -m build` sau khi cài extra dev. Theo cấu hình đóng gói hiện tại, wheel chứa code, grammar, lexicon, raw, input và tests; model `.joblib` và bộ dataset thống kê chưa được đưa vào wheel. Khi dùng wheel, cung cấp model ngoài qua `COURSE_QTYPE_MODEL` nếu cần fallback. Docker copy thư mục models của source vào image.
+Có thể build package bằng `python -m build` sau khi cài extra dev. Wheel chứa code, grammar, lexicon, raw, input, tests và model/metrics thống kê hiện có trong `models/statistical/`; bộ dataset huấn luyện không đi kèm wheel. Khi chạy wheel ngoài repository, không dùng `--input input/...` trừ khi đã copy input tới thư mục hiện tại; các lệnh không chỉ định input dùng fixture đóng gói. DB/output được ghi ở thư mục đang chạy và cần quyền ghi. Có thể cung cấp model khác qua `COURSE_QTYPE_MODEL`. Docker copy thư mục models của source vào image và cache lớp cài dependency theo pyproject.toml và constraints/python311.txt để thay code không phải tải lại toàn bộ thư viện.
 
 ## 11. Cách đánh giá và kiểm thử
 
-### 11.1. Smoke và benchmark
+### 11.1. Smoke, benchmark và so sánh phương pháp
 
 ```bash
-# Kiểm tra hồi quy/khởi động: 3 case
+# Kiểm tra khởi động/hồi quy: 3 case, dùng trong run và Docker launcher
 python -m src.main evaluate
 
-# Đánh giá bộ 125 câu gán nhãn
-python -m src.main evaluate --input input/test_cases.jsonl
+# 125 câu đơn: so sánh grammar-only với pipeline có fallback
+python -m src.main evaluate --input input/test_cases.jsonl --compare
+
+# Báo cáo nộp bài: gộp thêm 5 case/10 lượt hội thoại
+python -m src.main evaluate --input input/test_cases.jsonl \
+  --dialogue-cases input/evaluation_dialogues.jsonl --compare
 ```
 
-Smoke dùng `input/smoke_cases.jsonl`: câu trả lời tín chỉ, deadline thiếu dữ liệu và câu ngoài miền. Benchmark dùng `input/test_cases.jsonl`. Cả hai chỉ ghi `output/evaluation.txt`; lần chạy sau ghi đè báo cáo. CLI trả **exit code 1** nếu còn case chưa đạt, nhưng vẫn xuất báo cáo. Lỗi hệ thống/cấu hình thực sự giữ nguyên ngoại lệ.
+Smoke dùng `input/smoke_cases.jsonl`; benchmark 125 câu giữ trong `input/test_cases.jsonl`. Cả ba cách chỉ ghi `output/evaluation.txt`; `--output-dir` đổi thư mục, lần chạy sau ghi đè file. Case hội thoại có định dạng JSONL với `turns`, khác file text đầu vào của CLI `dialogue`. ID phải duy nhất khi gộp hai dataset.
 
-[Evaluator](src/evaluation/evaluator.py) so sánh chính xác các trường expected. Mỗi case ghi expected, checks, actual, actual_abstained và correct. Các chỉ số hiện có:
+CLI trả **exit code 1** nếu hệ thống chính còn case chưa đạt, nhưng vẫn xuất đầy đủ báo cáo. Lỗi cấu hình/hệ thống giữ nguyên ngoại lệ. Benchmark chưa đạt không chặn UI, vì launcher dùng smoke riêng. Khi chuẩn bị nộp bài, chạy lệnh đánh giá tổng hợp **sau** `run` để evaluation.txt chứa benchmark và context thay vì chỉ có smoke.
 
-| Nhóm | Chỉ số |
+Evaluator được tách thành `dataset.py` (validation/audit), `scoring.py` (checks), `metrics.py` (chỉ số), `reporting.py` (phân tích lỗi) và `evaluator.py` (điều phối). Report schema 3 giữ các trường `total`, `passed`, `cases`, `task_performance`, `abstention_performance`, đồng thời bổ sung:
+
+| Nội dung | Ý nghĩa |
 | --- | --- |
-| End-to-end | Số đạt / tổng số case, accuracy theo các trường được gán nhãn |
-| Intent | Accuracy, precision/recall/F1 có trọng số theo support, Macro-F1, per-class metrics và confusion matrix |
-| Entity | Exact match các slot; ghi số case có nhãn được chấm |
-| Abstention | N1–N5, precision/recall/F1, accuracy, coverage, abstention rate, effective reliability |
+| dataset_metadata | SHA-256, số case/lượt, nhãn mâu thuẫn và câu trùng sau chuẩn hóa |
+| answer_performance | Số câu có nhãn đáp án, số khớp literal; kiểm tra sự kiện và cụm từ nếu được gán nhãn |
+| task_performance | Intent/qtype accuracy, weighted precision/recall/F1, Macro-F1, confusion; entity exact match và micro precision/recall/F1 theo cặp slot/ID; độ bao phủ parser; độ đúng từng trường |
+| fallback_performance | Số lượt thử/chấp nhận, độ đúng trên lượt được chấp nhận, coverage của nhãn semantic |
+| dialogue_performance | Số session đúng toàn bộ lượt và kiểm tra context/source_turn |
+| comparison | Baseline grammar-only, các lượt được phục hồi/làm sai thêm và chênh lệch turn accuracy |
+| error_analysis / failures | Nhóm lỗi, ví dụ, giải thích quan sát, trường expected không khớp, trạng thái và dự đoán thống kê |
+| runtime / latency_ms | Model hash/ngưỡng, phiên bản Python; median/p95 từng lượt, không tính khởi tạo, không phải load test |
+| method_notes | Ưu điểm và hạn chế cần trình bày khi đánh giá |
 
-Intent/entity chỉ chấm các case có nhãn tương ứng trong `semantic` hoặc `intent_entity`. Không có nhãn intent thì case không vào confusion matrix. Một case chỉ gán nhãn trạng thái không đủ để chứng minh nội dung trả lời đúng.
+`total/passed` đếm case; một hội thoại chỉ đúng khi mọi lượt đạt mọi nhãn. `turn_accuracy` đếm lượt. `answer_performance.exact_text` báo riêng số đáp án khớp trên số câu có nhãn answer, không đồng nhất với số case đúng toàn bộ pipeline. Metric không có nhãn có count=0 hoặc null, không tự suy thành lỗi model. Intent/qtype Macro-F1 giữ quy ước trên tập nhãn xuất hiện trong gold/prediction; entity micro-F1 so tập slot/ID, còn exact checks giữ thứ tự/biểu diễn gốc.
 
-Ví dụ JSONL, mỗi object trên một dòng:
+**Chất lượng gold:** report cảnh báo nếu semantic và intent/entity mâu thuẫn. Raw checks không đổi; trường mâu thuẫn bị loại riêng khỏi metric thành phần, không chọn đáp án thuận tiện và không sửa dataset tự động. Case_044 hiện có DOMAIN/TITLE không thống nhất; một số câu trùng sau chuẩn hóa vẫn được giữ để đối chiếu. Vì đây là tập phát triển, không gọi kết quả là accuracy trên test mù độc lập.
+
+Dạng case cũ vẫn hoạt động. Có thể dùng nhãn rút gọn intent/qtype/entities và các checks bổ sung:
 
 ```json
-{"input":"Môn NLP có mấy tín chỉ?","expected":{"status":"ok","abstain":false,"intent_entity":{"intent":"GET_COURSE_INFO","qtype":"CREDITS","entities":{"course_id":"CO3085"}}}}
+{"id":"credits_case","tags":["paraphrase"],"input":"Cho mình hỏi số tín chỉ của NLP với","expected":{"intent":"GET_COURSE_INFO","qtype":"CREDITS","entities":{"course_id":"CO3085"},"status":"ok","abstain":false,"result_contains":[{"credits":3}],"answer_contains":["3 tín chỉ"]}}
 ```
 
-Nhãn `expected.abstain` phải là boolean và luôn được chấm, kể cả khi đó là nhãn duy nhất. Nếu thiếu nhãn tường minh, `status=ok` suy ra should_answer; missing_information, unsupported_query, unsupported_semantic, unsupported_answer, parse_failed, invalid_semantic, needs_context và ambiguous suy ra abstention. Quy tắc này áp dụng đồng nhất cho expected và actual. Nhãn tường minh ưu tiên hơn suy luận từ status; status tùy chỉnh không tự trở thành should_answer.
+`result_contains` kiểm tra mapping con trong các row KB; `answer_contains`/`answer_not_contains` kiểm tra cụm từ sau NFC/casefold/chuẩn hóa khoảng trắng. Chúng chỉ kiểm tra phần được gán nhãn, không tự chứng minh toàn bộ câu trả lời đúng về sự kiện. Query, answer, semantic và intent_entity truyền thống vẫn so sánh chính xác như trước.
 
-Abstention bao gồm chưa hiểu câu hoặc cần làm rõ, không chỉ câu ngoài miền. `semantic`/`intent_entity` có thể null để biểu diễn không nhận diện được. Tập trộn case có/không có nhãn abstention phải bổ sung nhãn cho mọi case; nếu tất cả không có nhãn thì metric này là null.
+Ví dụ case hội thoại, mỗi object trên một dòng:
 
-Quy ước N1–N5 trong code hiện tại:
+```json
+{"id":"part_reference","tags":["dialogue"],"turns":[{"input":"Bài tập lớn có phần parser không?","expected":{"status":"ok"}},{"input":"Phần này cần xuất file gì?","expected":{"status":"ok","context_used":{"source_turn":1},"answer_contains":["output/grammar.txt"]}}]}
+```
 
-| Outcome | Ý nghĩa |
-| --- | --- |
-| N1 | Nên trả lời, đã trả lời và đúng theo nhãn |
-| N2 | Nên trả lời, đã trả lời nhưng sai theo nhãn |
-| N3 | Nên trả lời nhưng abstain |
-| N4 | Nên abstain nhưng đã trả lời |
-| N5 | Nên abstain và đã abstain |
+Mỗi case và mỗi chế độ so sánh có session riêng. `--compare` chia sẻ grammar/KB/component nghiệp vụ nhưng tắt thống kê ở baseline bằng `CourseAssistant(use_statistical=False)`; không retrain hoặc thay threshold. Nếu chưa có model, report ghi rõ primary không dùng được fallback.
 
-Các công thức hiện tại: abstention precision = N5/(N3+N5), recall = N5/(N2+N4+N5), accuracy = (N1+N5)/N, coverage = (N1+N2+N4)/N và effective reliability = (N1−N2−N4)/N. Mẫu số bằng 0 cho kết quả 0 theo implementation. Đọc từng case không đạt để phân biệt lỗi grammar, nhận diện, dữ liệu KB và đáp án; không sửa gold để làm tăng điểm.
+**Abstention:** `expected.abstain` là boolean và luôn được chấm. Nếu thiếu nhãn tường minh, status=ok suy ra should_answer; missing_information, unsupported_query, unsupported_semantic, unsupported_answer, parse_failed, invalid_semantic, needs_context và ambiguous suy ra abstention. Status tùy chỉnh không tự trở thành should_answer. Một tập phải gán nhãn nhất quán cho mọi lượt nếu muốn chấm abstention; semantic/intent_entity null là nhãn không nhận diện được. Abstention không tự khẳng định câu ngoài miền.
+
+Giữ nguyên quy ước task-aware N1–N5: N1 trả lời đúng, N2 trả lời sai, N3 nên trả lời nhưng từ chối, N4 nên từ chối nhưng trả lời, N5 từ chối đúng. Precision=N5/(N3+N5), recall=N5/(N2+N4+N5), accuracy=(N1+N5)/N, coverage=(N1+N2+N4)/N, effective reliability=(N1−N2−N4)/N. Mẫu số bằng 0 cho kết quả 0 theo implementation cũ. `binary_decision` báo riêng quyết định nhị phân: recall=N5/(N4+N5), accuracy=(N1+N2+N5)/N; một câu trả lời sai nội dung vẫn có thể là quyết định should_answer đúng. Không trộn hai nhóm chỉ số.
+
+Xem [đối chiếu yêu cầu và kịch bản demo](docs/assignment-review.md) để chuẩn bị báo cáo/video, kiểm tra 9 artifact và các phần còn cần nhóm hoàn thiện.
 
 ### 11.2. Unit/integration tests
 
@@ -444,7 +489,9 @@ python -m unittest discover -s tests -p "test_intent_entity.py" -v
 python -m unittest discover -s tests -p "test_queries.py" -v
 python -m unittest discover -s tests -p "test_answers.py" -v
 python -m unittest discover -s tests -p "test_dialogue.py" -v
-python -m unittest discover -s tests -p "test_evaluation.py" -v
+python -m unittest discover -s tests -p "test_evaluation*.py" -v
+python -m unittest discover -s tests -p "test_assignment_acceptance.py" -v
+python -m unittest discover -s tests -p "test_runtime_optimizations.py" -v
 python -m unittest discover -s tests -p "test_ui.py" -v
 ```
 
@@ -459,7 +506,7 @@ Có thể dùng cùng mẫu cho các file khác trong `tests/`. Tests bao phủ 
 - Liên kết LO/topic/chương/tài liệu còn thiếu; có thể nhận diện đúng nhưng chưa trả lời được. Deadline và giảng viên chưa có thông tin trong nguồn.
 - Lịch, mốc BTL và một số quy định là dữ liệu mẫu. Nguồn ghi tổng giờ 150 nhưng các thành phần cộng 135; hệ thống giữ nguyên thay vì tự sửa.
 - SQLite document/JSON phù hợp miền nhỏ; chưa có schema quan hệ riêng và chưa đánh giá tải lớn.
-- Evaluation hiện chưa tự động đo riêng qtype, entity micro-F1, hội thoại nhiều lượt hoặc so sánh grammar-only với hybrid. Bộ sinh từ grammar và 125 câu chưa phải bằng chứng về accuracy tổng quát.
+- Evaluation đã đo qtype, entity micro-F1, context và ablation, nhưng gold còn mâu thuẫn/trùng, dữ liệu chưa phải test mù; exact match đáp án không phải bộ chấm sự kiện tổng quát.
 - UI giữ phiên trong bộ nhớ, chưa có đăng nhập, lịch sử bền vững hoặc đánh giá nhiều người dùng đồng thời.
 
 ## 13. Giấy phép, nguồn và ghi nhận
@@ -468,4 +515,4 @@ Mã nguồn phát hành theo [MIT License](LICENSE). Tài liệu môn học, d�
 
 Nguồn dữ liệu là đặc tả bài tập, đề cương và các file raw/sample được cung cấp. Các module chính: [Pipeline](src/application/pipeline.py), [Grammar](src/parsing/grammar_loader.py), [Semantic](src/semantic/interpreter.py), [Query](src/retrieval/query_builder.py), [SQLite](src/retrieval/sqlite/storage.py), [Evaluation](src/evaluation/evaluator.py).
 
-Có hỗ trợ Codex trong phát triển. Nhóm cần kiểm chứng, hiểu và giải thích thuật toán/code, ghi nhận nguồn và sự hỗ trợ theo quy định môn học. Trước khi nộp, hoàn thiện thông tin thành viên, báo cáo/video và chạy lại workflow/test. Giữ src/data/models/input/output/README.md/Dockerfile cùng pyproject.toml, LICENSE và các file UI/config cần thiết; không đưa `.venv` vào gói nộp.
+Có hỗ trợ Codex trong phát triển. Nhóm cần kiểm chứng, hiểu và giải thích thuật toán/code, ghi nhận nguồn và sự hỗ trợ theo quy định môn học. Trước khi nộp, kiểm tra thông tin thành viên, hoàn thiện báo cáo/video và chạy lại workflow/test. Giữ src/data/models/input/output/README.md/Dockerfile cùng pyproject.toml, constraints/, LICENSE và các file UI/config cần thiết; không đưa `.venv` vào gói nộp.

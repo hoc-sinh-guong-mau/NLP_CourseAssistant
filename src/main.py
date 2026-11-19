@@ -3,7 +3,6 @@ import argparse
 import logging
 from pathlib import Path
 
-from src.application.runner import AssignmentRunner
 from src.config import DEFAULT_SAMPLE_LIMIT, MAX_SAMPLE_LIMIT, LOG_LEVEL, RunConfig
 
 
@@ -43,6 +42,10 @@ def main():
         if name == 'evaluate':
             command.add_argument('--input', type=Path, default=defaults.evaluation_path,
                                  help='Labeled JSONL cases; defaults to startup smoke checks')
+            command.add_argument('--compare', action='store_true',
+                                 help='Compare the configured assistant against grammar-only')
+            command.add_argument('--dialogue-cases', type=Path,
+                                 help='Additional labeled JSONL dialogue cases in the same report')
         if name == 'run':
             command.add_argument('--dialogue-input', type=Path, default=defaults.dialogue_path)
         if name in {'generate','run'}:
@@ -52,6 +55,8 @@ def main():
         if name in {'grammar','generate','parse','batch','dialogue','semantic','intent-entity','query','answer','evaluate','run'}:
             command.add_argument('--output-dir', type=Path, default=defaults.output_dir)
     args = cli.parse_args()
+    # Argument validation/help should not initialize the NLP dependency graph.
+    from src.application.runner import AssignmentRunner
     
     config = RunConfig(
         input_path=getattr(args,'input',defaults.input_path),
@@ -59,6 +64,8 @@ def main():
         sample_limit=getattr(args,'limit',DEFAULT_SAMPLE_LIMIT),
         dialogue_path=args.input if args.command=='dialogue' else getattr(args,'dialogue_input',defaults.dialogue_path),
         evaluation_path=args.input if args.command=='evaluate' else defaults.evaluation_path,
+        evaluation_compare=getattr(args,'compare',False),
+        evaluation_dialogue_path=getattr(args,'dialogue_cases',None),
     )
     result = getattr(AssignmentRunner(config), args.command.replace('-','_'))()
     if args.command == 'test' and not result:
