@@ -120,6 +120,7 @@ Các lệnh dưới đây chạy sau `python -m src.main`. Sau khi cài project,
 | Toàn bộ Phần II | `batch` | semantic.txt, intent-entity.txt, query.txt, answer.txt |
 | III — Ngữ cảnh hội thoại | `dialogue` | dialogue.txt |
 | IV — Smoke evaluation | `evaluate` | evaluation.txt |
+| Biểu đồ đánh giá | `plot` | PNG trong reports/evaluation/, không thêm file vào output/ |
 | IV — Benchmark 125 câu | `evaluate --input input/test_cases.jsonl` | evaluation.txt |
 | Toàn bộ workflow | `run` | Đủ 9 file của đề |
 | Unit/integration tests | `test` | Không tạo artifact nộp bài |
@@ -471,7 +472,39 @@ Giữ nguyên quy ước task-aware N1–N5: N1 trả lời đúng, N2 trả l�
 
 Xem [đối chiếu yêu cầu và kịch bản demo](docs/assignment-review.md) để chuẩn bị báo cáo/video, kiểm tra 9 artifact và các phần còn cần nhóm hoàn thiện.
 
-### 11.2. Unit/integration tests
+### 11.2. Xuất biểu đồ từ báo cáo evaluation
+
+```bash
+python -m src.main plot
+# Chỉ định báo cáo và thư mục ảnh:
+python -m src.main plot --input output/evaluation.txt --output-dir reports/evaluation
+```
+
+Lệnh chỉ đọc báo cáo JSON schema 3 từ `evaluate`; không cần DB, không nạp model, không huấn luyện hoặc đánh giá lại. Chạy benchmark ở mục 11.1 trước nếu muốn vẽ kết quả 130 case; nếu lần cuối chạy `run`, biểu đồ sẽ phản ánh 3 smoke case. Benchmark trả exit code 1 vẫn tạo báo cáo hợp lệ để vẽ. `plot` trả 0 khi xuất ảnh thành công, kể cả khi báo cáo có case sai.
+
+```text
+reports/evaluation/
+├── summary.png                       # Case/turn accuracy, intent/qtype macro F1, entity micro F1
+├── grammar_only_summary.png          # Có khi báo cáo được tạo với --compare
+├── intent_confusion_matrix.png       # Hàng: gold; cột: prediction; số lượng mẫu
+├── qtype_confusion_matrix.png
+├── abstention_confusion_matrix.png   # Ma trận task-aware, không phải binary decision
+└── error_categories.png              # Số lượt lỗi theo nhóm quan sát của primary
+```
+
+Chỉ xuất những biểu đồ có dữ liệu tương ứng. Metric chưa có nhãn không được vẽ thành 0. Confusion matrix nhiều nhãn không chèn số trong từng ô để giữ khả năng đọc; số đếm đầy đủ vẫn ở evaluation.txt. Lệnh ghi đè ảnh cùng tên; nên dùng thư mục mới khi đổi dataset để tránh giữ ảnh từ lần chạy trước. Không dùng `models/statistical/metrics.json` làm input: đó là báo cáo model riêng, khác schema pipeline. `reports/` được loại khỏi Git/Docker build context và không làm tăng 9 artifact theo đề.
+
+Sau khi build lại image, có thể chạy trong Docker (báo cáo phải có sẵn trên host):
+
+```bash
+mkdir -p reports
+docker run --rm -v "$PWD/output:/app/output:ro" -v "$PWD/reports:/app/reports" \
+  nlp-course-assistant course-assistant plot
+```
+
+Quyền ghi thư mục reports tuân theo hướng dẫn bind mount ở mục 3.4.
+
+### 11.3. Unit/integration tests
 
 ```bash
 # Tự build KB rồi chạy toàn bộ test

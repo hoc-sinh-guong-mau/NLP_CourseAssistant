@@ -33,12 +33,18 @@ def main():
         'query':'Part II / 3: query.txt only',
         'answer':'Part II / 4: answer.txt only',
         'evaluate':'Part IV: evaluate the provided smoke cases',
+        'plot':'Render charts from an existing evaluation report (no model or KB needed)',
         'chat':'Interactive demo; /exit to quit',
         'run':'Rebuild KB and reproduce all implemented assignment outputs',
         'test':'Build KB and run unit/integration tests',
     }
     for name, description in descriptions.items():
         command = commands.add_parser(name, help=description)
+        if name == 'plot':
+            command.add_argument('--input', type=Path, default=defaults.output_dir / 'evaluation.txt',
+                                 help='Evaluation report JSON produced by evaluate')
+            command.add_argument('--output-dir', type=Path, default=Path('reports/evaluation'),
+                                 help='Chart directory; defaults to reports/evaluation')
         if name == 'evaluate':
             command.add_argument('--input', type=Path, default=defaults.evaluation_path,
                                  help='Labeled JSONL cases; defaults to startup smoke checks')
@@ -55,6 +61,13 @@ def main():
         if name in {'grammar','generate','parse','batch','dialogue','semantic','intent-entity','query','answer','evaluate','run'}:
             command.add_argument('--output-dir', type=Path, default=defaults.output_dir)
     args = cli.parse_args()
+    if args.command == 'plot':
+        from src.evaluation.plots import plot_evaluation
+        paths = plot_evaluation(args.input, args.output_dir)
+        print(f'Generated {len(paths)} charts in {args.output_dir}')
+        for path in paths:
+            print(path)
+        return
     # Argument validation/help should not initialize the NLP dependency graph.
     from src.application.runner import AssignmentRunner
     

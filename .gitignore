@@ -4,6 +4,7 @@ __pycache__/
 .pytest_cache/
 .DS_Store
 output/
+reports/
 input/*
 
 data/db/course_assistant_normalized.sqlite3*
@@ -14,6 +15,7 @@ data/db/course_assistant_normalized.sqlite3*
 build/
 dist/
 docs/
+tests/
 *.egg-info/
 
 # Required default dialogue fixture must survive a fresh checkout.
