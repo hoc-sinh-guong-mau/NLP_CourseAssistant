@@ -82,3 +82,4 @@ class RunConfig:
     evaluation_path: Path = INPUT_DIR / "test_cases.jsonl"
     sample_limit: int = DEFAULT_SAMPLE_LIMIT
     dialogue_path: Path = INPUT_DIR / "dialogues.txt"
+    evaluation_compare: bool = False

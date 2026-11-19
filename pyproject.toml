@@ -15,11 +15,15 @@ dependencies = [
   "PyYAML==6.0.3",
   "streamlit==1.66.1",
   "python-dotenv==1.2.4",
+  "scikit-learn>=1.5,<2",
+  "joblib>=1.4,<2",
+  "matplotlib>=3.8,<4",
 ]
 
 [project.optional-dependencies]
 dev = ["build>=1.2,<2"]
-statistical = ["scikit-learn>=1.5,<2", "joblib>=1.4,<2", "matplotlib>=3.8,<4"]
+# Backward-compatible extra: statistical dependencies are now installed by default.
+statistical = []
 
 [project.scripts]
 course-assistant = "src.main:main"
