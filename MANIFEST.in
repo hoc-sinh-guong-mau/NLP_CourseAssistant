@@ -5,3 +5,10 @@ recursive-include models *.fcfg *.yaml *.joblib *.json
 recursive-include data/raw *.txt
 recursive-include input *.txt *.jsonl
 recursive-include tests *.py
+
+# Runtime snapshots and generated reports are never distribution inputs.
+prune data/db
+prune data/stat_dataset
+prune output
+prune reports
+global-exclude *.pyc *.sqlite *.sqlite3 *.sqlite-wal *.sqlite-shm *.sqlite3-wal *.sqlite3-shm

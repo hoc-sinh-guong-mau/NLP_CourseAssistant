@@ -1,5 +1,6 @@
 """Label projection and observable checks, without guessing missing annotations."""
 
+import json
 import unicodedata
 
 ABSTENTION_STATUSES = {
@@ -74,6 +75,13 @@ def gold_labels(expected):
         )
     ):
         labels["entities"] = None
+    if any(
+        key in expected and expected[key] is None
+        for key in ("semantic", "intent_entity")
+    ):
+        for field in ("intent", "qtype"):
+            if field not in conflicts:
+                labels.setdefault(field, "UNKNOWN")
     return labels
 
 
@@ -83,7 +91,7 @@ def actual_labels(actual):
     return {
         "intent": intent_entity.get("intent", frame.get("predicate")),
         "qtype": intent_entity.get("qtype", frame.get("qtype")),
-        "entities": frame.get("arguments", intent_entity.get("entities")),
+        "entities": intent_entity.get("entities", frame.get("arguments")),
     }
 
 
@@ -106,6 +114,19 @@ def contains(actual, expected):
     return actual == expected
 
 
+def query_key(query):
+    """Canonicalize unordered projections/conjunctions for a separate logical metric."""
+    if query is None:
+        return None
+    result = dict(query)
+    for field in ("select", "conditions"):
+        if isinstance(result.get(field), list):
+            result[field] = sorted(
+                result[field], key=lambda item: json.dumps(item, sort_keys=True)
+            )
+    return result
+
+
 def _text(text):
     return " ".join(unicodedata.normalize("NFC", text).casefold().split())
 
@@ -119,7 +140,7 @@ def score(expected, actual):
         elif key == "entities":
             correct = (predicted[key] or {}) == value
         elif key in LABEL_FIELDS:
-            correct = predicted[key] == value
+            correct = (predicted[key] or "UNKNOWN") == value
         elif key in ("context_used", "context_after"):
             correct = contains(actual.get(key), value)
         elif key in ("answer_contains", "answer_not_contains"):

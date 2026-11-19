@@ -423,12 +423,15 @@ python -m src.main evaluate
 # 125 câu đơn: so sánh grammar-only với pipeline có fallback
 python -m src.main evaluate --input input/test_cases.jsonl --compare
 
+# Bộ 42 case từ main: câu chuẩn, paraphrase, typo, ngoài miền và hội thoại
+python -m src.main evaluate --input input/evaluation_cases.jsonl --compare
+
 # Báo cáo nộp bài: gộp thêm 5 case/10 lượt hội thoại
 python -m src.main evaluate --input input/test_cases.jsonl \
   --dialogue-cases input/evaluation_dialogues.jsonl --compare
 ```
 
-Smoke dùng `input/smoke_cases.jsonl`; benchmark 125 câu giữ trong `input/test_cases.jsonl`. Cả ba cách chỉ ghi `output/evaluation.txt`; `--output-dir` đổi thư mục, lần chạy sau ghi đè file. Case hội thoại có định dạng JSONL với `turns`, khác file text đầu vào của CLI `dialogue`. ID phải duy nhất khi gộp hai dataset.
+Smoke dùng `input/smoke_cases.jsonl`; benchmark 125 câu giữ trong `input/test_cases.jsonl`. Bộ `input/evaluation_cases.jsonl` từ main có 42 case và được chấm riêng; không tự gộp với benchmark cũ vì có câu trùng. Các lệnh này chỉ ghi `output/evaluation.txt`; `--output-dir` đổi thư mục, lần chạy sau ghi đè file. Case hội thoại có định dạng JSONL với `turns`, khác file text đầu vào của CLI `dialogue`. ID phải duy nhất khi gộp hai dataset.
 
 CLI trả **exit code 1** nếu hệ thống chính còn case chưa đạt, nhưng vẫn xuất đầy đủ báo cáo. Lỗi cấu hình/hệ thống giữ nguyên ngoại lệ. Benchmark chưa đạt không chặn UI, vì launcher dùng smoke riêng. Khi chuẩn bị nộp bài, chạy lệnh đánh giá tổng hợp **sau** `run` để evaluation.txt chứa benchmark và context thay vì chỉ có smoke.
 
@@ -471,6 +474,16 @@ Mỗi case và mỗi chế độ so sánh có session riêng. `--compare` chia s
 Giữ nguyên quy ước task-aware N1–N5: N1 trả lời đúng, N2 trả lời sai, N3 nên trả lời nhưng từ chối, N4 nên từ chối nhưng trả lời, N5 từ chối đúng. Precision=N5/(N3+N5), recall=N5/(N2+N4+N5), accuracy=(N1+N5)/N, coverage=(N1+N2+N4)/N, effective reliability=(N1−N2−N4)/N. Mẫu số bằng 0 cho kết quả 0 theo implementation cũ. `binary_decision` báo riêng quyết định nhị phân: recall=N5/(N4+N5), accuracy=(N1+N2+N5)/N; một câu trả lời sai nội dung vẫn có thể là quyết định should_answer đúng. Không trộn hai nhóm chỉ số.
 
 Xem [đối chiếu yêu cầu và kịch bản demo](docs/assignment-review.md) để chuẩn bị báo cáo/video, kiểm tra 9 artifact và các phần còn cần nhóm hoàn thiện.
+
+Các thay đổi tích hợp từ main giữ report **schema 3** và bổ sung:
+
+- `task_performance.semantic_frame_accuracy`: chấm semantic frame riêng với intent/entity; chỉ tính lượt có đủ nhãn intent/qtype/entities.
+- `task_performance.unknown_requests`: số yêu cầu được gán UNKNOWN và tỷ lệ chấp nhận sai. Gold semantic/intent_entity null cũng được tính là UNKNOWN cho metric phân loại; output pipeline vẫn giữ null.
+- `task_performance.query_logical_equivalence`: bỏ qua thứ tự select/conditions để so query theo nghĩa; raw check `query` vẫn giữ exact-match, không đổi gold hay số case đạt.
+- `group_turns`: độ đúng theo lượt cho từng tag, bổ sung `groups` đếm case/session.
+- `comparison.fallback_accepted_incorrect_turns`: số lượt fallback được chấp nhận nhưng không đạt toàn bộ nhãn.
+
+Macro-F1 tiếp tục dùng hợp các nhãn gold/prediction của schema 3; không trộn với công thức chỉ dùng nhãn có gold support của implementation schema 2 trên main. Các test từ main được chuyển theo hợp đồng này; không giữ hai evaluator cạnh tranh nhau.
 
 ### 11.2. Xuất biểu đồ từ báo cáo evaluation
 
@@ -541,6 +554,12 @@ Có thể dùng cùng mẫu cho các file khác trong `tests/`. Tests bao phủ 
 - SQLite document/JSON phù hợp miền nhỏ; chưa có schema quan hệ riêng và chưa đánh giá tải lớn.
 - Evaluation đã đo qtype, entity micro-F1, context và ablation, nhưng gold còn mâu thuẫn/trùng, dữ liệu chưa phải test mù; exact match đáp án không phải bộ chấm sự kiện tổng quát.
 - UI giữ phiên trong bộ nhớ, chưa có đăng nhập, lịch sử bền vững hoặc đánh giá nhiều người dùng đồng thời.
+
+### File được quản lý phiên bản và file sinh lại
+
+Giữ trong Git: code, test source, raw, lexicon/grammar, các input fixture được liệt kê trong .gitignore, constraints và model fallback đã kiểm chứng. Model joblib đi kèm là đầu vào runtime; không tự huấn luyện lại khi chạy workflow.
+
+Không commit: `data/db/`, SQLite/WAL/SHM, `data/stat_dataset/` (script training sinh lại), `output/`, `reports/`, venv, egg-info, build/dist, cache và kết quả coverage/test. `.dockerignore` cũng loại các artifact này; **không loại test source** vì Docker CLI `test` cần chúng. Docker dựng DB từ raw và sinh output khi chạy. File từng được track cần bỏ khỏi index; ignore không tự bỏ tracking.
 
 ## 13. Giấy phép, nguồn và ghi nhận
 

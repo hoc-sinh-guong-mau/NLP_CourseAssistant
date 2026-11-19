@@ -1,24 +1,43 @@
+# Local environments, configuration and IDE state
 .venv/
-__pycache__/
-*.py[cod]
-.pytest_cache/
-.DS_Store
-output/
-reports/
-input/*
-
-data/db/course_assistant_normalized.sqlite3*
-
 .env
 .env.*
 !.env.example
+.DS_Store
+.vscode/
+
+# Python build and test artifacts (test source remains tracked)
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+junit*.xml
 build/
 dist/
-docs/
-tests/
 *.egg-info/
 
-# Required default dialogue fixture must survive a fresh checkout.
-!input/dialogues.txt
-!input/smoke_cases.jsonl
-!input/evaluation_dialogues.jsonl
+# Rebuildable SQLite snapshots and training splits
+/data/db/
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+/data/stat_dataset/
+
+# Generated assignment outputs and charts; keep versioned input fixtures
+/output/
+/reports/
+/input/*
+!/input/sentences.txt
+!/input/dialogues.txt
+!/input/test_cases.jsonl
+!/input/smoke_cases.jsonl
+!/input/evaluation_cases.jsonl
+!/input/evaluation_dialogues.jsonl

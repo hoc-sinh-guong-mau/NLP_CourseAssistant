@@ -129,7 +129,13 @@ def flatten(cases):
 
 
 def summarize(cases):
-    from .scoring import actual_labels, entity_pairs, expected_abstention, gold_labels
+    from .scoring import (
+        actual_labels,
+        entity_pairs,
+        expected_abstention,
+        gold_labels,
+        query_key,
+    )
 
     rows = flatten(cases)
     annotated = [
@@ -141,9 +147,7 @@ def summarize(cases):
         pairs = [
             (
                 str(gold[field]),
-                str(predicted[field])
-                if predicted[field] is not None
-                else "UNRECOGNIZED",
+                str(predicted[field]) if predicted[field] is not None else "UNKNOWN",
             )
             for _, gold, predicted in annotated
             if field in gold
@@ -228,6 +232,25 @@ def summarize(cases):
             and {"intent", "qtype", "entities"} <= gold.keys()
         ):
             accepted_semantic.append(gold == predicted)
+    semantic_frames = []
+    unknown_requests = []
+    for row, gold, predicted in annotated:
+        if gold.get("intent") == "UNKNOWN":
+            unknown_requests.append(predicted["intent"] not in (None, "UNKNOWN"))
+        if not {"intent", "qtype", "entities"} <= gold.keys():
+            continue
+        frame = row["actual"].get("semantic")
+        semantic_frames.append(
+            frame is None
+            if gold["intent"] == "UNKNOWN"
+            else bool(
+                frame
+                and frame.get("predicate") == gold["intent"]
+                and frame.get("qtype") == gold["qtype"]
+                and entity_pairs(frame.get("arguments"))
+                == entity_pairs(gold["entities"])
+            )
+        )
     dialogues = [case for case in cases if "turns" in case]
     latencies = sorted(row["elapsed_ms"] for row in rows)
     return {
@@ -251,6 +274,20 @@ def summarize(cases):
                     slot: prf(c["tp"], c["fp"], c["fn"])
                     for slot, c in sorted(slots.items())
                 },
+            },
+            "semantic_frame_accuracy": accuracy(semantic_frames),
+            "query_logical_equivalence": accuracy(
+                query_key(row["expected"]["query"])
+                == query_key(row["actual"].get("query"))
+                for row in rows
+                if "query" in row["expected"]
+            ),
+            "unknown_requests": {
+                "count": len(unknown_requests),
+                "false_accepts": sum(unknown_requests),
+                "false_acceptance_rate": sum(unknown_requests) / len(unknown_requests)
+                if unknown_requests
+                else None,
             },
             "field_accuracy": {
                 field: accuracy(
@@ -289,6 +326,15 @@ def summarize(cases):
             tag: accuracy(case["correct"] for case in cases if tag in case["tags"])
             for tag in sorted({tag for case in cases for tag in case["tags"]})
         },
+        "group_turns": {
+            tag: accuracy(
+                row["correct"]
+                for case in cases
+                if tag in case["tags"]
+                for row in flatten([case])
+            )
+            for tag in sorted({tag for case in cases for tag in case["tags"]})
+        },
         "latency_ms": {
             "count": len(rows),
             "median": median(latencies),
@@ -310,6 +356,11 @@ def comparison(baseline, primary):
         if a["correct"] and not b["correct"]:
             regressed.append(identity)
     return {
+        "evaluated_turns": len(after),
+        "fallback_accepted_incorrect_turns": sum(
+            bool(row["actual"].get("statistical_used")) and not row["correct"]
+            for row in after
+        ),
         "recovered_turns": recovered,
         "regressed_turns": regressed,
         "turn_accuracy_delta": (

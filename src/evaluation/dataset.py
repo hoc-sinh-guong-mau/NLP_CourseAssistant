@@ -72,6 +72,9 @@ def _expected(value, **context):
             continue
         if not isinstance(frame, dict):
             _error(f"expected.{key} must be a mapping or null", **context)
+        fields = {slot_key, "qtype", "predicate" if key == "semantic" else "intent"}
+        if not frame or set(frame) - fields:
+            _error(f"Invalid expected.{key} fields", **context)
         if slot_key in frame:
             _entities(frame[slot_key], **context)
         for field in ("intent", "predicate", "qtype"):
@@ -84,6 +87,19 @@ def _expected(value, **context):
     for key in ("intent", "qtype", "status"):
         if key in value and (not isinstance(value[key], str) or not value[key]):
             _error(f"{key} must be a nonempty string", **context)
+    for key in ("statistical_used", "statistical_attempted", "abstained"):
+        if key in value and not isinstance(value[key], bool):
+            _error(f"{key} must be boolean", **context)
+    if "parse_count" in value and (
+        type(value["parse_count"]) is not int or value["parse_count"] < 0
+    ):
+        _error("parse_count must be a nonnegative integer", **context)
+    if (
+        "query" in value
+        and value["query"] is not None
+        and not isinstance(value["query"], dict)
+    ):
+        _error("query must be a mapping or null", **context)
     for key in ("answer_contains", "answer_not_contains"):
         if key in value:
             fragments = value[key]
