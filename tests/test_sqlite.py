@@ -44,7 +44,7 @@ class SQLiteTests(unittest.TestCase):
 
     def test_pipeline_results_match_for_existing_input(self):
         json_app, sql_app = CourseAssistant(kb=self.json), CourseAssistant(kb=self.sql)
-        for text in (ROOT/'input/sentences.txt').read_text().splitlines():
+        for text in (ROOT/'input/sentences.txt').read_text(encoding="utf-8").splitlines():
             if text.strip():
                 with self.subTest(text=text):
                     self.assertEqual(json_app.process(text),sql_app.process(text))

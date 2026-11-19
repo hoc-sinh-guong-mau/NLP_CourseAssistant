@@ -105,7 +105,7 @@ class DialogueTests(unittest.TestCase):
                                   env={**os.environ, 'COURSE_DATABASE': str(SQLITE_PATH)})
             self.assertEqual(result.returncode,0,result.stderr)
             self.assertEqual({p.name for p in (root/'out').iterdir()},{'dialogue.txt'})
-            text=(root/'out/dialogue.txt').read_text()
+            text=(root/'out/dialogue.txt').read_text(encoding="utf-8")
             for label in ('INPUT:','CONTEXT_USED:','RAW_SEMANTIC:','RESOLVED_SEMANTIC:','QUERY:','ANSWER:','STATUS:'):
                 self.assertIn(label,text)
             first,second=text.split('DIALOGUE 02')

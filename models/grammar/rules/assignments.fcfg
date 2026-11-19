@@ -1,6 +1,9 @@
 # Assignment entity may occur before or after its question phrase.
 ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE=?q] -> ASSIGNMENT[ENTITY=?e] ASSIGNMENT_QUESTION[QTYPE=?q]
 ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE=?q] -> ASSIGNMENT_QUESTION[QTYPE=?q] ASSIGNMENT[ENTITY=?e]
+#===1
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE=?q] -> ASSIGNMENT_QUESTION[QTYPE=?q] 'theo' 'mô' 'tả' ASSIGNMENT[ENTITY=?e]
+#===2
 
 # Shared question focus, kept separate so question wording is not repeated.
 WH_QUESTION[] -> 'gì'
@@ -10,7 +13,23 @@ WH_QUESTION[] -> 'ra' 'sao'
 WH_QUESTION[] -> 'như' 'thế' 'nào'
 
 ASSIGNMENT_QUESTION[QTYPE='REQUIREMENTS'] -> REQUIREMENT_CUE[] WH_QUESTION[]
+ASSIGNMENT_QUESTION[QTYPE='REQUIREMENTS'] -> 'có' REQUIREMENT_DETERMINER[] REQUIREMENT_CUE[] WH_QUESTION[]
+REQUIREMENT_DETERMINER[] -> 'những' | 'các'
 ASSIGNMENT_QUESTION[QTYPE='REQUIREMENTS'] -> REQUIREMENT_CUE[] 'những' 'yêu' 'cầu' WH_QUESTION[]
+
+# Nominal field questions share syntax; the field determines the semantic request.
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE=?q] -> ASSIGNMENT_FIELD[QTYPE=?q] 'của' ASSIGNMENT[ENTITY=?e] 'là' WH_QUESTION[]
+ASSIGNMENT_FIELD[QTYPE='GOAL'] -> 'mục' 'tiêu' | 'mục' 'đích'
+ASSIGNMENT_FIELD[QTYPE='TITLE'] -> 'tên' | 'tên' 'gọi' | 'đề' 'tài'
+ASSIGNMENT_FIELD[QTYPE='DOMAIN'] -> 'miền' 'dữ' 'liệu' | 'lĩnh' 'vực' | 'phạm' 'vi'
+ASSIGNMENT_FIELD[QTYPE='OUTPUTS'] -> 'đầu' 'ra' | 'sản' 'phẩm'
+ASSIGNMENT_FIELD[QTYPE='REQUIREMENTS'] -> 'yêu' 'cầu'
+#===1
+ASSIGNMENT_QUESTION[QTYPE='REQUIREMENTS'] -> 'bao' 'gồm' REQUIREMENT_CUE[] WH_QUESTION[]
+REQUIREMENT_CUE[] -> 'yêu' 'cầu' 'cụ' 'thể'
+REQUIREMENT_CUE[] -> 'nội' 'dung' 'cần' 'làm'
+REQUIREMENT_CUE[] -> 'việc' 'cần' 'hoàn' 'thành'
+#===2
 REQUIREMENT_CUE[] -> 'yêu' 'cầu'
 REQUIREMENT_CUE[] -> 'đề' 'bài' 'yêu' 'cầu'
 REQUIREMENT_CUE[] -> 'cần' 'làm'
@@ -20,6 +39,11 @@ REQUIREMENT_CUE[] -> 'phải' 'hoàn' 'thành'
 
 ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_INFO'] -> PART[ENTITY=?p] PART_RELATION[] ASSIGNMENT[ENTITY=?e] PART_INFO_CUE[]
 ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_INFO'] -> ASSIGNMENT[ENTITY=?e] PART_RELATION[] PART[ENTITY=?p] PART_INFO_CUE[]
+#===1
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_INFO'] -> ASSIGNMENT[ENTITY=?e] REVERSED_PART_RELATION[] PART[ENTITY=?p] PART_INFO_CUE[]
+REVERSED_PART_RELATION[] -> 'quy' 'định'
+REVERSED_PART_RELATION[] -> 'yêu' 'cầu'
+#===2
 PART_RELATION[] -> 'của'
 PART_RELATION[] -> 'trong'
 PART_RELATION[] -> 'thuộc' 'về'
@@ -27,6 +51,9 @@ PART_INFO_CUE[] -> 'là' WH_QUESTION[]
 PART_INFO_CUE[] -> 'gồm' WH_QUESTION[]
 PART_INFO_CUE[] -> 'có' 'nội' 'dung' 'gì'
 PART_INFO_CUE[] -> 'nói' 'về' 'gì'
+#===1
+PART_INFO_CUE[] -> 'bao' 'gồm' WH_QUESTION[]
+#===2
 
 ASSIGNMENT_QUESTION[QTYPE='HAS_COMPONENT'] -> COMPONENT_CUE[] COMPONENT_QUESTION[]
 COMPONENT_CUE[] -> 'có'
@@ -36,6 +63,9 @@ COMPONENT_QUESTION[] -> 'những' 'phần' WH_QUESTION[]
 COMPONENT_QUESTION[] -> 'các' 'phần' WH_QUESTION[]
 COMPONENT_QUESTION[] -> 'những' 'thành' 'phần' WH_QUESTION[]
 COMPONENT_QUESTION[] -> 'các' 'thành' 'phần' WH_QUESTION[]
+#===1
+COMPONENT_QUESTION[] -> 'những' 'gì'
+#===2
 COMPONENT_QUESTION[] -> ASSIGNMENT_COMPONENT[ENTITY=?p] 'không'
 COMPONENT_QUESTION[] -> 'phần' ASSIGNMENT_COMPONENT[ENTITY=?p] 'không'
 
@@ -47,11 +77,20 @@ TEAM_SIZE_QUESTION[] -> 'mấy' 'người'
 TEAM_SIZE_QUESTION[] -> 'bao' 'nhiêu' 'người'
 TEAM_SIZE_QUESTION[] -> 'có' 'bao' 'nhiêu' 'thành' 'viên'
 TEAM_SIZE_QUESTION[] -> 'gồm' 'bao' 'nhiêu' 'thành' 'viên'
+#===1
+TEAM_SIZE_QUESTION[] -> 'được' 'bao' 'nhiêu' 'người'
+TEAM_SIZE_QUESTION[] -> 'bao' 'nhiêu' 'thành' 'viên'
+TEAM_SIZE_QUESTION[] -> 'tối' 'đa' 'bao' 'nhiêu' 'người'
+#===2
 
 ASSIGNMENT_QUESTION[QTYPE='TITLE'] -> TITLE_CUE[] TITLE_QUESTION[]
 TITLE_CUE[] -> 'tên'
 TITLE_CUE[] -> 'tên' 'gọi'
 TITLE_CUE[] -> 'đề' 'tài'
+#===1
+TITLE_CUE[] -> 'có' 'tên'
+TITLE_CUE[] -> 'tên' 'đề' 'tài'
+#===2
 TITLE_QUESTION[] -> 'gì'
 TITLE_QUESTION[] -> 'là' 'gì'
 TITLE_QUESTION[] -> 'được' 'gọi' 'là' 'gì'
@@ -63,17 +102,27 @@ GOAL_QUESTION[] -> 'gì'
 GOAL_QUESTION[] -> 'là' WH_QUESTION[]
 GOAL_QUESTION[] -> 'nhằm' 'gì'
 GOAL_QUESTION[] -> 'để' 'làm' 'gì'
+#===1
+GOAL_QUESTION[] -> 'đạt' 'được' 'điều' 'gì'
+GOAL_QUESTION[] -> 'hướng' 'đến' 'điều' 'gì'
+#===2
 
 ASSIGNMENT_QUESTION[QTYPE='DOMAIN'] -> DOMAIN_CUE[] DOMAIN_QUESTION[]
 DOMAIN_CUE[] -> 'chủ' 'đề'
 DOMAIN_CUE[] -> 'lĩnh' 'vực'
 DOMAIN_CUE[] -> 'miền' 'dữ' 'liệu'
 DOMAIN_CUE[] -> 'phạm' 'vi'
+#===1
+DOMAIN_CUE[] -> 'nội' 'dung'
+#===2
 DOMAIN_QUESTION[] -> 'gì'
 DOMAIN_QUESTION[] -> 'nào'
 DOMAIN_QUESTION[] -> 'là' WH_QUESTION[]
 DOMAIN_QUESTION[] -> 'thuộc' 'về' WH_QUESTION[]
 DOMAIN_QUESTION[] -> 'liên' 'quan' 'đến' WH_QUESTION[]
+#===1
+DOMAIN_QUESTION[] -> 'tập' 'trung' 'vào' WH_QUESTION[]
+#===2
 
 ASSIGNMENT_QUESTION[QTYPE='OUTPUTS'] -> OUTPUT_CUE[] OUTPUT_QUESTION[]
 OUTPUT_CUE[] -> 'đầu' 'ra'
@@ -84,11 +133,19 @@ OUTPUT_QUESTION[] -> 'cần' 'nộp' WH_QUESTION[]
 OUTPUT_QUESTION[] -> 'phải' 'nộp' WH_QUESTION[]
 OUTPUT_QUESTION[] -> 'cần' 'xuất' WH_QUESTION[]
 OUTPUT_QUESTION[] -> 'là' WH_QUESTION[]
+#===1
+OUTPUT_QUESTION[] -> WH_QUESTION[]
+#===2
 
 ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_OUTPUTS'] -> PART[ENTITY=?p] PART_RELATION[] ASSIGNMENT[ENTITY=?e] OUTPUT_CUE[] OUTPUT_QUESTION[]
 ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_OUTPUTS'] -> PART[ENTITY=?p] PART_RELATION[] ASSIGNMENT[ENTITY=?e] PART_OUTPUT_QUESTION[]
 ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_REQUIREMENTS'] -> PART[ENTITY=?p] PART_RELATION[] ASSIGNMENT[ENTITY=?e] REQUIREMENT_CUE[] WH_QUESTION[]
 PART_OUTPUT_QUESTION[] -> 'cần' 'xuất' 'file' WH_QUESTION[]
+#===1
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_OUTPUTS'] -> ASSIGNMENT[ENTITY=?e] REVERSED_PART_RELATION[] PART[ENTITY=?p] OUTPUT_CUE[] OUTPUT_QUESTION[]
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_OUTPUTS'] -> ASSIGNMENT[ENTITY=?e] REVERSED_PART_RELATION[] PART[ENTITY=?p] PART_OUTPUT_QUESTION[]
+ASSIGNMENT_QUERY[ENTITY=?e, INTENT='GET_ASSIGNMENT', QTYPE='PART_REQUIREMENTS'] -> ASSIGNMENT[ENTITY=?e] REVERSED_PART_RELATION[] PART[ENTITY=?p] REQUIREMENT_CUE[] WH_QUESTION[]
+#===2
 
 # List questions bind to an assignment entity recognized by the lexicon,
 # without spelling out assignment aliases in this grammar.

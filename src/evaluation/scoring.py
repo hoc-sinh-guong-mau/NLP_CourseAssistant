@@ -1,76 +1,167 @@
-"""Observable comparisons; answer text checks never infer KB facts from prose."""
+"""Label projection and observable checks, without guessing missing annotations."""
+
 import json
 import unicodedata
 
+ABSTENTION_STATUSES = {
+    "missing_information",
+    "unsupported_query",
+    "unsupported_semantic",
+    "unsupported_answer",
+    "parse_failed",
+    "invalid_semantic",
+    "needs_context",
+    "ambiguous",
+}
+LABEL_FIELDS = ("intent", "qtype", "entities")
 
-def entity_pairs(entities):
-    return {(slot, value) for slot, values in entities.items()
-            for value in (values if isinstance(values, list) else [values])}
+
+def abstained(record):
+    return (
+        record.get("abstained") is True or record.get("status") in ABSTENTION_STATUSES
+    )
 
 
-def labels(expected):
-    result = dict(expected.get('intent_entity') or {})
-    semantic = expected.get('semantic') or {}
-    if semantic:
-        result.update(intent=semantic['predicate'], qtype=semantic['qtype'], entities=semantic['arguments'])
-    result.update({key: expected[key] for key in ('intent', 'qtype', 'entities') if key in expected})
-    # Explicit null denotes no recognized request, without adding grammar UNKNOWN rules.
-    if expected.get('intent_entity', False) is None or expected.get('semantic', False) is None:
-        result = {'intent': 'UNKNOWN', 'qtype': 'UNKNOWN', 'entities': {}, **result}
-    return result
+def expected_abstention(expected):
+    if "abstain" in expected:
+        return expected["abstain"]
+    status = expected.get("status")
+    if status == "ok":
+        return False
+    return True if isinstance(status, str) and status in ABSTENTION_STATUSES else None
+
+
+def _label_sources(expected):
+    sources = [expected.get("intent_entity") or {}]
+    semantic = expected.get("semantic") or {}
+    sources.append(
+        {
+            target: semantic[source]
+            for source, target in (
+                ("predicate", "intent"),
+                ("qtype", "qtype"),
+                ("arguments", "entities"),
+            )
+            if source in semantic
+        }
+    )
+    sources.append({key: expected[key] for key in LABEL_FIELDS if key in expected})
+    return sources
+
+
+def label_conflicts(expected):
+    conflicts = []
+    for key in LABEL_FIELDS:
+        values = [source[key] for source in _label_sources(expected) if key in source]
+        if values and any(value != values[0] for value in values[1:]):
+            conflicts.append(key)
+    return conflicts
+
+
+def gold_labels(expected):
+    labels = {}
+    for source in _label_sources(expected):
+        labels.update(source)
+    # Keep contradictory gold visible in raw exact-match checks; don't select one as metric truth.
+    conflicts = set(label_conflicts(expected))
+    for key in conflicts:
+        labels.pop(key, None)
+    if (
+        "entities" not in labels
+        and "entities" not in conflicts
+        and any(
+            key in expected and expected[key] is None
+            for key in ("semantic", "intent_entity")
+        )
+    ):
+        labels["entities"] = None
+    if any(
+        key in expected and expected[key] is None
+        for key in ("semantic", "intent_entity")
+    ):
+        for field in ("intent", "qtype"):
+            if field not in conflicts:
+                labels.setdefault(field, "UNKNOWN")
+    return labels
 
 
 def actual_labels(actual):
-    frame = actual.get('intent_entity') or {}
-    return {'intent': frame.get('intent') or 'UNKNOWN',
-            'qtype': frame.get('qtype') or 'UNKNOWN', 'entities': frame.get('entities') or {}}
+    frame = actual.get("semantic") or {}
+    intent_entity = actual.get("intent_entity") or {}
+    return {
+        "intent": intent_entity.get("intent", frame.get("predicate")),
+        "qtype": intent_entity.get("qtype", frame.get("qtype")),
+        "entities": intent_entity.get("entities", frame.get("arguments")),
+    }
+
+
+def entity_pairs(entities):
+    return {
+        (slot, value)
+        for slot, values in (entities or {}).items()
+        for value in (values if isinstance(values, list) else [values])
+    }
 
 
 def contains(actual, expected):
     if isinstance(expected, dict):
         if not expected:
             return actual == {}
-        return isinstance(actual, dict) and all(key in actual and contains(actual[key], value)
-                                                for key, value in expected.items())
+        return isinstance(actual, dict) and all(
+            key in actual and contains(actual[key], value)
+            for key, value in expected.items()
+        )
     return actual == expected
 
 
 def query_key(query):
+    """Canonicalize unordered projections/conjunctions for a separate logical metric."""
     if query is None:
         return None
     result = dict(query)
-    # Projection order and conjunction order do not change the logical query.
-    for key in ('select', 'conditions'):
-        if isinstance(result.get(key), list):
-            result[key] = sorted(result[key], key=lambda v: json.dumps(v, sort_keys=True, ensure_ascii=False))
+    for field in ("select", "conditions"):
+        if isinstance(result.get(field), list):
+            result[field] = sorted(
+                result[field], key=lambda item: json.dumps(item, sort_keys=True)
+            )
     return result
 
 
-def text_key(text):
-    return ' '.join(unicodedata.normalize('NFC', text).casefold().split())
+def _text(text):
+    return " ".join(unicodedata.normalize("NFC", text).casefold().split())
 
 
-def score_turn(expected, actual):
+def score(expected, actual):
     checks = {}
     predicted = actual_labels(actual)
     for key, value in expected.items():
-        observed = predicted[key] if key in predicted else actual.get(key)
-        if key == 'entities':
-            correct = entity_pairs(observed) == entity_pairs(value)
-        elif key == 'query':
-            correct = query_key(observed) == query_key(value)
-        elif key in {'context_used', 'context_after'}:
-            correct = contains(observed, value)
-        elif key in {'answer_contains', 'answer_not_contains'}:
-            observed = actual.get('answer') or ''
-            present = [text_key(fragment) in text_key(observed) for fragment in value]
-            correct = all(present) if key == 'answer_contains' else not any(present)
-        elif key == 'result_contains':
-            observed = actual.get('result') or []
-            correct = all(any(contains(row, fact) for row in observed) for fact in value)
+        if key == "abstain":
+            correct = abstained(actual) == value
+        elif key == "entities":
+            correct = (predicted[key] or {}) == value
+        elif key in LABEL_FIELDS:
+            correct = (predicted[key] or "UNKNOWN") == value
+        elif key in ("context_used", "context_after"):
+            correct = contains(actual.get(key), value)
+        elif key in ("answer_contains", "answer_not_contains"):
+            matches = [
+                _text(fragment) in _text(actual.get("answer") or "")
+                for fragment in value
+            ]
+            correct = all(matches) if key == "answer_contains" else not any(matches)
+        elif key == "result_contains":
+            correct = all(
+                any(contains(row, fact) for row in (actual.get("result") or []))
+                for fact in value
+            )
         else:
-            correct = observed == value
-        checks[key] = {'correct': correct, 'expected': value, 'actual': observed}
-    return {'correct': all(check['correct'] for check in checks.values()),
-            'checks': checks, 'expected_labels': labels(expected),
-            'actual_labels': predicted, 'actual': actual}
+            # Legacy exact match is deliberately unchanged, including query and answer strings.
+            correct = actual.get(key) == value
+        checks[key] = correct
+    return {
+        "correct": all(checks.values()),
+        "expected": expected,
+        "checks": checks,
+        "actual_abstained": abstained(actual),
+        "actual": actual,
+    }

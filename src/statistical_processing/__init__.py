@@ -1,1 +1,1 @@
-"""Statistical qtype classification and domain entity extraction."""
+"""Statistical qtype recognition and domain entity extraction."""

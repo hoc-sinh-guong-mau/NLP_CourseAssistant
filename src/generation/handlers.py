@@ -1,7 +1,7 @@
 """
 Grounded domain renderers for lists, relations and special field types.
 
-Template for generations
+Template for generations. These handlers contain conditional logic.
 """
 from .exceptions import AnswerError
 from .formatting import display, label, missing, present
@@ -115,7 +115,7 @@ def assignment(frame, records):
 
 def resource(frame, records):
     if not records:
-        return missing('Chưa tìm thấy tài liệu phù hợp hoặc liên kết tài liệu–chủ đề trong KB.')
+        return missing('Chưa tìm thấy tài liệu phù hợp hoặc liên kết tài liệu-chủ đề trong KB.')
     if frame.qtype=='RESOURCE_AUTHOR':
         if not present(records[0].get('authors')): return missing('Nguồn chưa cung cấp tác giả của tài liệu này.')
         return 'ok',f"Tác giả của {label(frame,records[0],'resource_id')}: {display(records[0]['authors'])}."

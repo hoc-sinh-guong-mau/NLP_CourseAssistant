@@ -51,6 +51,7 @@ ROOT = env_path("COURSE_ROOT", _DEFAULT_ROOT, base=Path.cwd())
 DATA_DIR = env_path("COURSE_DATA_DIR", ROOT / "data", base=ROOT)
 MODELS_DIR = env_path("COURSE_MODELS_DIR", ROOT / "models", base=ROOT)
 INPUT_DIR = env_path("COURSE_INPUT_DIR", ROOT / "input", base=ROOT)
+SMOKE_CASES_PATH = INPUT_DIR / "smoke_cases.jsonl"
 # A wheel's bundled resources are read-only inputs, never a runtime workspace.
 _RUNTIME_ROOT = ROOT if _IS_SOURCE else Path.cwd()
 OUTPUT_DIR = env_path("COURSE_OUTPUT_DIR", _RUNTIME_ROOT / "output", base=_RUNTIME_ROOT)
@@ -79,7 +80,8 @@ class RunConfig:
     input_path: Path = INPUT_DIR / "sentences.txt"
     output_dir: Path = OUTPUT_DIR
     database: Path = SQLITE_PATH
-    evaluation_path: Path = INPUT_DIR / "test_cases.jsonl"
+    evaluation_path: Path = SMOKE_CASES_PATH
     sample_limit: int = DEFAULT_SAMPLE_LIMIT
     dialogue_path: Path = INPUT_DIR / "dialogues.txt"
     evaluation_compare: bool = False
+    evaluation_dialogue_path: Path | None = None

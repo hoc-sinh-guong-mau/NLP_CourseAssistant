@@ -28,17 +28,21 @@ CONTEXT_WH[] -> 'ở' 'đâu'
 CONTEXT_WH[] -> 'như' 'thế' 'nào'
 CONTEXT_WH[] -> 'ra' 'sao'
 
-RESOURCE_NOUN[] -> 'tài' 'liệu'
+# Re-use the existed lexical entries in resources.fcfg.
+# Already defined in resources.fcfg.
+# RESOURCE_NOUN[] -> 'tài' 'liệu' 
 RESOURCE_NOUN[] -> 'tài' 'nguyên'
-RESOURCE_NOUN[] -> 'nguồn' 'tham' 'khảo'
+# Already defined in resources.fcfg.
+# RESOURCE_NOUN[] -> 'nguồn' 'tham' 'khảo'
 RESOURCE_ASK[] -> 'là' CONTEXT_WH[]
 RESOURCE_ASK[] -> CONTEXT_WH[]
 RESOURCE_ASK[] -> 'gồm' CONTEXT_WH[]
 
-# A topic's relation to a resource; TOPIC lexical entries live elsewhere.
-CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='RELATED_RESOURCE', TARGET=?t] -> RESOURCE_NOUN[] TOPIC[ENTITY=?t] RESOURCE_ASK[]
-CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='RELATED_RESOURCE', TARGET=?t] -> RESOURCE_NOUN[] 'của' TOPIC[ENTITY=?t] RESOURCE_ASK[]
+# Explicit topics are handled by RESOURCE_QUERY; references alone require context.
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='RELATED_RESOURCE', TARGET='NONE'] -> RESOURCE_NOUN[] 'của' CONTEXT_NOUN[] RESOURCE_ASK[]
+#===1
+CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='RELATED_RESOURCE', TARGET='NONE'] -> CONTEXT_NOUN[] 'có' RESOURCE_NOUN[] RESOURCE_ASK[]
+#===2
 
 CONTEXT_NOUN[] -> 'phần' CONTEXT_PRONOUN[]
 CONTEXT_NOUN[] -> 'chương' CONTEXT_PRONOUN[]
@@ -61,15 +65,22 @@ PART_NOUN[] -> 'phần'
 OUTPUT_QUESTION[] -> 'cần' 'xuất' 'file' CONTEXT_WH[]
 OUTPUT_QUESTION[] -> 'phải' 'xuất' 'file' CONTEXT_WH[]
 OUTPUT_QUESTION[] -> 'cần' 'nộp' 'file' CONTEXT_WH[]
-OUTPUT_QUESTION[] -> 'phải' 'nộp' 'những' 'gì'
-OUTPUT_QUESTION[] -> 'cần' 'nộp' 'những' 'gì'
+# Covered by assignments.fcfg.
+# OUTPUT_QUESTION[] -> 'phải' 'nộp' 'những' 'gì' 
+# Covered by assignments.fcfg.
+# OUTPUT_QUESTION[] -> 'cần' 'nộp' 'những' 'gì'  
 OUTPUT_QUESTION[] -> 'đầu' 'ra' 'là' CONTEXT_WH[]
-OUTPUT_QUESTION[] -> 'gồm' CONTEXT_WH[]
+# Covered by assignments.fcfg.
+# OUTPUT_QUESTION[] -> 'gồm' CONTEXT_WH[]  
 
 # Resources associated with the current chapter or part.
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CHAPTER_RESOURCE', TARGET='NONE'] -> RESOURCE_NOUN[] 'của' CHAPTER_REF[] RESOURCE_ASK[]
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CHAPTER_RESOURCE', TARGET='NONE'] -> CHAPTER_REF[] RESOURCE_NOUN[] RESOURCE_ASK[]
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='RELATED_RESOURCE', TARGET='NONE'] -> RESOURCE_NOUN[] 'của' PART_REF[] RESOURCE_ASK[]
+#===1
+CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='RELATED_RESOURCE', TARGET='NONE'] -> PART_REF[] RESOURCE_NOUN[] RESOURCE_ASK[]
+CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CHAPTER_RESOURCE', TARGET='NONE'] -> CHAPTER_REF[] 'có' RESOURCE_NOUN[] RESOURCE_ASK[]
+#===2
 CHAPTER_REF[] -> 'chương' CONTEXT_PRONOUN[]
 PART_REF[] -> 'phần' CONTEXT_PRONOUN[]
 
@@ -81,10 +92,18 @@ NEXT_CHAPTER_QUESTION[] -> CHAPTER_REF[] 'tiếp' 'theo' 'là' 'chương' 'nào'
 NEXT_CHAPTER_QUESTION[] -> 'sau' CHAPTER_REF[] 'là' 'chương' 'nào'
 NEXT_CHAPTER_QUESTION[] -> 'chương' 'nào' 'học' 'sau' CHAPTER_REF[]
 NEXT_CHAPTER_QUESTION[] -> 'chương' 'tiếp' 'theo' 'là' 'gì'
+#===1
+NEXT_CHAPTER_QUESTION[] -> 'chương' 'tiếp' 'theo' 'là' 'chương' 'nào'
+NEXT_CHAPTER_QUESTION[] -> 'chương' 'nào' 'đứng' 'sau' CHAPTER_REF[]
+#===2
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='PREVIOUS_CHAPTER', TARGET='NONE'] -> PREVIOUS_CHAPTER_QUESTION[]
 PREVIOUS_CHAPTER_QUESTION[] -> 'trước' CHAPTER_REF[] 'là' 'chương' 'nào'
 PREVIOUS_CHAPTER_QUESTION[] -> 'chương' 'nào' 'học' 'trước' CHAPTER_REF[]
 PREVIOUS_CHAPTER_QUESTION[] -> 'chương' 'trước' 'là' 'gì'
+#===1
+PREVIOUS_CHAPTER_QUESTION[] -> 'chương' 'liền' 'trước' CHAPTER_REF[] 'là' 'chương' 'nào'
+PREVIOUS_CHAPTER_QUESTION[] -> 'chương' 'nào' 'đứng' 'trước' CHAPTER_REF[]
+#===2
 
 # Ask which chapter covers a contextually mentioned topic/content.
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='CONTENT_CHAPTER', TARGET='NONE'] -> CONTENT_REF[] CHAPTER_LOCATION_QUESTION[]
@@ -100,7 +119,7 @@ CHAPTER_LOCATION_QUESTION[] -> 'nằm' 'trong' 'chương' CONTEXT_WH[]
 CONTEXT_QUERY[ENTITY='CONTEXT_REF', INTENT='CONTEXT_DEPENDENT', QTYPE='COURSE_CHAPTER_COUNT', TARGET='NONE'] -> COURSE_REF[] CHAPTER_COUNT_QUESTION[]
 COURSE_REF[] -> 'môn' CONTEXT_PRONOUN[]
 COURSE_REF[] -> 'khóa' 'học' CONTEXT_PRONOUN[]
-CHAPTER_COUNT_QUESTION[] -> 'có' 'bao' 'nhiêu' 'chương'
-CHAPTER_COUNT_QUESTION[] -> 'gồm' 'bao' 'nhiêu' 'chương'
+# CHAPTER_COUNT_QUESTION[] -> 'có' 'bao' 'nhiêu' 'chương'  # Already defined in course.fcfg.
+# CHAPTER_COUNT_QUESTION[] -> 'gồm' 'bao' 'nhiêu' 'chương'  # Already defined in course.fcfg.
 CHAPTER_COUNT_QUESTION[] -> 'tổng' 'cộng' 'có' 'bao' 'nhiêu' 'chương'
-CHAPTER_COUNT_QUESTION[] -> 'bao' 'nhiêu' 'chương'
+# CHAPTER_COUNT_QUESTION[] -> 'bao' 'nhiêu' 'chương'  # Already defined in course.fcfg.

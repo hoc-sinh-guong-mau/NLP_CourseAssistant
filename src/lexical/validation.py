@@ -41,6 +41,7 @@ def validate_entries(data):
             aliases = row.get("aliases")
             if not isinstance(aliases, list) or not aliases or not all(isinstance(a, str) for a in aliases):
                 raise LexiconError("aliases must be a nonempty list of strings")
+            # Normalize aliases and check for duplicates and empty strings.
             aliases = tuple(dict.fromkeys(normalize(a) for a in aliases))
             if any(not alias for alias in aliases):
                 raise LexiconError("Empty normalized alias")

@@ -15,14 +15,14 @@ dependencies = [
   "PyYAML==6.0.3",
   "streamlit==1.66.1",
   "python-dotenv==1.2.4",
-  "scikit-learn>=1.5,<2",
-  "joblib>=1.4,<2",
+  "scikit-learn==1.9.1",
+  "joblib==1.6.0",
   "matplotlib>=3.8,<4",
 ]
 
 [project.optional-dependencies]
 dev = ["build>=1.2,<2"]
-# Backward-compatible extra: statistical dependencies are now installed by default.
+# Keep the existing install command compatible; the pipeline imports these by default.
 statistical = []
 
 [project.scripts]
@@ -41,6 +41,7 @@ namespaces = false
 "share/nlp-course-assistant/models/grammar" = ["models/grammar/*.fcfg"]
 "share/nlp-course-assistant/models/grammar/rules" = ["models/grammar/rules/*.fcfg"]
 "share/nlp-course-assistant/models/lexicon" = ["models/lexicon/*.yaml"]
+"share/nlp-course-assistant/models/statistical" = ["models/statistical/*.joblib", "models/statistical/*.json"]
 "share/nlp-course-assistant/data/raw" = ["data/raw/*.txt"]
 "share/nlp-course-assistant/input" = ["input/*.txt", "input/*.jsonl"]
 "share/nlp-course-assistant/tests" = ["tests/*.py"]

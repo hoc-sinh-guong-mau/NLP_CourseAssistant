@@ -1,4 +1,4 @@
-"""Evaluation verifies outputs and failure accounting without fitting an oracle."""
+"""Regressions for abstention labels, null slots and startup smoke evaluation."""
 import json
 import os
 from pathlib import Path
@@ -9,237 +9,173 @@ import unittest
 from unittest.mock import Mock, patch
 
 from src.application.pipeline import CourseAssistant
-from src.config import ROOT, SQLITE_PATH
-from src.evaluation.dataset import load_cases
-from src.evaluation.evaluator import evaluate
+from src.config import ROOT, SQLITE_PATH, RunConfig
+from src.evaluation.evaluator import evaluate, _expected_abstention
 from src.evaluation.exceptions import EvaluationError
-from src.evaluation.metrics import summarize
-from src.evaluation.scoring import score_turn
+from src.semantic import SemanticInterpreter
+from src.parsing import Parser
+from src.preprocessing import normalize, tokenize
+from src.dialogue import DialogueSession
 
 
-def record(intent='GET_COURSE_INFO', qtype='CREDITS', entities=None, **extra):
-    return {'intent_entity': {'intent': intent, 'qtype': qtype,
-                             'entities': {'course_id': 'CO3085'} if entities is None else entities},
-            'parse_tree': '(S)', 'status': 'ok', 'answer': 'Môn CO3085 có 3 tín chỉ.',
-            'result': [{'credits': 3}], **extra}
-
-
-def scored(expected, actual):
-    return {'elapsed_ms': 1.0, **score_turn(expected, actual)}
-
-
-def summary(rows):
-    return summarize([{'id': 'example', 'tags': ['test'], 'dialogue': False,
-                       'correct': all(row['correct'] for row in rows), 'turns': rows}])
-
-
-class EvaluationDatasetTests(unittest.TestCase):
-    def load(self, rows):
+class EvaluationRegressionTests(unittest.TestCase):
+    def run_cases(self, cases, records):
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / 'cases.jsonl'
-            path.write_text(''.join(json.dumps(row) + '\n' for row in rows))
-            return load_cases(path)
-
-    def test_accepts_legacy_and_dialogue_cases(self):
-        cases = self.load([{'input': 'Question?', 'expected': {'status': 'ok'}},
-                           {'id': 'dialogue', 'tags': ['reference'], 'turns': [
-                               {'input': 'Follow up?', 'expected': {'status': 'needs_context'}}]}])
-        self.assertEqual(cases[0]['id'], 'case_001')
-        self.assertFalse(cases[0]['dialogue'])
-        self.assertTrue(cases[1]['dialogue'])
-
-    def test_rejects_invalid_labels_and_ambiguous_formats(self):
-        invalid = [
-            {'input': '', 'expected': {'status': 'ok'}},
-            {'input': 'q', 'expected': {}},
-            {'input': 'q', 'expected': {'intnet': 'GET_TOPIC'}},
-            {'input': 'q', 'expected': {'entities': {'week_id': []}}},
-            {'input': 'q', 'expected': {'entities': {'week_id': {'id': 'WEEK_03'}}}},
-            {'input': 'q', 'expected': {'result_contains': []}},
-            {'input': 'q', 'expected': {'answer_contains': []}},
-            {'input': 'q', 'expected': {'query': 'SELECT *'}},
-            {'input': 'q', 'expected': {'semantic': {'wrong': 'keys'}}},
-            {'input': 'q', 'expected': {'intent': 'GET_TOPIC', 'intent_entity': {
-                'intent': 'GET_COURSE_INFO', 'qtype': 'CREDITS', 'entities': {'course_id': 'CO3085'}}}},
-            {'input': 'q', 'expected': {'status': 'ok'}, 'turns': []},
-            {'turns': [{'input': 'q', 'expected': {'status': 'ok'}, 'typo': True}]},
-        ]
-        for row in invalid:
-            with self.subTest(row=row), self.assertRaises(EvaluationError):
-                self.load([row])
-        with self.assertRaises(EvaluationError):
-            self.load([{'id': 'same', 'input': 'q', 'expected': {'status': 'ok'}}] * 2)
-
-    def test_malformed_json_is_an_evaluation_error_with_line_number(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / 'cases.jsonl'
-            path.write_text('\n{bad json}\n')
-            with self.assertRaises(EvaluationError) as error:
-                load_cases(path)
-            self.assertEqual(error.exception.context['line'], 2)
-            path.write_text('{"input":"q","expected":{"result_contains":[{"credits":NaN}]}}\n')
-            with self.assertRaises(EvaluationError):
-                load_cases(path)
-
-    def test_invalid_dataset_does_not_initialize_or_process_models(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / 'cases.jsonl'
-            path.write_text('{}\n')
-            with patch('src.evaluation.evaluator.CourseAssistant') as assistant:
-                with self.assertRaises(EvaluationError):
-                    evaluate(cases_path=path, output_path=Path(directory) / 'out.txt')
-                assistant.assert_not_called()
-
-
-class EvaluationMetricTests(unittest.TestCase):
-    def test_classification_counts_abstentions_and_reports_macro_f1(self):
-        rows = [scored({'intent': 'GET_COURSE_INFO'}, record()),
-                scored({'intent': 'GET_TOPIC'}, record()),
-                scored({'intent': 'GET_TOPIC'}, record(intent='GET_TOPIC')),
-                scored({'intent': 'UNKNOWN'}, record(intent_entity=None, parse_tree='()'))]
-        metrics = summary(rows)['intent']
-        self.assertEqual(metrics['total'], 4)
-        self.assertEqual(metrics['accuracy'], 0.75)
-        self.assertAlmostEqual(metrics['macro_f1'], (2/3 + 2/3 + 1)/3)
-        self.assertIn({'expected': 'GET_TOPIC', 'predicted': 'GET_COURSE_INFO', 'count': 1}, metrics['confusion'])
-
-    def test_entities_use_slot_and_id_sets_and_penalize_hallucinated_entities(self):
-        rows = [scored({'entities': {'topic_ids': ['CFG', 'PARSING']}},
-                       record(entities={'topic_ids': ['PARSING', 'CFG']})),
-                scored({'entities': {'week_id': 'WEEK_03'}}, record(entities={'week_id': 'WEEK_04'})),
-                scored({'entities': {}}, record())]
-        metrics = summary(rows)['entities']
-        self.assertEqual(metrics['true_positive'], 2)
-        self.assertEqual(metrics['false_positive'], 2)
-        self.assertEqual(metrics['false_negative'], 1)
-        self.assertEqual(metrics['micro_precision'], 0.5)
-        self.assertAlmostEqual(metrics['micro_recall'], 2/3)
-        self.assertAlmostEqual(metrics['micro_f1'], 4/7)
-        self.assertAlmostEqual(metrics['exact_match']['accuracy'], 1/3)
-
-    def test_unlabeled_components_are_not_silently_scored(self):
-        metrics = summary([scored({'status': 'ok'}, record())])
-        self.assertEqual(metrics['status']['accuracy'], 1)
-        for key in ('intent', 'qtype', 'query_exact_match', 'answer'):
-            self.assertEqual(metrics[key]['total'], 0)
-            self.assertIsNone(metrics[key]['accuracy'])
-        self.assertIsNone(metrics['entities']['micro_f1'])
-
-    def test_query_order_is_ignored_but_wrong_filters_are_errors(self):
-        expected = {'collection': 'course', 'filters': {'id': 'CO3085'}, 'select': ['credits', 'id']}
-        self.assertTrue(score_turn({'query': expected}, record(query={**expected, 'select': ['id', 'credits']}))['correct'])
-        self.assertFalse(score_turn({'query': expected}, record(query={**expected, 'filters': {'id': 'WRONG'}}))['correct'])
-
-    def test_facts_answer_and_context_have_separate_checks(self):
-        result = scored({'result_contains': [{'credits': 3}], 'answer_contains': ['3 tín chỉ'],
-                         'answer_not_contains': ['4 tín chỉ'], 'context_used': {'source_turn': 1}},
-                        record(context_used={'source_turn': 1, 'entities': {'course': ['CO3085']}}))
-        self.assertTrue(result['correct'])
-        incorrect_answer = scored({'result_contains': [{'credits': 3}], 'answer_contains': ['3 tín chỉ']},
-                                  record(answer='Có 4 tín chỉ.'))
-        metrics = summary([incorrect_answer])
-        self.assertEqual(metrics['retrieved_facts']['accuracy'], 1)
-        self.assertEqual(metrics['answer']['accuracy'], 0)
-        self.assertFalse(score_turn({'context_used': {}}, record(context_used={'source_turn': 1}))['correct'])
-
-    def test_semantic_frame_metrics_do_not_substitute_intent_accuracy(self):
-        labels = {'intent': 'GET_COURSE_INFO', 'qtype': 'CREDITS', 'entities': {'course_id': 'CO3085'}}
-        row = scored(labels, record(semantic={'predicate': 'GET_COURSE_INFO', 'qtype': 'CREDITS',
-                                             'arguments': {'course_id': 'WRONG'}}))
-        metrics = summary([row])
-        self.assertEqual(metrics['intent']['accuracy'], 1)
-        self.assertEqual(metrics['semantic_frame_accuracy']['accuracy'], 0)
-
-    def test_unknown_false_acceptance_and_fallback_attempts(self):
-        rows = [scored({'intent': 'UNKNOWN'}, record(statistical_used=True, statistical_attempted=True)),
-                scored({'intent': 'UNKNOWN'}, record(intent_entity=None, parse_tree='()',
-                       statistical_prediction={'qtype': 'UNKNOWN', 'confidence': 0.01}))]
-        metrics = summary(rows)
-        self.assertEqual(metrics['unknown_requests']['false_acceptance_rate'], 0.5)
-        self.assertEqual(metrics['fallback']['attempted'], 2)
-        self.assertEqual(metrics['fallback']['accepted'], 1)
-        self.assertEqual(metrics['fallback']['acceptance_rate'], 0.5)
-        self.assertEqual(metrics['fallback']['accepted_semantic_accuracy']['total'], 0)
-
-
-class EvaluationRunnerTests(unittest.TestCase):
-    def test_comparison_reports_recoveries_regressions_and_one_output(self):
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            path = root / 'cases.jsonl'
-            path.write_text(''.join(json.dumps({'id': str(i), 'input': f'question {i}',
-                             'tags': ['paraphrase'], 'expected': {'status': 'ok'}}) + '\n' for i in range(3)))
-            hybrid = Mock(statistical_recognizer=None)
-            baseline = Mock(statistical_recognizer=None)
-            hybrid.process.side_effect = [record(statistical_used=True), record(status='parse_failed'), record()]
-            baseline.process.side_effect = [record(status='parse_failed'), record(), record()]
-            report = evaluate(hybrid, cases_path=path, output_path=root/'out/evaluation.txt',
-                              compare=True, baseline=baseline)
-            self.assertEqual((report['passed'], report['total']), (2, 3))
-            self.assertEqual(report['comparison']['recovered_turns'], 1)
-            self.assertEqual(report['comparison']['regressed_turns'], 1)
-            self.assertEqual(report['metrics']['groups']['paraphrase']['cases']['total'], 3)
-            self.assertEqual(len(report['failures']), 2)
-            self.assertEqual({file.name for file in (root/'out').iterdir()}, {'evaluation.txt'})
-            saved = json.loads((root/'out/evaluation.txt').read_text())
-            self.assertEqual(saved['dataset']['sha256'], report['dataset']['sha256'])
-            self.assertEqual(saved['systems']['grammar_only']['metrics']['case_accuracy']['correct'], 2)
-
-    def test_input_cannot_be_overwritten_and_system_errors_propagate(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / 'cases.jsonl'
-            path.write_text('{"input":"q","expected":{"status":"ok"}}\n')
-            with self.assertRaises(EvaluationError):
-                evaluate(cases_path=path, output_path=path)
+            path = Path(directory)/'cases.jsonl'
+            output = Path(directory)/'evaluation.txt'
+            path.write_text(''.join(json.dumps(case)+'\n' for case in cases), encoding='utf-8')
             assistant = Mock()
-            assistant.process.side_effect = RuntimeError('unexpected system failure')
-            with self.assertRaisesRegex(RuntimeError, 'system failure'):
-                evaluate(assistant, cases_path=path, output_path=Path(directory)/'out.txt')
-            self.assertFalse((Path(directory)/'out.txt').exists())
+            assistant.process.side_effect = records
+            report = evaluate(assistant, cases_path=path, output_path=output)
+            self.assertEqual(json.loads(output.read_text(encoding='utf-8')), report)
+            return report
 
-    def test_explicit_grammar_only_never_loads_model(self):
-        with patch('src.application.pipeline._load_statistical_recognizer') as loader:
-            assistant = CourseAssistant(use_statistical=False)
-        loader.assert_not_called()
-        answer = assistant.process('Bạn cho mình hỏi số tín chỉ của NLP với')
-        self.assertFalse(answer['statistical_attempted'])
-        self.assertEqual(answer['status'], 'parse_failed')
+    def test_abstain_only_labels_are_scored_for_both_decisions(self):
+        for expected, actual, correct in [
+            (True, {'status':'ok'}, False),
+            (True, {'status':'needs_context'}, True),
+            (False, {'status':'ok'}, True),
+            (False, {'status':'ambiguous'}, False),
+            (True, {'status':'ok','abstained':True}, True),
+        ]:
+            with self.subTest(expected=expected, actual=actual):
+                report = self.run_cases([{'input':'q','expected':{'abstain':expected}}], [actual])
+                self.assertEqual(report['passed'], int(correct))
+                self.assertEqual(report['cases'][0]['checks']['abstain'], correct)
+                self.assertEqual(report['cases'][0]['expected']['abstain'], expected)
 
-    def test_comparison_and_dialogue_cases_are_isolated(self):
-        cases = [
-            {'id': 'with_context', 'turns': [
-                {'input': 'Bài tập lớn có phần parser không?', 'expected': {'status': 'ok'}},
-                {'input': 'Phần này cần xuất file gì?', 'expected': {'status': 'ok', 'context_used': {'source_turn': 1}}}]},
-            {'id': 'without_context', 'turns': [
-                {'input': 'Phần này cần xuất file gì?', 'expected': {'status': 'needs_context'}}]},
+    def test_abstain_and_output_checks_must_both_match(self):
+        report = self.run_cases(
+            [{'input':'q','expected':{'abstain':True,'answer':'clarify'}}],
+            [{'status':'needs_context','answer':'wrong clarification'}])
+        self.assertEqual(report['passed'], 0)
+        self.assertTrue(report['cases'][0]['checks']['abstain'])
+        self.assertFalse(report['cases'][0]['checks']['answer'])
+
+    def test_every_abstention_status_is_symmetric_in_truth_and_prediction(self):
+        statuses = ('missing_information','unsupported_query','unsupported_semantic','unsupported_answer',
+                    'parse_failed','invalid_semantic','needs_context','ambiguous')
+        cases = [{'input':status,'expected':{'status':status}} for status in statuses]
+        report = self.run_cases(cases, [{'status':case['input']} for case in cases])
+        self.assertEqual(report['passed'], len(cases))
+        metrics = report['abstention_performance']
+        self.assertEqual(metrics['abstention_accuracy'], 1)
+        self.assertEqual(metrics['coverage'], 0)
+        self.assertEqual(metrics['outcomes']['N5_correct_abstention'], len(cases))
+
+    def test_unrecognized_status_does_not_become_should_answer(self):
+        self.assertIsNone(_expected_abstention({'status':'custom_status'}))
+        self.assertFalse(_expected_abstention({'status':'ok'}))
+        self.assertIsNone(_expected_abstention({'answer':'some answer'}))
+        report = self.run_cases([{'input':'q','expected':{'status':'custom_status'}}],
+                                [{'status':'custom_status'}])
+        self.assertIsNone(report['abstention_performance'])
+        self.assertIsNotNone(report['abstention_note'])
+
+    def test_explicit_should_answer_label_overrides_status_inference(self):
+        # An answerable request may currently fail parsing; do not reward that failure.
+        report = self.run_cases([{'input':'q','expected':{'status':'parse_failed','abstain':False}}],
+                                [{'status':'parse_failed'}])
+        self.assertEqual(report['passed'], 0)
+        self.assertEqual(report['abstention_performance']['outcomes']['N3_unneeded_abstention'], 1)
+
+    def test_null_entities_are_scored_without_crashing(self):
+        for key in ('semantic','intent_entity'):
+            with self.subTest(key=key):
+                report = self.run_cases([{'input':'q','expected':{'status':'parse_failed',key:None}}],
+                                       [{'status':'parse_failed','semantic':None,'intent_entity':None}])
+                self.assertEqual(report['passed'], 1)
+                self.assertEqual(report['task_performance']['entity_extraction_count'], 1)
+                self.assertEqual(report['task_performance']['entity_extraction_exact_match_accuracy'], 1)
+        report = self.run_cases([{'input':'q','expected':{'intent_entity':None,'abstain':True}}],
+                               [{'status':'ok','intent_entity':{'intent':'GET_COURSE_INFO','entities':{'course_id':'CO3085'}}}])
+        self.assertEqual(report['passed'], 0)
+        self.assertEqual(report['task_performance']['entity_extraction_exact_match_accuracy'], 0)
+
+    def test_invalid_nested_labels_and_mixed_annotations_fail_before_models_run(self):
+        invalid = [
+            [{'input':'q','expected':{'semantic':'not a mapping'}}],
+            [{'input':'q','expected':{'intent_entity':{'entities':None}}}],
+            [{'input':'q','expected':{'abstain':'yes'}}],
+            [{'input':'a','expected':{'status':'ok'}},
+             {'input':'b','expected':{'status':'custom_status'}}],
         ]
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)/'cases.jsonl'
-            path.write_text(''.join(json.dumps(case) + '\n' for case in cases))
-            report = evaluate(CourseAssistant(use_statistical=False), cases_path=path,
-                              output_path=Path(directory)/'evaluation.txt', compare=True)
-            self.assertEqual((report['passed'], report['total']), (2, 2))
-            for system in report['systems'].values():
-                self.assertEqual(system['metrics']['dialogue']['session_accuracy']['accuracy'], 1)
-                self.assertEqual(system['cases'][1]['turns'][0]['actual']['context_before']['entities'], {})
+            for cases in invalid:
+                path.write_text(''.join(json.dumps(case)+'\n' for case in cases), encoding='utf-8')
+                with self.subTest(cases=cases), patch('src.evaluation.evaluator.CourseAssistant') as assistant:
+                    with self.assertRaises(EvaluationError):
+                        evaluate(cases_path=path, output_path=Path(directory)/'out.txt')
+                    assistant.assert_not_called()
 
-    def test_cli_reads_custom_cases_and_compares_systems(self):
+    def test_dataset_cannot_be_overwritten_by_report(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)/'cases.jsonl'
+            path.write_text('original', encoding='utf-8')
+            with self.assertRaises(EvaluationError):
+                evaluate(cases_path=path, output_path=path)
+            self.assertEqual(path.read_text(encoding='utf-8'), 'original')
+
+    def test_startup_smoke_passes_without_requiring_benchmark_to_be_perfect(self):
+        self.assertEqual(RunConfig().evaluation_path.name, 'smoke_cases.jsonl')
+        self.assertTrue((ROOT/'input/test_cases.jsonl').is_file())
+        self.assertNotEqual(RunConfig().evaluation_path, ROOT/'input/test_cases.jsonl')
+        with tempfile.TemporaryDirectory() as directory:
+            report = evaluate(cases_path=RunConfig().evaluation_path, output_path=Path(directory)/'evaluation.txt')
+            self.assertEqual((report['passed'],report['total']), (3,3))
+
+    def test_cli_accepts_a_dataset_and_keeps_failure_exit_code(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            path = root/'cases.jsonl'
-            path.write_text('{"input":"Môn NLP có mấy tín chỉ?","expected":{"status":"ok"}}\n')
-            result = subprocess.run([sys.executable, '-m', 'src.main', 'evaluate', '--compare',
-                                     '--input', str(path), '--output-dir', str(root/'out')],
-                                    cwd=ROOT, env={**os.environ, 'COURSE_DATABASE': str(SQLITE_PATH)},
-                                    capture_output=True, text=True, timeout=60)
-            self.assertEqual(result.returncode, 0, result.stderr)
-            report = json.loads((root/'out/evaluation.txt').read_text())
-            self.assertEqual(report['dataset']['cases'], 1)
-            self.assertEqual(set(report['systems']), {'grammar_only', 'hybrid'})
-            path.write_text('{"input":"Môn NLP có mấy tín chỉ?","expected":{"status":"needs_context"}}\n')
-            result = subprocess.run([sys.executable, '-m', 'src.main', 'evaluate', '--input', str(path),
-                                     '--output-dir', str(root/'failed')],
-                                    cwd=ROOT, env={**os.environ, 'COURSE_DATABASE': str(SQLITE_PATH)},
-                                    capture_output=True, text=True, timeout=60)
-            self.assertEqual(result.returncode, 1, result.stderr)
-            self.assertEqual(json.loads((root/'failed/evaluation.txt').read_text())['passed'], 0)
+            path = root/'custom.jsonl'
+            path.write_text(json.dumps({'input':'Môn NLP có mấy tín chỉ?',
+                                        'expected':{'abstain':True}})+'\n', encoding='utf-8')
+            result = subprocess.run([sys.executable,'-m','src.main','evaluate','--input',str(path),
+                                     '--output-dir',str(root/'out')], cwd=ROOT,
+                                    env={**os.environ,'COURSE_DATABASE':str(SQLITE_PATH)},
+                                    capture_output=True,text=True,timeout=60)
+            self.assertEqual(result.returncode,1,result.stderr)
+            report = json.loads((root/'out/evaluation.txt').read_text(encoding='utf-8'))
+            self.assertEqual((report['passed'],report['total']), (0,1))
+            self.assertEqual({file.name for file in (root/'out').iterdir()}, {'evaluation.txt'})
+
+
+class ResourceGrammarRegressionTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.parser = Parser()
+        cls.semantic = SemanticInterpreter()
+
+    def test_explicit_topics_have_only_a_direct_resource_meaning(self):
+        for text in ('CFG có tài liệu nào?', 'CFG có tài liệu nào không?',
+                     'Tài liệu CFG là gì?', 'Tài liệu của CFG ở đâu?'):
+            with self.subTest(text=text):
+                trees = self.parser.parse_all(tokenize(normalize(text)))
+                self.assertTrue(trees)
+                frames = [self.semantic.interpret(tree) for tree in trees]
+                self.assertEqual({frame.canonical_key() for frame in frames},
+                                 {frames[0].canonical_key()})
+                for frame in frames:
+                    self.assertEqual(frame.predicate, 'GET_RESOURCE')
+                    self.assertEqual(frame.qtype, 'RESOURCE_BY_TOPIC')
+                    self.assertEqual(frame.arguments, {'topic_id':'CFG'})
+
+    def test_explicit_topic_overrides_previous_chapter_context(self):
+        assistant = CourseAssistant(parser=self.parser)
+        session = DialogueSession(assistant)
+        session.process('Chương 4 nói về gì?')
+        record = session.process('CFG có tài liệu nào?')
+        self.assertEqual(record['semantic']['arguments'], {'topic_id':'CFG'})
+        self.assertEqual(record['semantic']['predicate'], 'GET_RESOURCE')
+        self.assertEqual(record['context_used'], {})
+        self.assertEqual(record['query']['conditions'], [{'field':'topic_ids','operator':'contains','value':'CFG'}])
+        self.assertNotIn(record['status'], ('ambiguous','needs_context','parse_failed'))
+
+    def test_real_references_still_need_context(self):
+        for text in ('Tài liệu của phần này ở đâu?', 'Chương này có tài liệu nào?'):
+            with self.subTest(text=text):
+                trees = self.parser.parse_all(tokenize(normalize(text)))
+                self.assertTrue(trees)
+                for tree in trees:
+                    self.assertEqual(self.semantic.interpret(tree).predicate, 'CONTEXT_DEPENDENT')

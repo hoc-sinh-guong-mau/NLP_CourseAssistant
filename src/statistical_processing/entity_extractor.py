@@ -39,12 +39,14 @@ class EntityExtractor:
     """Resolve semantic argument slots from normalized lexicon aliases."""
 
     def __init__(self, lexicon: Lexicon):
-        self._aliases = tuple(
-            (entry.category, tuple(tokenize(alias)), entry.canonical_id)
-            for entry in lexicon.entries
-            if entry.canonical_id is not None
-            for alias in entry.aliases
-        )
+        self._aliases = {}
+        for entry in lexicon.entries:
+            if entry.canonical_id is None:
+                continue
+            category = self._aliases.setdefault(entry.category, {})
+            for alias in entry.aliases:
+                tokens = tuple(tokenize(alias))
+                category.setdefault(tokens[0], []).append((tokens, entry.canonical_id))
 
     def extract(
         self,
@@ -66,6 +68,11 @@ class EntityExtractor:
 
             matches = self._find(tokens, categories)
             if slot == "topic_ids":
+                spans = {}
+                for match in matches:
+                    spans.setdefault((match.start, match.end), set()).add(match.canonical_id)
+                if any(len(ids) > 1 for ids in spans.values()):
+                    return None  # One ambiguous mention is not a conjunction of several topics.
                 ids = list(dict.fromkeys(match.canonical_id for match in matches))
                 if len(ids) < 2:
                     return None
@@ -88,15 +95,13 @@ class EntityExtractor:
 
     def _find(self, tokens: list[str], categories: tuple[str, ...]) -> list[_Match]:
         candidates = []
-        for category, alias, canonical_id in self._aliases:
-            if category not in categories:
-                continue
-            width = len(alias)
-            candidates.extend(
-                _Match(start, start + width, canonical_id)
-                for start in range(len(tokens) - width + 1)
-                if tuple(tokens[start:start + width]) == alias
-            )
+        for category in categories:
+            aliases = self._aliases.get(category, {})
+            for start, token in enumerate(tokens):
+                for alias, canonical_id in aliases.get(token, ()):
+                    end = start + len(alias)
+                    if tuple(tokens[start:end]) == alias:
+                        candidates.append(_Match(start, end, canonical_id))
 
         # Prefer the longest alias at a given position and avoid counting an
         # alias nested inside a longer entity name as a separate entity.

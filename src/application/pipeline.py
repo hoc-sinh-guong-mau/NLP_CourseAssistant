@@ -11,7 +11,6 @@ from src.retrieval import QueryBuilder
 from src.retrieval.sqlite import SQLiteKnowledgeBase
 from src.generation import AnswerGenerator
 from src.statistical_processing.entity_extractor import EntityExtractor
-from src.statistical_processing.intent_recognizer import QTypeRecognizer
 
 from .messages import set_status
 
@@ -30,6 +29,8 @@ def _load_statistical_recognizer():
             )
         return None
 
+    # CLI/help and grammar-only runs do not need sklearn or model deserialization.
+    from src.statistical_processing.intent_recognizer import QTypeRecognizer
     return run_stage("statistical", QTypeRecognizer.load_model, QTYPE_MODEL_PATH)
 
 

@@ -28,6 +28,7 @@ def generate_sentences(limit=DEFAULT_SAMPLE_LIMIT) -> list[str]:
         raise GenerationError("limit must be between 1 and 10000")
     
     grammar: FeatureGrammar = load_grammar()
+    # dict.fromkeys: remove duplicates while preserving order
     productions: list[Production] = list(dict.fromkeys(
         Production(Nonterminal(p.lhs()[TYPE]), [
             symbol if isinstance(symbol, str) else Nonterminal(symbol[TYPE])
@@ -35,7 +36,7 @@ def generate_sentences(limit=DEFAULT_SAMPLE_LIMIT) -> list[str]:
         ]) for p in grammar.productions()
     ))
     projection: CFG = CFG(Nonterminal(grammar.start()[TYPE]), productions)
-    parser: Parser = Parser(grammar)
+    parser: Parser = Parser(grammar) # From FCFG 
     seen = set()
     sentences = []
     
@@ -43,7 +44,7 @@ def generate_sentences(limit=DEFAULT_SAMPLE_LIMIT) -> list[str]:
         sentence = " ".join(tokens)
         if sentence not in seen:
             seen.add(sentence)
-            if parser.parse_all(tokens):
+            if parser.parse_all(tokens): # Use FCFG to validate
                 sentences.append(sentence)
                 if len(sentences) == limit:
                     break

@@ -29,12 +29,12 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual((report['passed'],report['total']),(1,1))
             for filename in ('parse-results.txt','semantic.txt','intent-entity.txt','query.txt','answer.txt'):
                 with self.subTest(filename=filename):
-                    self.assertEqual(len((config.output_dir/filename).read_text().splitlines()),3)
-            queries = [json.loads(line) for line in (config.output_dir/'query.txt').read_text().splitlines()]
+                    self.assertEqual(len((config.output_dir/filename).read_text(encoding="utf-8").splitlines()),3)
+            queries = [json.loads(line) for line in (config.output_dir/'query.txt').read_text(encoding="utf-8").splitlines()]
             self.assertEqual(queries[0]['filters'],{'id':'CO3085'})
             self.assertEqual(queries[1:],[None,None])
             self.assertTrue((config.output_dir/'grammar.txt').is_file())
-            self.assertEqual(len((config.output_dir/'samples.txt').read_text().splitlines()),3)
+            self.assertEqual(len((config.output_dir/'samples.txt').read_text(encoding="utf-8").splitlines()),3)
             self.assertEqual({p.name for p in config.output_dir.iterdir()}, {
                 'grammar.txt','samples.txt','parse-results.txt','semantic.txt',
                 'intent-entity.txt','query.txt','answer.txt','evaluation.txt','dialogue.txt',
@@ -96,7 +96,7 @@ class WorkflowTests(unittest.TestCase):
                     self.assertEqual(result.returncode,0,result.stderr)
                     self.assertEqual({p.name for p in output.iterdir()},expected)
                     if 'query.txt' in expected:
-                        lines=(output/'query.txt').read_text().splitlines()
+                        lines=(output/'query.txt').read_text(encoding="utf-8").splitlines()
                         self.assertEqual(len(lines),3)
                         self.assertEqual([json.loads(line) for line in lines[1:]],[None,None])
 
