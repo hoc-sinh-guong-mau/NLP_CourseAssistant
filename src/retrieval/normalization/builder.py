@@ -28,6 +28,9 @@ RESOURCE_TERMS = {
     'STATISTICAL_NLP': ['statistical methods', 'statistical natural language processing'],
     'PYTHON_NLP': ['nlp with python', 'natural language processing with python'],
 }
+# "Parsing" is itself a queryable topic and appears literally in method names
+# such as "top-down parsing". Keep that evidence alongside the specific method.
+NESTED_TOPIC_MENTIONS = {'PARSING'}
 
 
 def provenance(filename, section, sample=False):
@@ -37,6 +40,8 @@ def provenance(filename, section, sample=False):
 def match_entities(text, entries, extra_terms=None):
     """Find source evidence, preferring longer overlapping aliases.
 
+    The generic PARSING topic may overlap a named parsing method. Other aliases
+    retain longest-match behavior (e.g. PCFG must not imply a separate CFG link).
     Links are intentionally partial: an absent textual mention is not evidence
     that a chapter does not cover a topic.
     """
@@ -51,7 +56,7 @@ def match_entities(text, entries, extra_terms=None):
                 candidates.append((match.start(), match.end(), entry.canonical_id, match[0]))
     occupied, evidence = [], {}
     for start, end, entity, mention in sorted(candidates, key=lambda c: (-(c[1] - c[0]), c[0], c[2])):
-        if any(start < right and end > left for left, right in occupied):
+        if entity not in NESTED_TOPIC_MENTIONS and any(start < right and end > left for left, right in occupied):
             continue
         occupied.append((start, end))
         evidence.setdefault(entity, set()).add(mention)

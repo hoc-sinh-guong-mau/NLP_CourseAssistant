@@ -380,6 +380,8 @@ Các luật này là cơ chế chấp nhận thận trọng, chưa phải classi
 
 `data/raw/` chứa thông tin môn, lịch, chủ đề, bài tập, tài liệu và quy định. `data/sample/` là FAQ/câu hỏi/hội thoại tham khảo; không nhập đáp án mẫu thành sự kiện KB. Raw và lexicon được chuẩn hóa trong bộ nhớ, kiểm tra ID, liên kết và provenance trước khi ghi SQLite. Bộ nguồn hiện tại tạo **14 collection / 118 record**; mỗi record giữ source, source_section và is_sample.
 
+Khi chuẩn hóa topic, từ khóa `parsing` xuất hiện trực tiếp trong tên phương pháp như `top-down parsing` được giữ làm bằng chứng cho topic chung PARSING, đồng thời giữ ID phương pháp cụ thể. Vì vậy câu “Phần CFG và Parsing nằm ở tuần nào?” tìm được tuần 3 từ schedule.txt. Các loại alias khác vẫn ưu tiên khớp dài nhất, tránh tự suy ra CFG từ một mention chỉ nói PCFG. Dữ liệu nguồn và cờ liên kết chưa đầy đủ được giữ nguyên.
+
 SQLite nhúng dùng ba bảng:
 
 | Bảng | Nội dung |
