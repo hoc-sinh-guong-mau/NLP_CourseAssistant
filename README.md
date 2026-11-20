@@ -291,6 +291,18 @@ INTENT, QTYPE, ENTITY, TARGET được truyền bằng feature unification. WEEK
 
 Sinh câu dùng CFG projection tạo ứng viên, sau đó parse lại bằng FCFG để kiểm tra feature, loại trùng và giới hạn độ sâu/ngân sách. `samples.txt` có thể ít câu hơn limit; thứ tự sinh không bảo đảm cân bằng intent.
 
+Các câu hỏi bài tập được phân biệt theo phạm vi thực thể:
+
+| Ví dụ | Qtype và slot |
+| --- | --- |
+| `Bài tập lớn làm gì?`, `Tôi cần làm gì cho BTL?` | REQUIREMENTS, assignment_id=BTL01 |
+| `BTL cần nộp những gì?`, `BTL phải nộp file gì?` | OUTPUTS, assignment_id=BTL01 |
+| `BTL để làm gì?` | GOAL, assignment_id=BTL01 |
+| `Phần I của BTL cần làm gì?` | PART_REQUIREMENTS, assignment_id=BTL01 và part_id=PART_I |
+| `Môn NLP có những bài tập nào?`, `Tôi cần hoàn thành những bài tập nào?` | ASSIGNMENT_LIST, course_id=CO3085 |
+
+Trong miền này, “BTL làm gì?” được quy ước là hỏi nhiệm vụ/yêu cầu; “BTL để làm gì?” hỏi mục tiêu. Câu hỏi danh sách không lấy ID từ một bài tập cụ thể để gán cho course_id. Các cách hỏi chung như “Tôi cần làm gì?” chưa đủ để suy ra môn hoặc bài tập. Grammar thay đổi được nạp khi tạo Parser/CourseAssistant mới; khởi động lại Streamlit để áp dụng cho phiên đang chạy.
+
 ## 6. Mô tả parser
 
 [Parser](src/parsing/parser.py) dùng **NLTK FeatureChartParser**. Chart lưu kết quả phân tích từng phần, kết hợp các production và feature unification để dựng cây từ S. Project sử dụng thuật toán của NLTK, không tự hiện thực Chart Parser từ đầu.
