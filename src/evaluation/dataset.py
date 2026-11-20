@@ -25,6 +25,7 @@ RECORD_FIELDS = {
     "context_after",
     "context_used",
     "statistical_prediction",
+    "fallback_validation",
     "statistical_used",
     "statistical_attempted",
     "abstained",

@@ -99,7 +99,7 @@ python -m src.main evaluate --input input/test_cases.jsonl \
   --dialogue-cases input/evaluation_dialogues.jsonl --compare
 ```
 
-Hai lệnh đầu phải trả exit code 0. Lệnh cuối hiện trả **1** vì benchmark còn case chưa đạt; đây là kết quả chấm, vẫn có báo cáo. Không nối benchmark bằng `&&` với lệnh mở UI. Với phiên bản dữ liệu/model đã kiểm chứng: smoke **3/3**, benchmark tổng hợp **94/130 case**, trong đó hội thoại **5/5**. Hash dataset/model nằm trong report để đối chiếu; latency và thông tin runtime không giống byte giữa các máy. Không sửa gold hoặc retrain chỉ để khớp các con số này.
+Hai lệnh đầu phải trả exit code 0. Lệnh cuối hiện trả **1** vì benchmark còn case chưa đạt; đây là kết quả chấm, vẫn có báo cáo. Không nối benchmark bằng `&&` với lệnh mở UI. Với phiên bản dữ liệu/model đã kiểm chứng: smoke **3/3**, benchmark tổng hợp **93/130 case**, trong đó hội thoại **5/5**. Hash dataset/model nằm trong report để đối chiếu; latency và thông tin runtime không giống byte giữa các máy. Không sửa gold hoặc retrain chỉ để khớp các con số này.
 
 Checkout phải có `input/sentences.txt`, `input/smoke_cases.jsonl`, `input/test_cases.jsonl`, `input/dialogues.txt`, `input/evaluation_dialogues.jsonl` và `models/statistical/qtype.joblib`. Không cần `.env`, DB hay output từ máy tác giả; `.env` là tùy chọn vì đã có mặc định. Bộ source nộp bài cần giữ các fixture/model này.
 
@@ -363,6 +363,17 @@ Model tự tải từ `COURSE_QTYPE_MODEL`, mặc định `models/statistical/qt
 
 UNKNOWN là kết quả nội bộ khi confidence dưới ngưỡng, không phải nhãn được huấn luyện hoặc intent nghiệp vụ được xuất riêng. Fallback không chấp nhận được thì pipeline giữ `parse_failed` và intent/entity null. Parse thất bại cũng có thể do thiếu grammar/alias; không đủ để kết luận câu ngoài miền.
 
+Fallback còn phải vượt qua [FallbackPolicy](src/statistical_processing/fallback_policy.py) trước khi tạo semantic:
+
+- Confidence hợp lệ và đạt ngưỡng lưu trong model; không tăng ngưỡng mặc định bằng một giá trị tùy ý.
+- Không có tên môn được nêu sau “môn” hoặc mã COxxxx nằm ngoài alias/code môn học được hỗ trợ. Đây là luật nhận diện giới hạn, không phải bộ nhận diện mọi tên môn tổng quát.
+- Qtype phụ thuộc ngữ cảnh phải có biểu thức tham chiếu đúng loại, như “môn này”, “phần đó”, “chương sau”; không tự tạo context_ref chỉ vì model dự đoán nhãn context.
+- Câu có dấu hiệu hỏi phù hợp với qtype trong [fallback_rules.py](src/statistical_processing/fallback_rules.py), sau khi che alias của những entity đã trích xuất. Tên môn/sách không tự làm bằng chứng cho loại thông tin được hỏi. Cues được so khớp không phân biệt dấu để chịu một số lỗi dấu; entity vẫn phải khớp lexicon.
+
+Trace/UI có `fallback_validation` với `accepted` và `reason`: `unknown_prediction`, `invalid_confidence`, `low_confidence`, `unsupported_course`, `unsupported_qtype`, `missing_reference`, `missing_entities`, `missing_qtype_evidence`, hoặc `accepted`. Bị từ chối thì `statistical_used=false`, semantic/query null và status giữ `parse_failed`; đây không phải kết luận chắc chắn ngoài miền. Phiên dialogue giữ context cũ vì lượt này không được cập nhật state. Grammar có cây vẫn được xử lý theo nhánh symbolic như trước.
+
+Các luật này là cơ chế chấp nhận thận trọng, chưa phải classifier ngoài miền tổng quát và có thể từ chối thêm các paraphrase hợp lệ. Khi thêm qtype/alias cần bổ sung cue phù hợp và kiểm thử độc lập; không chỉ thêm từ khóa để làm pass một bộ câu đã biết. Dữ liệu thiếu như deadline/giảng viên vẫn đi tới `missing_information` nếu yêu cầu được nhận diện hợp lệ.
+
 ## 9. Knowledge Base và cách truy vấn
 
 ### 9.1. Dữ liệu và lưu trữ
@@ -463,7 +474,7 @@ Evaluator được tách thành `dataset.py` (validation/audit), `scoring.py` (c
 
 `total/passed` đếm case; một hội thoại chỉ đúng khi mọi lượt đạt mọi nhãn. `turn_accuracy` đếm lượt. `answer_performance.exact_text` báo riêng số đáp án khớp trên số câu có nhãn answer, không đồng nhất với số case đúng toàn bộ pipeline. Metric không có nhãn có count=0 hoặc null, không tự suy thành lỗi model. Intent/qtype Macro-F1 giữ quy ước trên tập nhãn xuất hiện trong gold/prediction; entity micro-F1 so tập slot/ID, còn exact checks giữ thứ tự/biểu diễn gốc.
 
-**Chất lượng gold:** report cảnh báo nếu semantic và intent/entity mâu thuẫn. Raw checks không đổi; trường mâu thuẫn bị loại riêng khỏi metric thành phần, không chọn đáp án thuận tiện và không sửa dataset tự động. Case_044 hiện có DOMAIN/TITLE không thống nhất; một số câu trùng sau chuẩn hóa vẫn được giữ để đối chiếu. Vì đây là tập phát triển, không gọi kết quả là accuracy trên test mù độc lập.
+**Chất lượng gold:** report cảnh báo nếu semantic và intent/entity mâu thuẫn. Raw checks không đổi; trường mâu thuẫn bị loại riêng khỏi metric thành phần, không chọn đáp án thuận tiện và không sửa dataset tự động. Case_044 hiện có DOMAIN/TITLE không thống nhất; một số câu trùng sau chuẩn hóa vẫn được giữ để đối chiếu. Vì đây là tập phát triển, không gọi kết quả là accuracy trên test mù độc lập. Sau khi siết fallback, strict score là 93/130 thay vì 94/130: câu “Bài tập lớn phải nộp qua hệ thống nào?” có gold DEADLINE, nhưng hỏi kênh nộp bài nên validator không còn chấp nhận dự đoán deadline. Gold được giữ nguyên để rà soát riêng; bộ 42 case vẫn đạt 36/42 và hội thoại bổ sung đạt 5/5.
 
 Dạng case cũ vẫn hoạt động. Có thể dùng nhãn rút gọn intent/qtype/entities và các checks bổ sung:
 

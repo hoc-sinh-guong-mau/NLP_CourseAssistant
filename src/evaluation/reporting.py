@@ -8,6 +8,7 @@ EXPLANATIONS = {
     "inconsistent_gold": "Gold labels contradict each other; raw exact checks are preserved for review.",
     "model_rejected": "No grammar parse; the statistical model returned UNKNOWN or no supported intent.",
     "fallback_unresolved": "No grammar parse; fallback predicted an intent but could not create a complete semantic frame.",
+    "fallback_rejected": "Fallback prediction failed course scope, reference or question-focus validation; inspect fallback_validation.",
     "grammar_no_parse": "No complete grammar parse and no usable statistical prediction.",
     "semantic_ambiguity": "More than one distinct semantic interpretation was found.",
     "unresolved_context": "The reference could not be grounded uniquely in the local session.",
@@ -30,6 +31,9 @@ def _category(row, conflicting_cases):
             return "grammar_no_parse"
         if prediction.get("qtype") == "UNKNOWN" or prediction.get("intent") is None:
             return "model_rejected"
+        validation = actual.get('fallback_validation') or {}
+        if validation.get('accepted') is False and validation.get('reason') != 'missing_entities':
+            return 'fallback_rejected'
         return "fallback_unresolved"
     if status == "ambiguous":
         return "semantic_ambiguity"
@@ -74,6 +78,7 @@ def describe_failures(systems, metadata):
                 "failed_fields": [key for key, ok in row["checks"].items() if not ok],
                 "error": row["actual"].get("error"),
                 "statistical_prediction": row["actual"].get("statistical_prediction"),
+                "fallback_validation": row["actual"].get("fallback_validation"),
             }
             failures.append(failure)
             examples.setdefault(category, [])

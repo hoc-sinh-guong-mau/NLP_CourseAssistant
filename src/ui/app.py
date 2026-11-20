@@ -26,6 +26,7 @@ def render_turn(record, show_analysis):
                 st.json({key: record.get(key) for key in (
                     'status', 'tokens', 'parse_tree', 'raw_semantic', 'semantic',
                     'intent_entity', 'statistical_attempted', 'statistical_used', 'statistical_prediction',
+                    'fallback_validation',
                     'context_used', 'query', 'context_after',
                 )})
 

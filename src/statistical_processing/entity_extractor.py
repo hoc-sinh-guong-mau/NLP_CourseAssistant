@@ -4,6 +4,7 @@ from typing import Mapping
 
 from src.lexical import Lexicon
 from src.preprocessing import normalize, tokenize
+from .fallback_policy import has_context_reference
 
 
 FeatureSource = str | tuple[str, ...]
@@ -61,6 +62,8 @@ class EntityExtractor:
         for slot in slots:
             categories = _SLOT_CATEGORIES.get(slot)
             if slot == "context_ref":
+                if not has_context_reference(text):
+                    return None
                 arguments[slot] = "CONTEXT_REF"
                 continue
             if categories is None:

@@ -1,4 +1,5 @@
 """Orchestrate NLP stages; implementations can be injected for tests/experiments."""
+import math
 from src.common import NLPError, run_stage
 from src.preprocessing import normalize, tokenize
 from src.parsing import Parser, ParseError
@@ -11,6 +12,7 @@ from src.retrieval import QueryBuilder
 from src.retrieval.sqlite import SQLiteKnowledgeBase
 from src.generation import AnswerGenerator
 from src.statistical_processing.entity_extractor import EntityExtractor
+from src.statistical_processing.fallback_policy import FallbackPolicy
 
 from .messages import set_status
 
@@ -57,9 +59,16 @@ class CourseAssistant:
             if statistical_recognizer is None else statistical_recognizer
         )
         self.entity_extractor = entity_extractor
-        if self.statistical_recognizer is not None and self.entity_extractor is None:
+        self.fallback_policy = None
+        if self.statistical_recognizer is not None:
             lexicon = run_stage("statistical_entity", Lexicon.load, LEXICON_DIR)
-            self.entity_extractor = EntityExtractor(lexicon)
+            threshold = getattr(self.statistical_recognizer, 'unknown_threshold', 0.0)
+            self.fallback_policy = run_stage(
+                'statistical_validation', FallbackPolicy, lexicon,
+                minimum_confidence=threshold if isinstance(threshold, (int, float)) else 0.0,
+            )
+            if self.entity_extractor is None:
+                self.entity_extractor = EntityExtractor(lexicon)
 
     def _statistical_fallback(self, text: str, record: dict) -> SemanticFrame | None:
         if self.statistical_recognizer is None:
@@ -73,9 +82,16 @@ class CourseAssistant:
         record["statistical_prediction"] = {
             "intent": intent,
             "qtype": qtype,
-            "confidence": confidence,
+            "confidence": confidence if isinstance(confidence, (int, float)) and math.isfinite(confidence) else None,
         }
         if intent is None:
+            record['fallback_validation'] = {'accepted': False, 'reason': 'unknown_prediction'}
+            return None
+
+        reason = run_stage('statistical_validation', self.fallback_policy.prediction_rejection,
+                           text, qtype, confidence)
+        if reason:
+            record['fallback_validation'] = {'accepted': False, 'reason': reason}
             return None
 
         rule = SEMANTIC_RULES[(intent, qtype)]
@@ -89,8 +105,16 @@ class CourseAssistant:
             rule.optional_slots,
         )
         if arguments is None:
+            record['fallback_validation'] = {'accepted': False, 'reason': 'missing_entities'}
             return None
 
+        reason = run_stage('statistical_validation', self.fallback_policy.arguments_rejection,
+                           text, qtype, arguments)
+        if reason:
+            record['fallback_validation'] = {'accepted': False, 'reason': reason}
+            return None
+
+        record['fallback_validation'] = {'accepted': True, 'reason': 'accepted'}
         record["statistical_used"] = True
         return SemanticFrame(intent, arguments, qtype)
 
@@ -129,6 +153,7 @@ class CourseAssistant:
             "semantic": None, "intent_entity": None, "query": None, "result": [],
             "statistical_attempted": False,
             "statistical_used": False, "statistical_prediction": None,
+            "fallback_validation": None,
         }
         
         try:
